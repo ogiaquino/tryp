@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<tryp>
+    <connection name="OLAP">
+        <host>localhost</host>
+        <port>5433</port>
+        <database>atomstore_olap_kraft</database>
+        <user>postgres</user>
+        <password>data01</password>
+    </connection>
+</tryp>
