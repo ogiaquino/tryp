@@ -48,13 +48,53 @@ if __name__ == '__main__':
         conn = data_connection(report["conn_str"])
         df = data_frame(report["query"], conn)
         df_raw = pivot_table(df, rows=['region','area','distributor','salesrep_name'], aggfunc={'net_sales':np.sum,'sales_order_id_count': np.sum})
-        #open('test.html', 'w').write(generate_report(df_raw, 'html'))
-        #df_region = pivot_table(df, rows=['region'], aggfunc={'net_sales':np.sum,'sales_order_id_count': np.sum})
-        #open('test1.html', 'w').write(generate_report(df_region, 'html'))
 
         wb = Workbook()
         ws = wb.add_sheet('SHIT')
-        for i, row in enumerate(df_raw.to_records()):
-            for j, col in enumerate(row):
-                ws.write(i, j, col)
+
+        #for i in range(3):
+        #    tmp = ""
+        #    for ir, row in enumerate(df_raw.T.iteritems()):
+        #        if tmp == row[0][0 + i]:
+        #            ws.write(ir + i, 0 + i, "")
+        #        else:
+        #            ws.write(ir + i, 0+i, row[0][0+i])
+        #        tmp = row[0][0+i]
+
+
+        tmp = ""
+        for i, x in enumerate(df_raw.T.iteritems()):
+            if tmp == x[0][0]:
+                ws.write(i, 0, "")
+            else:
+                ws.write(i, 0, x[0][0])
+            tmp = x[0][0]
+        tmp = ""
+        for i, x in enumerate(df_raw.T.iteritems()):
+            if tmp == x[0][1]:
+                ws.write(i+1, 1, "")
+            else:
+                ws.write(i+1, 1, x[0][1])
+            tmp = x[0][1]
+        tmp = ""
+        for i, x in enumerate(df_raw.T.iteritems()):
+            if tmp == x[0][2]:
+                ws.write(i+2, 3, "")
+            else:
+                ws.write(i+2, 3, x[0][2])
+            tmp = x[0][2]
+        tmp = ""
+        for i, x in enumerate(df_raw.T.iteritems()):
+            if tmp == x[0][3]:
+                ws.write(i+3, 5, "")
+            else:
+                ws.write(i+3, 5, x[0][3])
+            tmp = x[0][3]
+        #for i, row in enumerate(df_raw.to_records()):
+        #    col = list(row)
+        ##    if i > 0:
+        ##        if col
+        #    col = list(col[0]) + col[1:]
+        #    for j, c in enumerate(col):
+        #        ws.write(i, j, c)
         wb.save('SHIT.xls')
