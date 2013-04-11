@@ -4,7 +4,9 @@ import xml.etree.ElementTree as ET
 
 import pandas.io.sql as psql
 import numpy as np
+
 from pandas import *
+from xlwt import easyxf, Borders, Workbook, Pattern, Style
 
 def data_connection(conn_string):
     conn = psycopg2.connect(conn_string)
@@ -45,6 +47,14 @@ if __name__ == '__main__':
     for report in reports:
         conn = data_connection(report["conn_str"])
         df = data_frame(report["query"], conn)
-        open('test.html', 'w').write(generate_report(df, 'html'))
+        df_raw = pivot_table(df, rows=['region','area','distributor','salesrep_name'], aggfunc={'net_sales':np.sum,'sales_order_id_count': np.sum})
+        #open('test.html', 'w').write(generate_report(df_raw, 'html'))
+        #df_region = pivot_table(df, rows=['region'], aggfunc={'net_sales':np.sum,'sales_order_id_count': np.sum})
+        #open('test1.html', 'w').write(generate_report(df_region, 'html'))
 
-#print df.pivot_table(rows=['regional', 'region', 'distributor', 'SR Code'], cols=['category'], values=['Sell Out Actual'], aggfunc=np.sum, margins=True).to_html()
+        wb = Workbook()
+        ws = wb.add_sheet('SHIT')
+        for i, row in enumerate(df_raw.to_records()):
+            for j, col in enumerate(row):
+                ws.write(i, j, col)
+        wb.save('SHIT.xls')
