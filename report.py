@@ -47,21 +47,27 @@ if __name__ == '__main__':
     for report in reports:
         conn = data_connection(report["conn_str"])
         df = data_frame(report["query"], conn)
-            
-        df_raw = pivot_table(df, rows=['region','area','distributor','salesrep_name'], aggfunc={'net_sales':np.sum,'sales_order_id_count': np.sum})
+
+        rows = ['region', 'area', 'distributor', 'salesrep_name']
+        aggs = ['net_sales', 'sales_order_id_count']
+        agg = {'net_sales':np.sum,'sales_order_id_count': np.sum}
+        df_raw = pivot_table(df, rows=rows, aggfunc=agg)
 
         wb = Workbook()
         ws = wb.add_sheet('SHIT')
 
-        tmp = ["","",""]
-        row_len = 4 - 1
-        row_index = -1
+        tmp = ["" for x in range(len(rows))]
+        row_len = len(rows) - 1
+        row_index = 0
         for row in df_raw.to_records():
             for i in range(row_len):
                 if tmp[i] != row[0][i]:
                     row_index = row_index + 1
                     ws.write(row_index, i, row[0][i])
                     ws.write(row_index, i+1, row[0][i])
+                    for j in range(len(aggs)):
+                        h = df.groupby(rows[i]).sum()[aggs[j]][row[0][i]]
+                        ws.write(row_index, len(rows)+j, h)
 
             tmp = row[0]
             row = list(row)
@@ -70,5 +76,7 @@ if __name__ == '__main__':
             row_index = row_index + 1
             for i, col in enumerate(row):
                 ws.write(row_index, i, col)
-            
         wb.save('SHIT.xls')
+        #f = open('SHIT.html', 'w')
+        #f.write(generate_report(df_raw))
+        #f.close()
