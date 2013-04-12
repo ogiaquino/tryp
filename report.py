@@ -53,65 +53,22 @@ if __name__ == '__main__':
         wb = Workbook()
         ws = wb.add_sheet('SHIT')
 
-        #for i in range(3):
-        #    tmp = ""
-        #    for ir, row in enumerate(df_raw.T.iteritems()):
-        #        if tmp == row[0][0 + i]:
-        #            ws.write(ir + i, 0 + i, "")
-        #        else:
-        #            ws.write(ir + i, 0+i, row[0][0+i])
-        #        tmp = row[0][0+i]
+        tmp = ["","",""]
+        row_len = 4 - 1
+        row_index = -1
+        for row in df_raw.to_records():
+            for i in range(row_len):
+                if tmp[i] != row[0][i]:
+                    row_index = row_index + 1
+                    ws.write(row_index, i, row[0][i])
+                    ws.write(row_index, i+1, row[0][i])
 
+            tmp = row[0]
+            row = list(row)
+            row = ["" for x in range(row_len)] + [row[0][-1]] + row[1:]
 
-        #tmp = ""
-        #for i, x in enumerate(df_raw.T.iteritems()):
-        #    if tmp == x[0][0]:
-        #        ws.write(i, 0, "")
-        #    else:
-        #        ws.write(i, 0, x[0][0])
-        #    tmp = x[0][0]
-        #tmp = ""
-        #for i, x in enumerate(df_raw.T.iteritems()):
-        #    if tmp == x[0][1]:
-        #        ws.write(i+1, 1, "")
-        #    else:
-        #        ws.write(i+1, 1, x[0][1])
-        #    tmp = x[0][1]
-        #tmp = ""
-        #for i, x in enumerate(df_raw.T.iteritems()):
-        #    if tmp == x[0][2]:
-        #        ws.write(i+2, 3, "")
-        #    else:
-        #        ws.write(i+2, 3, x[0][2])
-        #    tmp = x[0][2]
-        #tmp = ""
-        #for i, x in enumerate(df_raw.T.iteritems()):
-        #    if tmp == x[0][3]:
-        #        ws.write(i+3, 5, "")
-        #    else:
-        #        ws.write(i+3, 5, x[0][3])
-        #    tmp = x[0][3]
-        tmp = ("","","")
-        for i, row in enumerate(df_raw.to_records()):
-            if tmp[0] != row[0][0]:
-                tmp = row[0]
-                row = list(row)
-                row = list(row[0]) + row[1:]
-                for j, c in enumerate(row):
-                    ws.write(i+3, j, c)
-                continue
-            if tmp[1] != row[0][1]:
-                tmp = row[0]
-                row = list(row)
-                row = list(row[0]) + row[1:]
-                for j, c in enumerate(row):
-                    ws.write(i+2, j, c)
-                continue
-            #if tmp[2] != row[0][2]:
-            #    tmp = row[0]
-            #    row = list(row)
-            #    row = list(row[0]) + row[1:]
-            #    for j, c in enumerate(row):
-            #        ws.write(i+1, j, c)
-            #    continue
+            row_index = row_index + 1
+            for i, col in enumerate(row):
+                ws.write(row_index, i, col)
+            
         wb.save('SHIT.xls')
