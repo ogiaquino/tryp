@@ -47,6 +47,7 @@ if __name__ == '__main__':
     for report in reports:
         conn = data_connection(report["conn_str"])
         df = data_frame(report["query"], conn)
+            
         df_raw = pivot_table(df, rows=['region','area','distributor','salesrep_name'], aggfunc={'net_sales':np.sum,'sales_order_id_count': np.sum})
 
         wb = Workbook()
@@ -62,39 +63,55 @@ if __name__ == '__main__':
         #        tmp = row[0][0+i]
 
 
-        tmp = ""
-        for i, x in enumerate(df_raw.T.iteritems()):
-            if tmp == x[0][0]:
-                ws.write(i, 0, "")
-            else:
-                ws.write(i, 0, x[0][0])
-            tmp = x[0][0]
-        tmp = ""
-        for i, x in enumerate(df_raw.T.iteritems()):
-            if tmp == x[0][1]:
-                ws.write(i+1, 1, "")
-            else:
-                ws.write(i+1, 1, x[0][1])
-            tmp = x[0][1]
-        tmp = ""
-        for i, x in enumerate(df_raw.T.iteritems()):
-            if tmp == x[0][2]:
-                ws.write(i+2, 3, "")
-            else:
-                ws.write(i+2, 3, x[0][2])
-            tmp = x[0][2]
-        tmp = ""
-        for i, x in enumerate(df_raw.T.iteritems()):
-            if tmp == x[0][3]:
-                ws.write(i+3, 5, "")
-            else:
-                ws.write(i+3, 5, x[0][3])
-            tmp = x[0][3]
-        #for i, row in enumerate(df_raw.to_records()):
-        #    col = list(row)
-        ##    if i > 0:
-        ##        if col
-        #    col = list(col[0]) + col[1:]
-        #    for j, c in enumerate(col):
-        #        ws.write(i, j, c)
+        #tmp = ""
+        #for i, x in enumerate(df_raw.T.iteritems()):
+        #    if tmp == x[0][0]:
+        #        ws.write(i, 0, "")
+        #    else:
+        #        ws.write(i, 0, x[0][0])
+        #    tmp = x[0][0]
+        #tmp = ""
+        #for i, x in enumerate(df_raw.T.iteritems()):
+        #    if tmp == x[0][1]:
+        #        ws.write(i+1, 1, "")
+        #    else:
+        #        ws.write(i+1, 1, x[0][1])
+        #    tmp = x[0][1]
+        #tmp = ""
+        #for i, x in enumerate(df_raw.T.iteritems()):
+        #    if tmp == x[0][2]:
+        #        ws.write(i+2, 3, "")
+        #    else:
+        #        ws.write(i+2, 3, x[0][2])
+        #    tmp = x[0][2]
+        #tmp = ""
+        #for i, x in enumerate(df_raw.T.iteritems()):
+        #    if tmp == x[0][3]:
+        #        ws.write(i+3, 5, "")
+        #    else:
+        #        ws.write(i+3, 5, x[0][3])
+        #    tmp = x[0][3]
+        tmp = ("","","")
+        for i, row in enumerate(df_raw.to_records()):
+            if tmp[0] != row[0][0]:
+                tmp = row[0]
+                row = list(row)
+                row = list(row[0]) + row[1:]
+                for j, c in enumerate(row):
+                    ws.write(i+3, j, c)
+                continue
+            if tmp[1] != row[0][1]:
+                tmp = row[0]
+                row = list(row)
+                row = list(row[0]) + row[1:]
+                for j, c in enumerate(row):
+                    ws.write(i+2, j, c)
+                continue
+            #if tmp[2] != row[0][2]:
+            #    tmp = row[0]
+            #    row = list(row)
+            #    row = list(row[0]) + row[1:]
+            #    for j, c in enumerate(row):
+            #        ws.write(i+1, j, c)
+            #    continue
         wb.save('SHIT.xls')
