@@ -14,25 +14,25 @@
             <connection>OLAP</connection>
             <query><![CDATA[
 SELECT
-region_id,
+--region_id,
 region,
-area_id,
+--area_id,
 area,
-distributor_id,
+--distributor_id,
 distributor,
-salesrep_id,
+--salesrep_id,
 salesrep_code,
 salesrep_name,
-product_id_count,
-sales_order_id_count,
-invoice_id_count,
-invoice_header_id_count,
-target_value as targets,
-achievement,
-1 as avg_sku_order,
-1 as avg_sku,
-1 as avg_order,
-1 as salesrep_count,
+--product_id_count,
+sum(sales_order_id_count) as sales_order_id_count,
+--invoice_id_count,
+--invoice_header_id_count,
+--target_value as targets,
+--achievement,
+--1 as avg_sku_order,
+--1 as avg_sku,
+--1 as avg_order,
+--1 as salesrep_count,
 sum(net_sales) as net_sales
 FROM
 (
@@ -205,7 +205,7 @@ FROM
                 AND distributors.parent_level = 6
         ORDER BY 1, 2, 3
 ) as dsr_data
-GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]]>
+GROUP BY 1,2,3,4,5]]>
             </query>
         </dataset>
     </datasets>

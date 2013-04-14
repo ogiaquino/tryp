@@ -42,15 +42,21 @@ def parse_report(tryp_file):
     
 
 
-if __name__ == '__main__':
+if True:
+#if __name__ == '__main__':
     reports = parse_report("daily_sales.tryp")
     for report in reports:
         conn = data_connection(report["conn_str"])
         df = data_frame(report["query"], conn)
 
+        def fuck(s):
+            return sum([5])
+
         rows = ['region', 'area', 'distributor', 'salesrep_name']
+        rows = ['region']
         aggs = ['net_sales', 'sales_order_id_count']
-        agg = {'net_sales':np.sum,'sales_order_id_count': np.sum}
+        agg = {'net_sales':np.sum,'sales_order_id_count': fuck}
+
         df_raw = pivot_table(df, rows=rows, aggfunc=agg)
 
         wb = Workbook()
@@ -66,7 +72,7 @@ if __name__ == '__main__':
                     ws.write(row_index, i, row[0][i])
                     ws.write(row_index, i+1, row[0][i])
                     for j in range(len(aggs)):
-                        h = df.groupby(rows[i]).sum()[aggs[j]][row[0][i]]
+                        h = df.groupby(rows[i]).agg(agg[aggs[j]])[aggs[j]][row[0][i]]
                         ws.write(row_index, len(rows)+j, h)
 
             tmp = row[0]
@@ -77,6 +83,3 @@ if __name__ == '__main__':
             for i, col in enumerate(row):
                 ws.write(row_index, i, col)
         wb.save('SHIT.xls')
-        #f = open('SHIT.html', 'w')
-        #f.write(generate_report(df_raw))
-        #f.close()
