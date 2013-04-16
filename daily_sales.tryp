@@ -212,7 +212,15 @@ GROUP BY 1,2,3,4,5]]>
     <reports>
         <report name='dsr'>
             <dataset>dsr</dataset>
-            <format>crosstab</format>
+            <groups>region,area,distributor,salesrep_name</groups>
+            <aggregate>
+                <column>net_sales</column>
+                <measure>sum</measure>
+            </aggregate>
+            <aggregate>
+                <column>sales_order_id_count</column>
+                <measure>sum</measure>
+            </aggregate>
         </report>
     </reports>
 </tryp>
