@@ -63,8 +63,9 @@ def label(ser):
     return '{s} Total'.format(s=ser)
 
 
-if __name__ == '__main__':
-    reports = pr.parse_tryp("daily_sales.tryp")
+#if __name__ == '__main__':
+if True:
+    reports = pr.parse_tryp("inventory_by_sku.tryp")
     for report in reports:
         ct = crosstabulate(report)
         print ct.to_string(index=False)

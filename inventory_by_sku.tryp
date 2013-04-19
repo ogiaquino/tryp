@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tryp>
+    <connections>
+        <connection name="OLAP">
+            <host>localhost</host>
+            <port>5433</port>
+            <database>atomstore_olap_fn</database>
+            <user>postgres</user>
+            <password>data01</password>
+        </connection>
+    </connections>
+    <datasets>
+        <dataset name="dsr">
+            <connection>OLAP</connection>
+            <query><![CDATA[
+SELECT
+    categories.parent_name AS "Category",
+    brands.parent_name AS "Brand",
+    brands.child_code AS "SKU",
+    brands.child_name AS "Description",
+    area_name AS "Region",
+    distributor_name AS "Distributor",
+    region_name AS "Region Parent",
+    sales_value AS "Sales Value",
+    sales_qty AS "Sales Qty",
+    soh_value AS "SOH Value",
+    soh_qty AS "SOH Qty"
+FROM
+    (
+        SELECT
+            product_id,
+            areas.parent_name AS area_name,
+            distributors.parent_name AS distributor_name,
+            regions.parent_name AS region_name,
+            sum(stocks.net_standard_value) AS sales_value,
+            sum(stocks.net_converted_quantity) AS sales_qty,
+            sum(snapshot.soh_standard_value) AS soh_value,
+            sum(snapshot.soh_converted_quantity) AS soh_qty
+        FROM
+            (
+                SELECT
+                    stocks.combo,
+                    stocks.product_id,
+                    sum(stocks.net_standard_value) AS net_standard_value,
+                    sum(stocks.net_converted_quantity) AS net_converted_quantity
+                FROM
+                    mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks
+                WHERE
+                    1 = 1
+                    AND stocks.status = 'Active'
+                    AND stocks.type IN ('New', 'Promotion', 'Standard')
+                GROUP BY 1, 2
+            ) AS stocks
+            FULL JOIN
+            (
+                SELECT
+                    stocks.combo,
+                    stocks.product_id,
+             sum(stocks.soh_standard_value ) AS soh_standard_value,
+             sum(stocks.soh_converted_quantity) AS soh_converted_quantity
+                FROM
+                    mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks
+                WHERE
+                    1 = 1
+                    AND stocks.status = 'Active'
+                    AND stocks.type IN ('New', 'Promotion', 'Standard')                    
+                GROUP BY 1, 2
+            ) AS snapshot
+            USING (combo, product_id)
+            JOIN dim_sites
+            USING (combo)
+            JOIN mv_closure_sites_hierarchy AS areas
+            ON
+                dim_sites.principal_code = areas.principal_code
+                AND dim_sites.dome_identifier = areas.dome_identifier
+                AND areas.extended IS FALSE
+                AND areas.parent_level = 3
+            JOIN mv_closure_sites_hierarchy AS distributors
+            ON
+                dim_sites.principal_code = distributors.principal_code
+                AND dim_sites.dome_identifier = distributors.dome_identifier
+                AND distributors.extended IS FALSE
+                AND distributors.parent_level = 4
+            JOIN mv_closure_sites_hierarchy AS regions
+            ON
+                dim_sites.principal_code = regions.principal_code
+                AND dim_sites.dome_identifier = regions.dome_identifier
+                AND regions.extended IS FALSE
+                AND regions.parent_level = 2
+        WHERE
+            1 = 1            
+            AND dim_sites.active IS TRUE
+        GROUP BY
+            1, 2, 3, 4
+    ) AS stocks
+    JOIN mv_closure_product_categories AS categories
+    ON
+        product_id = categories.child_id
+        AND categories.extended IS TRUE
+        AND categories.parent_level = 1
+    JOIN mv_closure_product_categories AS brands
+    ON
+        product_id = brands.child_id
+        AND brands.extended IS TRUE
+        AND brands.parent_level = 2
+ORDER BY
+    CASE
+        WHEN categories.parent_code = 'BISCUITS' THEN 1
+        WHEN categories.parent_code = 'SNACKS' THEN 2
+        WHEN categories.parent_code = 'CHEESE' THEN 3
+        WHEN categories.parent_code = 'GROCERY' THEN 4
+        WHEN categories.parent_code = 'CONFECTIONERY' THEN 5
+        ELSE 99
+    END,
+    2, 3, 5, 6;
+                ]]>
+            </query>
+        </dataset>
+    </datasets>
+    <reports>
+        <report name='dsr'>
+            <dataset>dsr</dataset>
+            <groups>Category,Brand,SKU</groups>
+            <aggregate>
+                <column>Sales Qty</column>
+                <measure>sum</measure>
+            </aggregate>
+            <aggregate>
+                <column>Sales Value</column>
+                <measure>sum</measure>
+            </aggregate>
+        </report>
+        <report name='dsr'>
+            <dataset>dsr</dataset>
+            <groups>Region,Distributor,Category,Brand,SKU</groups>
+            <aggregate>
+                <column>Sales Qty</column>
+                <measure>sum</measure>
+            </aggregate>
+            <aggregate>
+                <column>Sales Value</column>
+                <measure>sum</measure>
+            </aggregate>
+        </report>
+    </reports>
+</tryp>
