@@ -13,25 +13,27 @@
         <dataset name="dsr">
             <connection>OLAP</connection>
             <query><![CDATA[
+
 SELECT
     categories.parent_name AS "Category",
     brands.parent_name AS "Brand",
     brands.child_code AS "SKU",
     brands.child_name AS "Description",
-    area_name AS "Region",
+    area_name AS "Region Parent",
     distributor_name AS "Distributor",
-    region_name AS "Region Parent",
+    region_name AS "Region",
     sales_value AS "Sales Value",
     sales_qty AS "Sales Qty",
-    soh_value AS "SOH Value",
-    soh_qty AS "SOH Qty"
+    coalesce(soh_value, 0.0) AS "SOH Value",
+    coalesce(soh_qty, 0.0) AS "SOH Qty"
+            
 FROM
     (
         SELECT
             product_id,
             areas.parent_name AS area_name,
-            distributors.parent_name AS distributor_name,
             regions.parent_name AS region_name,
+            distributors.parent_name AS distributor_name,
             sum(stocks.net_standard_value) AS sales_value,
             sum(stocks.net_converted_quantity) AS sales_qty,
             sum(snapshot.soh_standard_value) AS soh_value,
@@ -44,11 +46,25 @@ FROM
                     sum(stocks.net_standard_value) AS net_standard_value,
                     sum(stocks.net_converted_quantity) AS net_converted_quantity
                 FROM
-                    mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks
+                    mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks,
+                    (
+                        SELECT
+                            ('2013-04-25')::date AS date --param_5
+                    ) AS t
                 WHERE
                     1 = 1
                     AND stocks.status = 'Active'
                     AND stocks.type IN ('New', 'Promotion', 'Standard')
+                    AND stocks.date in (SELECT date 
+                                        FROM dim_calendar 
+                                        WHERE reporting_month = (SELECT reporting_month 
+                                                                 FROM dim_calendar 
+                                                                 WHERE principal_code = 'FN' AND 
+                                                                 date = (SELECT min(date) - 1 FROM dim_calendar 
+                                                                         WHERE principal_code = 'FN' AND 
+                                                                         reporting_month = (SELECT reporting_month 
+                                                                                            FROM dim_calendar 
+                                                                                            WHERE date = '2013-04-25' AND principal_code = 'FN'))))
                 GROUP BY 1, 2
             ) AS stocks
             FULL JOIN
@@ -59,11 +75,16 @@ FROM
              sum(stocks.soh_standard_value ) AS soh_standard_value,
              sum(stocks.soh_converted_quantity) AS soh_converted_quantity
                 FROM
-                    mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks
+                    mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks,
+                    (
+                        SELECT
+                             ('2013-04-25')::date AS date --param_6
+                    ) AS t
                 WHERE
                     1 = 1
                     AND stocks.status = 'Active'
-                    AND stocks.type IN ('New', 'Promotion', 'Standard')                    
+                    AND stocks.type IN ('New', 'Promotion', 'Standard')
+                    AND stocks.date = t.date
                 GROUP BY 1, 2
             ) AS snapshot
             USING (combo, product_id)
@@ -75,20 +96,22 @@ FROM
                 AND dim_sites.dome_identifier = areas.dome_identifier
                 AND areas.extended IS FALSE
                 AND areas.parent_level = 3
-            JOIN mv_closure_sites_hierarchy AS distributors
-            ON
-                dim_sites.principal_code = distributors.principal_code
-                AND dim_sites.dome_identifier = distributors.dome_identifier
-                AND distributors.extended IS FALSE
-                AND distributors.parent_level = 4
             JOIN mv_closure_sites_hierarchy AS regions
             ON
                 dim_sites.principal_code = regions.principal_code
                 AND dim_sites.dome_identifier = regions.dome_identifier
                 AND regions.extended IS FALSE
-                AND regions.parent_level = 2
+                AND regions.parent_level = 4
+            JOIN mv_closure_sites_hierarchy AS distributors
+            ON
+                dim_sites.principal_code = distributors.principal_code
+                AND dim_sites.dome_identifier = distributors.dome_identifier
+                AND distributors.extended IS FALSE
+                AND distributors.parent_level = 6 
         WHERE
-            1 = 1            
+            1 = 1
+            AND dim_sites.principal_code = 'FN'
+            --AND dim_sites.dome_identifier || '.' || dim_sites.principal_code IN (!security_filter)
             AND dim_sites.active IS TRUE
         GROUP BY
             1, 2, 3, 4
@@ -103,16 +126,8 @@ FROM
         product_id = brands.child_id
         AND brands.extended IS TRUE
         AND brands.parent_level = 2
-ORDER BY
-    CASE
-        WHEN categories.parent_code = 'BISCUITS' THEN 1
-        WHEN categories.parent_code = 'SNACKS' THEN 2
-        WHEN categories.parent_code = 'CHEESE' THEN 3
-        WHEN categories.parent_code = 'GROCERY' THEN 4
-        WHEN categories.parent_code = 'CONFECTIONERY' THEN 5
-        ELSE 99
-    END,
-    2, 3, 5, 6;
+        
+                
                 ]]>
             </query>
         </dataset>
