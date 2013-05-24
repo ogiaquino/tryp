@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tryp>
+    <connections>
+        <connection name="OLAP">
+            <host>solar2</host>
+            <port>5433</port>
+            <database>atomstore_olap</database>
+            <user>postgres</user>
+            <password>dataNew!1</password>
+        </connection>
+    </connections>
+    <datasets>
+        <dataset name="dsr">
+            <connection>OLAP</connection>
+            <query><![CDATA[
+
+
+SELECT
+    areas.parent_name AS "Region",
+    distributors.parent_name AS "Distributor",
+    regional.parent_name AS "Regional",
+    sum(stocks.standard_value) AS "Sales_rm",
+    sum(snapshot.soh_standard_value) AS "SOH_rm",
+    sum(stocks.converted_quantity) AS "Sales_ctn",
+    sum(snapshot.soh_converted_quantity) AS "SOH_ctn",
+    sum(stocks.volume) as "Sales_volume",
+    sum(snapshot.soh_volume) as "SOH_volume"
+FROM
+    (
+        SELECT
+            stocks.combo,
+            sum(stocks.sales_standard_value) AS standard_value,
+            sum(stocks.sales_converted_quantity) AS converted_quantity,
+            sum((stocks.sales_converted_quantity * product.weight) / 1000) AS volume
+        FROM
+            mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks
+	JOIN dim_products as product
+	ON product_id = product.id       
+            ,
+            (
+                SELECT
+
+                    now()::date AS date
+
+            ) AS t
+        WHERE
+            1 = 1
+            AND stocks.status = 'Active'
+            AND stocks.type IN ('New', 'Promotion', 'Standard')
+            --AND stocks.date BETWEEN (t.date - '1 day'::interval - '3 mon'::interval)
+            --    AND (t.date - '1 day'::interval)
+            AND stocks.date BETWEEN (t.date - '1 day'::interval - '74 day'::interval) AND (t.date - '1 day'::interval)
+        GROUP BY 1
+    ) AS stocks
+    JOIN
+    (
+        SELECT
+            stocks.combo,
+            sum(stocks.soh_standard_value) AS soh_standard_value,
+            sum(stocks.soh_converted_quantity) AS soh_converted_quantity,
+            sum((stocks.soh_converted_quantity * product.weight) / 1000) AS soh_volume
+        FROM
+            mv_agg_fact_daily_transaction_by_sku_by_dome_identifier AS stocks
+	JOIN dim_products as product
+	ON product_id = product.id 
+	    ,
+            (
+                SELECT
+                    now()::date AS date
+            ) AS t
+        WHERE
+            1 = 1
+            AND stocks.status = 'Active'
+            AND stocks.type IN ('New', 'Promotion', 'Standard')
+            AND stocks.date = t.date
+        GROUP BY 1
+    ) AS snapshot
+    USING (combo)
+    JOIN dim_sites
+    USING (combo)
+    JOIN mv_closure_sites_hierarchy AS regional
+    ON
+        dim_sites.principal_code = regional.principal_code
+        AND dim_sites.dome_identifier = regional.dome_identifier
+        AND regional.extended IS FALSE
+        AND regional.parent_level = 2
+    JOIN mv_closure_sites_hierarchy AS areas
+    ON
+        dim_sites.principal_code = areas.principal_code
+        AND dim_sites.dome_identifier = areas.dome_identifier
+        AND areas.extended IS FALSE
+        AND areas.parent_level = 3
+    JOIN mv_closure_sites_hierarchy AS distributors
+    ON
+        dim_sites.principal_code = distributors.principal_code
+        AND dim_sites.dome_identifier = distributors.dome_identifier
+        AND distributors.extended IS FALSE
+        AND distributors.parent_level = 4
+WHERE
+     1 = 1
+     AND dim_sites.principal_code = 'kraft'
+     AND dim_sites.active IS TRUE
+     --AND combo IN (!security_filter)
+GROUP BY
+    1, 2, 3
+ORDER BY
+    1, 2, 3
+
+
+                ]]>
+            </query>
+        </dataset>
+    </datasets>
+        <report name='dsr'>
+            <dataset>dsr</dataset>
+            <columns></columns>
+            <rows>Regional,Region,Distributor</rows>
+            <values>Sales_rm,Sales_ctn,SOH_ctn,SOH_rm,Sales_volume,SOH_volume</values>
+            <result_level>1</result_level>
+            <computed_values>
+                <!--COLUMN COUNTER SHIT SOLVE THIS -->
+                <percentage>percentage</percentage>
+                <percentage>percentage</percentage>
+                <percentage>percentage</percentage>
+                <percentage>percentage</percentage>
+                <percentage>percentage</percentage>
+                <percentage>percentage</percentage>
+            </computed_values>
+            <labels>
+                <values>
+                    <sr>
+                        <key>Sales_rm</key>
+                        <label>Sales ($)</label>
+                    </sr>
+                    <sc>
+                        <key>Sales_ctn</key>
+                        <label>Sales (CTN)</label>
+                    </sc>
+                    <sohr>
+                        <key>SOH_ctn</key>
+                        <label>Stock On Hand (CTN)</label>
+                    </sohr>
+                    <sohc>
+                        <key>SOH_rm</key>
+                        <label>Stock On Hand ($)</label>
+                    </sohc>
+                    <sv>
+                        <key>Sales_volume</key>
+                        <label>Sales (TONNES)</label>
+                    </sv>
+                    <sohv>
+                        <key>SOH_volume</key>
+                        <label>Stock On Hand (TONNES)</label>
+                    </sohv>
+                    <ave_sales_rm>
+                        <key>Average Sales RM</key>
+                        <label>Avg Daily Sales ($)</label>
+                    </ave_sales_rm>
+                    <dosc_rm>
+                        <key>DOSC RM</key>
+                        <label>Days of Stock Covered ($)</label>
+                    </dosc_rm>
+                    <ave_sales_ctn>
+                        <key>Average Sales CTN</key>
+                        <label>Avg Daily Sales (CTN)</label>
+                    </ave_sales_ctn>
+                    <dosc_ctn>
+                        <key>DOSC CTN</key>
+                        <label>Days of Stock Covered (CTN)</label>
+                    </dosc_ctn>
+                    <ave_sales_vol>
+                        <key>Average Sales TONNES</key>
+                        <label>Avg Daily Sales (TONNES)</label>
+                    </ave_sales_vol>
+                    <dosc_vol>
+                        <key>DOSC TONNES</key>
+                        <label>Days of Stock Covered (TONNES)</label>
+                    </dosc_vol>
+                </values>
+            </labels>
+        </report>
+</tryp>
