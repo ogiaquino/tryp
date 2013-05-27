@@ -4,7 +4,6 @@ import pandas.io.sql as psql
 
 from time import gmtime, strftime
 
-from crosstab import crosstab as ct
 def working_days(connection):
     if connection:
             now = strftime("%Y-%m-%d")
@@ -27,7 +26,8 @@ def working_days(connection):
     return 1
 
 
-def computed_values(crosstab, rows=None, columns=None, df=None, tryp=None):
+def computed_values(tryp):
+    crosstab = tryp.crosstab
     wd = working_days(tryp.connection)
     new_columns = []
     for cc in crosstab.columns:

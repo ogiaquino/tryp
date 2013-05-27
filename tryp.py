@@ -24,9 +24,10 @@ class Tryp(object):
         self.labels = self.report['labels']
         self.computed_values = self.report['computed_values'] or []
 
-        self.crosstab = self._crosstab(self.rows,self.columns,self.values,self.df,self.computed_values,self.result_level)
         self.sheetname = sheetname
         self.filename = filename
+
+        self.crosstab = ct(self)
 
     def data_connection(self, conn_string):
         if self.dftype == 'db':
@@ -45,13 +46,6 @@ class Tryp(object):
             df = psql.frame_query(query, con=connection)
         return df
 
-    def _crosstab(self, rows, columns, values, df, computed_values, result_level):
-        crosstab = ct(rows,
-                      columns,
-                      values,
-                      df,
-                      computed_values, int(result_level))
-        return crosstab
 
 if __name__ == '__main__':
     import argparse

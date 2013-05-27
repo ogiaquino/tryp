@@ -1,5 +1,4 @@
 import itertools
-import pandas as pd
 import numpy as np
 import styles
 from xlwt import easyxf, Workbook
@@ -23,8 +22,7 @@ def to_excel(tryp):
     if tryp.computed_values:
         module = __import__('%s.computed_values' % tryp.reportname,
                             fromlist=['computed_values'])
-        df = tryp.df
-        crosstab = getattr(module, 'computed_values')(crosstab, rows, columns, df, tryp)
+        crosstab = getattr(module, 'computed_values')(tryp)
 
     header_info = rmodule.styles.headers(ws, tryp.connection, crosstab)
     if hasattr(rmodule.styles, 'conditional_rows_label'):
@@ -44,7 +42,7 @@ def to_excel(tryp):
         conditional_formatting = rmodule.styles.conditional_formatting
     else:
         conditional_formatting = None
-    write_values(tryp.reportname, rows, columns, crosstab, ws, plus_row, conditional_formatting, header_info, tryp.result_level)
+    write_values(tryp.reportname, rows, columns, crosstab, ws, plus_row, conditional_formatting, header_info)
 
     #merge the corner
     style = easyxf('borders: top medium;')
@@ -150,15 +148,9 @@ def get_columns_total_style_name(mck):
     return ''.join(ci)
 
 
-def get_values_style_name(crosstab, row, column, result_level=None):
+def get_values_style_name(crosstab, row, column):
     ci = [x[0] for x in crosstab.index[row] if '!' in x]
     ci = ''.join(ci)
-    #if result_level != '1':
-    #    cc = [x[0] for x in crosstab.columns[column]
-    #        if '!' in x] + [crosstab.columns[column][-1]]
-    #else:
-    #    cc = [x[0] for x in crosstab.columns[column]
-    #        if '!' in x] + [crosstab.columns[column]]
     cc_col = crosstab.columns[column]
     if not isinstance(cc_col,  basestring):
         cc_col = cc_col[-1]
@@ -169,7 +161,7 @@ def get_values_style_name(crosstab, row, column, result_level=None):
     return ci + '%' + cc
 
 
-def write_values(reportname, rows, columns, crosstab, ws, plus_row, conditional_formatting=None, header_info=None, result_level=None):
+def write_values(reportname, rows, columns, crosstab, ws, plus_row, conditional_formatting=None, header_info=None):
     xf = styles.get_styles(reportname, 'values')
     for iv, value in enumerate(crosstab.values):
         for il, label in enumerate(value):
@@ -177,10 +169,10 @@ def write_values(reportname, rows, columns, crosstab, ws, plus_row, conditional_
             c = il + len(rows)
             if np.isnan(label):
                 label = '-'
-            sn = get_values_style_name(crosstab, iv, il, result_level)
+            sn = get_values_style_name(crosstab, iv, il)
             if sn in xf:
                 if conditional_formatting:
-                    xf[sn] = conditional_formatting(xf[sn], header_info)
+                    xf[sn] = conditional_formatting(xf[sn], header_info, label)
                 ws.write(r, c, label, xf[sn])
             else:
                 ws.write(r, c, label)

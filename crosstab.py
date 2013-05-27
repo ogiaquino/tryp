@@ -2,7 +2,13 @@ import pandas as pd
 import numpy as np
 
 
-def crosstab(rows, columns, values, df, computed_values=None, result_level=2):
+def crosstab(tryp):
+    rows = tryp.rows
+    columns = tryp.columns
+    values = tryp.values
+    computed_values = tryp.computed_values
+    result_level = tryp.result_level
+    df = tryp.df
     df_groupby_sum = df.groupby(rows + columns).sum()
     crosstab = df_groupby_sum[values].unstack(columns)
 

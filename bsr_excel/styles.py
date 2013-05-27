@@ -589,8 +589,10 @@ def headers(ws, connection=None, crosstab=None):
     ws.set_panes_frozen(True)
     ws.set_horz_split_pos(5)
     ws.set_vert_split_pos(5)
+    ws.col(0).width = 3200
+    ws.col(2).width = 4700
     ws.col(3).width = 4000
-    ws.col(4).width = 8600
+    ws.col(4).width = 7600
     ws.show_grid = False
     xf_str = 'font: name sans-serif, color black,' \
              'bold on, height 160;' \
@@ -598,6 +600,6 @@ def headers(ws, connection=None, crosstab=None):
     #xf_str = xf_str + styles[name]['alignment']
     exf = easyxf(xf_str)
     ws.write(0,0,'BAD STOCK RETURN', exf)
-    ws.write(1,0,'PROXIMITY', exf)
+    ws.write(1,0,'WEST MALAYSIA & EAST MALAYSIA', exf)
     now = strftime("%d-%b-%Y")
     ws.write(2,0,now, exf)

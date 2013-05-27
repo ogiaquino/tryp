@@ -1,11 +1,9 @@
 import pandas as pd
 import numpy as np
-from crosstab import crosstab as ct
 
 
-def computed_values(crosstab, rows=None, columns=None, df=None, tryp=None):
-    #sohv = ct(rows, columns, ['SOH Value'], df)
-    #sv = ct(rows, columns, ['Sales Value'], df)
+def computed_values(tryp):
+    crosstab = tryp.crosstab
     new_columns = []
     for cc in crosstab.columns:
         if cc[:-1] not in new_columns:
@@ -16,8 +14,6 @@ def computed_values(crosstab, rows=None, columns=None, df=None, tryp=None):
         doscv = doscv.replace(-np.inf, 0.00)
         crosstab[nc + ('DOSC Value',)] = pd.DataFrame(doscv.round(1))
 
-    #sohq = ct(rows, columns, ['SOH Qty'], df)
-    #sv = ct(rows, columns, ['Sales Qty'], df)
     new_columns = []
     for cc in crosstab.columns:
         if cc[:-1] not in new_columns:

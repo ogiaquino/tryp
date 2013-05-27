@@ -775,11 +775,10 @@ columns_total = {
 }
 
 
-def conditional_formatting(xf, header_info):
+def conditional_formatting(xf, header_info, value):
     if xf.num_format_str == '0.0\%':
-        ep = header_info['elapse_percentage']
-        #xf.num_format_str = "[Color 64][>{0}]0.0\\%;[Red][<{1}]0.0\\%".format(ep, ep)
-        xf.num_format_str = "[color 4][>{0}]0.0\\%;[Red][<{1}]0.0\\%".format(ep, ep)
+        ep = float(header_info['elapse_percentage'])
+        xf.num_format_str = "[color10][>{0}]0.0\\%;[Red][<{1}]0.0\\%".format(ep, ep)
     return xf
 
 
@@ -826,8 +825,10 @@ def headers(ws, connection=None, crosstab=None):
     ws.set_panes_frozen(True)
     ws.set_horz_split_pos(5)
     ws.set_vert_split_pos(5)
+    ws.col(0).width = 3200
+    ws.col(2).width = 4700
     ws.col(3).width = 4000
-    ws.col(4).width = 8600
+    ws.col(4).width = 7600
     ws.show_grid = False
     xf_str = 'font: name sans-serif, color black,' \
              'bold on, height 160;' \
@@ -835,7 +836,7 @@ def headers(ws, connection=None, crosstab=None):
     #xf_str = xf_str + styles[name]['alignment']
     exf = easyxf(xf_str)
     ws.write(0,0,'SELL OUT - DAILY SALES REPORT', exf)
-    ws.write(1,0,'PROXIMITY', exf)
+    ws.write(1,0,'DISTRIBUTOR', exf)
     now = strftime("%d-%b-%Y")
     ws.write(2,0,now, exf)
 

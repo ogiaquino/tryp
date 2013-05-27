@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
-from crosstab import crosstab as ct
 
 
-def computed_values(crosstab, rows=None, columns=None, df=None, tryp=None):
+def computed_values(tryp):
+    crosstab = tryp.crosstab
     new_columns = []
     for cc in crosstab.columns:
         if cc[:-1] not in new_columns:

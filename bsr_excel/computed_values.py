@@ -3,8 +3,10 @@ import numpy as np
 from crosstab import crosstab as ct
 
 
-def computed_values(crosstab, rows=None, columns=None, df=None, tryp=None):
-    gross = ct(rows, columns, ['Gross Sales'], df)
+def computed_values(tryp):
+    crosstab = tryp.crosstab
+    tryp.values = ['Gross Sales']
+    gross = ct(tryp)
     new_columns = []
     for cc in crosstab.columns:
         if cc[:-1] not in new_columns:
