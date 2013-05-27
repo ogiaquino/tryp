@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 import styles
-from xlwt import easyxf, Workbook
+from xlwt import easyxf, Workbook, Pattern
 
 
 def to_excel(tryp):
@@ -25,11 +25,7 @@ def to_excel(tryp):
         crosstab = getattr(module, 'computed_values')(tryp)
 
     header_info = rmodule.styles.headers(ws, tryp.connection, crosstab)
-    if hasattr(rmodule.styles, 'conditional_rows_label'):
-        conditional_rows_label = rmodule.styles.conditional_rows_label(tryp.connection)
-    else:
-        conditional_rows_label = None
-    write_rows_labels(tryp.reportname, rows, columns, crosstab, ws, plus_row, conditional_rows_label)
+    write_rows_labels(tryp, rows, columns, crosstab, ws, plus_row, rmodule)
 
     write_columns_labels(tryp.reportname, rows, columns, crosstab, ws, plus_row)
     write_values_labels(tryp.reportname, rows, columns, labels, crosstab,
@@ -56,8 +52,9 @@ def to_excel(tryp):
     wb.save(filename)
 
 
-def write_rows_labels(reportname, rows, columns, crosstab, ws, plus_row, conditional_rows_labels=None):
-    xf = styles.get_styles(reportname, 'rows_labels')
+def write_rows_labels(tryp, rows, columns, crosstab, ws, plus_row, rmodule):
+    xf = styles.get_styles(tryp.reportname, 'rows_labels')
+    labels_rows = []
     for i in range(len(rows)):
         sn = i
         ci = [x[i] for x in crosstab.index]
@@ -78,11 +75,27 @@ def write_rows_labels(reportname, rows, columns, crosstab, ws, plus_row, conditi
             label = ci[x[0]]
             label = str(label).decode("utf-8")
             if '!' not in label:
-                if conditional_rows_labels:
-                    if label in conditional_rows_labels:
-                        label = conditional_rows_labels[label]
                 if sn in xf:
-                    ws.write_merge(r1, r2, c1, c2, label, xf[sn])
+                    if hasattr(rmodule.styles, 'conditional_rows_label'):
+                        conditional_rows_labels = rmodule.styles.conditional_rows_label(tryp.connection, xf[sn])
+                        if label in conditional_rows_labels['labels']:
+                            label = conditional_rows_labels['labels'][label]
+                            tet = conditional_rows_labels['xf']
+                            labels_rows.append(r1)
+                            ws.write_merge(r1, r2, c1, c2, label, tet)
+                        else:
+                            pat1 = Pattern()
+                            pat1.pattern = Pattern.SOLID_PATTERN
+                            pat1.pattern_fore_colour = 0x01
+                            xf[sn].pattern = pat1
+                            if r1 in labels_rows:
+                                pat1 = Pattern()
+                                pat1.pattern = Pattern.SOLID_PATTERN
+                                pat1.pattern_fore_colour = 0x02
+                                xf[sn].pattern = pat1
+                            ws.write_merge(r1, r2, c1, c2, label, xf[sn])
+                    else:
+                        ws.write_merge(r1, r2, c1, c2, label, xf[sn])
                 else:
                     ws.write_merge(r1, r2, c1, c2, label)
 

@@ -27,7 +27,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%SOH Qty":
@@ -57,7 +57,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -75,12 +75,12 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%SOH Value":
@@ -110,7 +110,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -134,7 +134,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%SOH Volume":
@@ -189,7 +189,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%SOH Qty":
@@ -219,7 +219,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -242,7 +242,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%SOH Value":
@@ -272,7 +272,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -296,7 +296,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%SOH Volume":
@@ -350,7 +350,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%SOH Qty":
@@ -380,7 +380,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -403,7 +403,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%SOH Value":
@@ -433,7 +433,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -457,7 +457,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%SOH Volume":
@@ -511,7 +511,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!SOH Qty":
@@ -541,7 +541,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -564,7 +564,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!SOH Value":
@@ -594,7 +594,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -618,7 +618,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!SOH Volume":
@@ -673,7 +673,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!SOH Qty":
@@ -703,7 +703,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -726,7 +726,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!SOH Value":
@@ -756,7 +756,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -780,7 +780,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!SOH Volume":
@@ -834,7 +834,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!SOH Qty":
@@ -864,7 +864,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -887,7 +887,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!SOH Value":
@@ -917,7 +917,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -941,7 +941,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!SOH Volume":
@@ -996,7 +996,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!!SOH Qty":
@@ -1026,7 +1026,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -1049,7 +1049,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!!SOH Value":
@@ -1079,7 +1079,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -1103,7 +1103,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!!SOH Volume":
@@ -1158,7 +1158,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!!SOH Qty":
@@ -1188,7 +1188,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1211,7 +1211,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!!SOH Value":
@@ -1241,7 +1241,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1265,7 +1265,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!!SOH Volume":
@@ -1295,7 +1295,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1319,7 +1319,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!!SOH Qty":
@@ -1349,7 +1349,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1372,7 +1372,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!!SOH Value":
@@ -1402,7 +1402,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1426,7 +1426,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!!SOH Volume":
@@ -1479,7 +1479,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!!!SOH Qty":
@@ -1509,7 +1509,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -1532,7 +1532,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!!!SOH Value":
@@ -1562,7 +1562,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -1586,7 +1586,7 @@ values = {
        "top": 0x02,
        "bottom": 0x02
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!!%!!!SOH Volume":
@@ -1641,7 +1641,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!!!SOH Qty":
@@ -1671,7 +1671,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1694,7 +1694,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!!!SOH Value":
@@ -1724,7 +1724,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1748,7 +1748,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!!%!!!SOH Volume":
@@ -1802,7 +1802,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -1833,7 +1833,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1856,7 +1856,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!!!SOH Value":
@@ -1886,7 +1886,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -1910,7 +1910,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 "!!%!!!SOH Volume":
@@ -1963,7 +1963,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -1995,7 +1995,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2018,7 +2018,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2050,7 +2050,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2072,7 +2072,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2126,7 +2126,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2158,7 +2158,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2181,7 +2181,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2213,7 +2213,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2235,7 +2235,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2291,7 +2291,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2323,7 +2323,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2346,7 +2346,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2378,7 +2378,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2400,7 +2400,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2454,7 +2454,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2486,7 +2486,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2509,7 +2509,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2541,7 +2541,7 @@ values = {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x01,
        "bottom": 0x01
       },
@@ -2563,7 +2563,7 @@ values = {
        "top": 0x01,
        "bottom": 0x01
       },
-     "number_format_str": "#,###0.0",
+     "number_format_str": "#,###0",
      "alignment": "alignment: vertical Center, horizontal right"
     },
 
@@ -2794,7 +2794,7 @@ values_labels= {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -2845,7 +2845,7 @@ values_labels= {
       },
      "border":
       {"left": 0x01,
-       "right": 0x01,
+       "right": 0x02,
        "top": 0x02,
        "bottom": 0x02
       },
@@ -3016,14 +3016,12 @@ columns_total = {
 }
 
 
-def conditional_formatting(xf, header_info):
-    if xf.num_format_str == '0.0\%':
-        ep = header_info['elapse_percentage']
-        xf.num_format_str = "[GREEN][>{0}]0.0\\%;[RED][<{1}]0.0\\%".format(ep, ep)
-    return xf
-
-
-def conditional_rows_label(connection):
+def conditional_rows_label(connection, xf):
+    xf_new = xf
+    pat1 = Pattern()
+    pat1.pattern = Pattern.SOLID_PATTERN
+    pat1.pattern_fore_colour = 0x02
+    xf_new.pattern = pat1
     if connection:
 	conn_string = "host='solar2' port='5432' dbname='atomstore' user='postgres' password='dataNew!1'"
 	conn = psycopg2.connect(conn_string)
@@ -3031,10 +3029,10 @@ def conditional_rows_label(connection):
 		SELECT stock_keeping_unit from products where star_product = 't' and principal_code='kraft'
         """
         df = psql.frame_query(query, con=conn)
-        return dict([(x[0], x[0] + ' *') for x in df.values])
+        return {'labels' : dict([(x[0], x[0] + ' *') for x in df.values]), 'xf': xf_new}
     else:
-        return {}
-    
+        return {'labels': {'0030597': '0030597 *', '0030593': '0030593 *'}, 'xf': xf_new}
+
 
 def headers(ws, connection=None, crosstab=None):
     def working_days(connection):
@@ -3075,4 +3073,4 @@ def headers(ws, connection=None, crosstab=None):
     ws.write(1,0,'Days Of Stock Covered = Stock On Hand / Avg Daily Sales', exf)
     now = strftime("%d-%b-%Y")
     ws.write(2,0,now, exf)
-    ws.write(3,0,'Last 75 days (%s working days)' % str(working_days(connection)), exf)
+    ws.write(3,0,'Last 75 days', exf)
