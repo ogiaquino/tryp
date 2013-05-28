@@ -8,14 +8,14 @@ from parser import parse
 
 
 class Tryp(object):
-    def __init__(self, reportname, sheetname, filename, dftype):
+    def __init__(self, reportname, sheetname, filename, dftype, parameters):
         self.reportname = reportname
         self.dftype = dftype
         self.report = parse('%s/%s.tryp' % (self.reportname, self.reportname))
 
-        self.connection = self.data_connection(self.report['conn_str'])
+        self.connection = self.data_connection(self.report['conn_str'], parameters)
         self.df = self.data_frame(self.report['query'],
-                                  self.connection, dftype)
+                                  self.connection, dftype, parameters)
 
         self.rows = self.report['rows']
         self.columns = self.report['columns']
@@ -36,7 +36,7 @@ class Tryp(object):
         self.plus_row = self.rmodule.styles.plus_row
         self.column_counter_limit = len(self.values) + len(self.computed_values)  - 1
 
-    def data_connection(self, conn_string):
+    def data_connection(self, conn_string, parameters):
         if self.dftype == 'db':
             try:
                 conn = psycopg2.connect(conn_string)
@@ -46,10 +46,11 @@ class Tryp(object):
         else:
             return None
 
-    def data_frame(self, query, connection, dftype=None):
+    def data_frame(self, query, connection, dftype, parameters):
         if dftype == 'csv':
             df = read_csv('csv/%s.%s' % (self.reportname, 'csv'))
         if dftype == 'db':
+            query = query % parameters
             df = psql.frame_query(query, con=connection)
         return df
 
@@ -61,13 +62,15 @@ if __name__ == '__main__':
     parser.add_argument('--sheetname')
     parser.add_argument('--filename')
     parser.add_argument('--dftype', default='csv')
+    parser.add_argument('-p', action='append')
+
 
     args = parser.parse_args()
     reportname = args.reportname
     sheetname = args.sheetname or reportname
     filename = args.filename or reportname + '.xls'
     dftype = args.dftype
-
-    tryp = Tryp(reportname, sheetname, filename, dftype)
+    parameters = dict([p.split('=') for p in args.p])
+    tryp = Tryp(reportname, sheetname, filename, dftype, parameters)
 
     to_excel(tryp)

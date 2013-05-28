@@ -100,7 +100,7 @@ WHERE
      1 = 1
      AND dim_sites.principal_code = 'kraft'
      AND dim_sites.active IS TRUE
-     --AND combo IN (!security_filter)
+     AND combo IN (%(security_filter)s)
 GROUP BY
     1, 2, 3
 ORDER BY

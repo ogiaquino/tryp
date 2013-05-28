@@ -50,7 +50,7 @@ FROM
             AND date_trunc('mon', dim_calendar.date) = date_trunc('mon', now()::date)::date
             
             -- AND date_trunc('mon', dim_calendar.date) = date_trunc('mon', 'epoch'::timestamp with time zone + (cast(? as double precision) * '1 second'::interval))::date
-            --AND dim_sites.dome_identifier || '.' || dim_sites.principal_code in (!security_filter)
+            AND dim_sites.dome_identifier || '.' || dim_sites.principal_code in (%(security_filter)s)
             AND dim_sites.active is TRUE
         GROUP BY
             1, 2
@@ -75,7 +75,7 @@ FROM
             AND fact_goods_return_notes.quantity > 0
             AND date_trunc('mon', dim_calendar.date) = date_trunc('mon', now()::date)::date
             -- AND date_trunc('mon', dim_calendar.date) = date_trunc('mon', 'epoch'::timestamp with time zone + (cast(? as double precision) * '1 second'::interval))::date
-            --AND dim_sites.dome_identifier || '.' || dim_sites.principal_code in (!security_filter)
+            AND dim_sites.dome_identifier || '.' || dim_sites.principal_code in (%(security_filter)s)
             AND dim_sites.active is TRUE
         GROUP BY
             1, 2

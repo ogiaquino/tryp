@@ -15,11 +15,6 @@
             <query><![CDATA[
 
 SELECT
-*
-FROM
-(
-    (
-        SELECT
             regional.parent_name AS "Regional",
             areas.parent_name AS "Region",
             distributors.parent_name AS "Distributor",
@@ -37,40 +32,8 @@ FROM
                     "Category",
                     sum(t1.amount) AS amount
                 FROM
-                    (
-                        --SELECT
-                        --    dim_sales_representatives.id AS sales_representative_id,
-                        --    category1.parent_code AS "Category",
-                        --    sum(0 - fact_goods_return_notes.standard_value) AS amount
-                        --FROM
-                        --    mv_fact_goods_return_notes AS fact_goods_return_notes
-                        --    JOIN dim_calendar
-                        --    ON
-                        --        fact_goods_return_notes.calendar_id = dim_calendar.id
-                        --    JOIN dim_sites
-                        --    ON
-                        --        fact_goods_return_notes.site_id = dim_sites.id
-                        --    JOIN dim_sales_representatives
-                        --    ON
-                        --        fact_goods_return_notes.sales_representative_id = dim_sales_representatives.id
-                        --    JOIN mv_closure_product_categories category1
-                        --    ON
-                        --        fact_goods_return_notes.product_category_id = category1.child_id
-                        --        AND NOT category1.extended
-                        --        AND category1.parent_level = 1
-                        --WHERE
-                        --    dim_sites.principal_code = 'kraft'           
-                        --    AND date_trunc('mon', dim_calendar.date) = date_trunc('mon', now()::date)::date
-                        --    --AND dim_sites.combo IN (!security_filter)
-			--    AND dim_sites.active is TRUE
-                        --    AND fact_goods_return_notes.quantity > 0
-                        --GROUP BY
-                        --    1, 2
-                        --
-                        --UNION ALL
-                        
+                    (                                             
                         SELECT
-                            --dim_sales_representatives.id,
                             dim_sales_representatives.id AS sales_representative_id,
                             category1.parent_code AS "Category",
                             sum(fact_invoices.standard_value) AS amount
@@ -93,7 +56,7 @@ FROM
                         WHERE
                             dim_sites.principal_code = 'kraft' 
                             AND date_trunc('mon', dim_calendar.date) = date_trunc('mon', now()::date)::date
-                            --AND dim_sites.combo IN (!security_filter)
+                            AND dim_sites.combo IN (%(security_filter)s)
 			    AND dim_sites.active is TRUE
                             AND fact_invoices.delivered_quantity > 0
                         GROUP BY
@@ -141,7 +104,7 @@ FROM
                     AND sales_targets.value <> 0
                     AND sales_targets.measure = 'currency'
                     AND dim_calendar.date = now()::date
-                    --AND dim_sales_representatives.dome_identifier || '.' || dim_sales_representatives.principal_code  IN (!security_filter)
+                    AND dim_sales_representatives.dome_identifier || '.' || dim_sales_representatives.principal_code  IN (%(security_filter)s)
                     AND dim_sites.active is TRUE
                 GROUP BY 1, 2
             ) AS t2
@@ -162,16 +125,6 @@ FROM
                 AND distributors.extended
                 AND distributors.parent_level = 4
         ORDER BY 1, 2, 3
-    ) as bsr_data_set
-
-    JOIN
-    (
-        SELECT category_id, (ARRAY['BISCUITS','SNACKS','CHEESE','GROCERY','CONFECTIONERY','kraft_UNK'])[category_id] AS category_name from
-          generate_series(1,array_upper(ARRAY['BISCUITS','SNACKS','CHEESE','GROCERY','CONFECTIONERY','kraft_UNK'],1)) category_id
-    ) as product_category
-    ON bsr_data_set."Category" = product_category.category_name
-
-) as ordered_bsr_data
 
                 ]]>
             </query>
