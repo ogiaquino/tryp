@@ -782,7 +782,8 @@ def conditional_formatting(xf, header_info, value):
     return xf
 
 
-def headers(ws, connection=None, crosstab=None):
+def headers(ws, tryp):
+    connection = tryp.connection
     def selling_days(connection):
         if connection:
             now = strftime("%Y-%m-%d")
@@ -833,7 +834,6 @@ def headers(ws, connection=None, crosstab=None):
     xf_str = 'font: name sans-serif, color black,' \
              'bold on, height 160;' \
              'pattern: pattern solid, fore-colour white; '
-    #xf_str = xf_str + styles[name]['alignment']
     exf = easyxf(xf_str)
     ws.write(0,0,'SELL OUT - DAILY SALES REPORT', exf)
     ws.write(1,0,'DISTRIBUTOR', exf)
@@ -849,4 +849,13 @@ def headers(ws, connection=None, crosstab=None):
     ws.write(0,4, str(selling_days), exf)
     ws.write(1,4, str(elapse_days), exf)
     ws.write(2,4, str(round(elapse_percentage,1)) + '%', exf)
+
+    #merge the corner
+    style = easyxf('borders: top medium;')
+    ws.write_merge(0 + tryp.plus_row, len(tryp.columns)+tryp.plus_row, 0,
+                   len(tryp.rows)-1, '', style)
+
+    #borderize thick the last row
+    for i in range(len(tryp.rows) + len(tryp.crosstab.values[0])):
+        ws.write(len(tryp.crosstab.values)+ len(tryp.columns) + tryp.plus_row + 1, i, '', style)
     return {'elapse_percentage': elapse_percentage}

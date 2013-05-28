@@ -5,54 +5,25 @@ from xlwt import easyxf, Workbook, Pattern
 
 
 def to_excel(tryp):
-    rmodule = __import__(tryp.reportname, globals(), locals(), ['styles'], -1)
-    plus_row = rmodule.styles.plus_row
-    rows = tryp.rows
-    column_counter_limit = len(tryp.values) + len(tryp.computed_values)  -1
-    columns = tryp.columns
-    values = tryp.values
-    labels = tryp.labels
-    crosstab = tryp.crosstab
-    connection = tryp.connection
     sheetname = tryp.sheetname
     filename = tryp.filename
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
-
-    if tryp.computed_values:
-        module = __import__('%s.computed_values' % tryp.reportname,
-                            fromlist=['computed_values'])
-        crosstab = getattr(module, 'computed_values')(tryp)
-
-    header_info = rmodule.styles.headers(ws, tryp.connection, crosstab)
-    write_rows_labels(tryp, rows, columns, crosstab, ws, plus_row, rmodule)
-
-    write_columns_labels(tryp.reportname, rows, columns, crosstab, ws, plus_row)
-    write_values_labels(tryp.reportname, rows, columns, labels, crosstab,
-                        ws, plus_row, column_counter_limit)
-    write_columns_totals_labels(tryp.reportname, rows, columns, values, crosstab,
-                                ws, plus_row, tryp.computed_values)
-    write_rows_totals_labels(tryp.reportname, rows, columns, crosstab, ws, plus_row)
-
-    if hasattr(rmodule.styles, 'conditional_formatting'):
-        conditional_formatting = rmodule.styles.conditional_formatting
-    else:
-        conditional_formatting = None
-    write_values(tryp.reportname, rows, columns, crosstab, ws, plus_row, conditional_formatting, header_info)
-
-    #merge the corner
-    style = easyxf('borders: top medium;')
-    ws.write_merge(0 + plus_row, len(columns)+plus_row, 0,
-                   len(rows)-1, '', style)
-
-    #borderize thick the last row
-    for i in range(len(rows) + len(crosstab.values[0])):
-        ws.write(len(crosstab.values)+ len(columns) + plus_row + 1, i, '', style)
-
+    write_rows_labels(ws, tryp)
+    write_columns_labels(ws, tryp)
+    write_values_labels(ws, tryp)
+    write_columns_totals_labels(ws, tryp)
+    write_rows_totals_labels(ws, tryp)
+    write_values(ws, tryp)
     wb.save(filename)
 
 
-def write_rows_labels(tryp, rows, columns, crosstab, ws, plus_row, rmodule):
+def write_rows_labels(ws, tryp):
+    rows = tryp.rows
+    columns = tryp.columns
+    crosstab = tryp.crosstab
+    plus_row = tryp.plus_row
+    rmodule = tryp.rmodule
     xf = styles.get_styles(tryp.reportname, 'rows_labels')
     labels_rows = []
     for i in range(len(rows)):
@@ -100,7 +71,12 @@ def write_rows_labels(tryp, rows, columns, crosstab, ws, plus_row, rmodule):
                     ws.write_merge(r1, r2, c1, c2, label)
 
 
-def write_columns_labels(reportname, rows, columns, crosstab, ws, plus_row):
+def write_columns_labels(ws, tryp):
+    reportname = tryp.reportname
+    rows = tryp.rows
+    columns = tryp.columns
+    crosstab = tryp.crosstab
+    plus_row = tryp.plus_row
     xf = styles.get_styles(reportname, 'columns_labels')
     for i in range(len(columns)):
         sn = i
@@ -127,8 +103,14 @@ def write_columns_labels(reportname, rows, columns, crosstab, ws, plus_row):
                     ws.write_merge(r1, r2, c1, c2, label)
 
 
-def write_values_labels(reportname, rows, columns, labels, crosstab, ws,
-                        plus_row, column_counter_limit):
+def write_values_labels(ws, tryp):
+    reportname = tryp.reportname
+    rows = tryp.rows
+    columns = tryp.columns
+    labels = tryp.labels
+    crosstab = tryp.crosstab
+    plus_row = tryp.plus_row
+    column_counter_limit = tryp.column_counter_limit
     column_counter = -1
     xf = styles.get_styles(reportname, 'values_labels')
     for i, cc in enumerate(crosstab.columns):
@@ -174,8 +156,26 @@ def get_values_style_name(crosstab, row, column):
     return ci + '%' + cc
 
 
-def write_values(reportname, rows, columns, crosstab, ws, plus_row, conditional_formatting=None, header_info=None):
+def write_values(ws, tryp):
+    reportname = tryp.reportname
+    rows = tryp.rows
+    columns = tryp.columns
+    crosstab = tryp.crosstab
+    plus_row = tryp.plus_row
+    rmodule = tryp.rmodule
+    header_info = rmodule.styles.headers(ws, tryp)
+    if hasattr(rmodule.styles, 'conditional_formatting'):
+        conditional_formatting = rmodule.styles.conditional_formatting
+    else:
+        conditional_formatting = None
+
     xf = styles.get_styles(reportname, 'values')
+    #pat1 = Pattern()
+    #pat1.pattern = Pattern.SOLID_PATTERN
+    #pat1.pattern_fore_colour = 0x02
+    #pat2 = Pattern()
+    #pat2.pattern = Pattern.SOLID_PATTERN
+    #pat2.pattern_fore_colour = 0x01
     for iv, value in enumerate(crosstab.values):
         for il, label in enumerate(value):
             r = iv + len(columns) + 1 + plus_row
@@ -186,13 +186,27 @@ def write_values(reportname, rows, columns, crosstab, ws, plus_row, conditional_
             if sn in xf:
                 if conditional_formatting:
                     xf[sn] = conditional_formatting(xf[sn], header_info, label)
+                #if labels_rows:
+                #    newxf = xf[sn]
+                #    if r in labels_rows:
+                #        newxf.pattern = pat1
+                #    else:
+                #        newxf.pattern = pat2
+                #    ws.write(r, c, label, newxf)
+                #else:
                 ws.write(r, c, label, xf[sn])
             else:
                 ws.write(r, c, label)
 
 
-def write_columns_totals_labels(reportname, rows, columns, values, crosstab,
-                                ws, plus_row, computed_values):
+def write_columns_totals_labels(ws, tryp):
+    reportname = tryp.reportname
+    rows = tryp.rows
+    columns = tryp.columns
+    values = tryp.values
+    crosstab = tryp.crosstab
+    plus_row = tryp.plus_row
+    computed_values = tryp.computed_values
     xf = styles.get_styles(reportname, 'columns_total')
     merge_columns = {}
 
@@ -225,7 +239,12 @@ def write_columns_totals_labels(reportname, rows, columns, values, crosstab,
                 break
 
 
-def write_rows_totals_labels(reportname, rows, columns, crosstab, ws, plus_row):
+def write_rows_totals_labels(ws, tryp):
+    reportname = tryp.reportname
+    rows = tryp.rows
+    columns = tryp.columns
+    crosstab = tryp.crosstab
+    plus_row = tryp.plus_row
     xf = styles.get_styles(reportname, 'rows_total')
     merge_rows = {}
     for i, ci in enumerate(crosstab.index):

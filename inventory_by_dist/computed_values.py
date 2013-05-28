@@ -4,31 +4,9 @@ import pandas.io.sql as psql
 
 from time import gmtime, strftime
 
-def working_days(connection):
-    if connection:
-            now = strftime("%Y-%m-%d")
-            query = """
-                    SELECT 
-                        count(*)
-                    FROM 
-                        dim_calendar 
-                    WHERE 
-                        date BETWEEN (now()::date - '1 day'::interval - '74 day'::interval) 
-                    AND 
-                        (now()::date - '1 day'::interval) 
-                    AND 
-                        principal_code='kraft' 
-                    AND 
-                        holiday='f';
-                    """
-            df = psql.frame_query(query, con=connection)
-            return df['count'][0]
-    return 1
-
-
 def computed_values(tryp):
     crosstab = tryp.crosstab
-    wd = working_days(tryp.connection)
+    wd = 75
     new_columns = []
     for cc in crosstab.columns:
         if cc not in new_columns:

@@ -4,7 +4,7 @@ import pandas.io.sql as psql
 from time import gmtime, strftime
 from xlwt import easyxf, Borders, Workbook, Pattern, Style, XFStyle, Font
 
-plus_row = 4
+plus_row = 5
 
 columns_total_labels = {
 '!!': ' TOTAL',
@@ -3034,36 +3034,17 @@ def conditional_rows_label(connection, xf):
         return {'labels': {'0030597': '0030597 *', '0030593': '0030593 *'}, 'xf': xf_new}
 
 
-def headers(ws, connection=None, crosstab=None):
-    def working_days(connection):
-        if connection:
-            now = strftime("%Y-%m-%d")
-            query = """
-                    SELECT 
-                        count(*)
-                    FROM 
-                        dim_calendar 
-                    WHERE 
-                        date BETWEEN (now()::date - '1 day'::interval - '74 day'::interval) 
-                    AND 
-                        (now()::date - '1 day'::interval) 
-                    AND 
-                        principal_code='kraft' 
-                    AND 
-                        holiday='f';
-                    """
-            df = psql.frame_query(query, con=connection)
-            return df['count'][0]
-        return 1
+def headers(ws, tryp):
     ws.row(7).height = 700
     ws.set_panes_frozen(True)
-    ws.set_horz_split_pos(8)
+    ws.set_horz_split_pos(9)
     ws.set_vert_split_pos(4)
     ws.col(1).width = 6000
+    ws.col(2).width = 3500
     ws.col(3).width = 10500
-    ws.row(7).height = 1100 
-    for i in range(len(crosstab.values[0])):
-        ws.col(i + 4).width = 2400
+    ws.row(8).height = 1100 
+    for i in range(len(tryp.crosstab.values[0])):
+        ws.col(i + 4).width = 2800
     ws.show_grid = False
     xf_str = 'font: name sans-serif, color black,' \
              'bold on, height 160;' \
@@ -3074,3 +3055,17 @@ def headers(ws, connection=None, crosstab=None):
     now = strftime("%d-%b-%Y")
     ws.write(2,0,now, exf)
     ws.write(3,0,'Last 75 days', exf)
+    xf_new = exf
+    pat1 = Pattern()
+    pat1.pattern = Pattern.SOLID_PATTERN
+    pat1.pattern_fore_colour = 0x02
+    xf_new.pattern = pat1
+    ws.write(4,0,'* MSL', xf_new)
+    #merge the corner
+    style = easyxf('borders: top medium;')
+    ws.write_merge(0 + tryp.plus_row, len(tryp.columns)+tryp.plus_row, 0,
+                   len(tryp.rows)-1, '', style)
+
+    #borderize thick the last row
+    for i in range(len(tryp.rows) + len(tryp.crosstab.values[0])):
+        ws.write(len(tryp.crosstab.values)+ len(tryp.columns) + tryp.plus_row + 1, i, '', style)

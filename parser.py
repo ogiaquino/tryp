@@ -43,6 +43,10 @@ def get_values(report):
     values = report.find("values").text.split(',')
     return values
 
+def get_rows_results(report):
+    rows = report.find("rows_results").text.split(',')
+    return rows
+
 
 def get_labels(report):
     labels = {}
@@ -87,6 +91,7 @@ def parse_tryp(tryp_file):
     values = get_values(report)
     labels = get_labels(report)
     computed_values = get_computed_values(report)
+    rows_results = get_rows_results(report)
 
     return {
         "query": query,
@@ -96,6 +101,7 @@ def parse_tryp(tryp_file):
         "values": values,
         "labels": labels,
         "computed_values": computed_values,
+        "rows_results": rows_results,
     }
 
 parse = parse_tryp

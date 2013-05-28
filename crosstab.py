@@ -7,7 +7,7 @@ def crosstab(tryp):
     columns = tryp.columns
     values = tryp.values
     computed_values = tryp.computed_values
-    result_level = tryp.result_level
+    rows_results = tryp.rows_results
     df = tryp.df
     df_groupby_sum = df.groupby(rows + columns).sum()
     crosstab = df_groupby_sum[values].unstack(columns)
@@ -38,17 +38,11 @@ def crosstab(tryp):
                 crosstab_columns.append(key + (val,))
 
         crosstab = pd.DataFrame(crosstab, columns=crosstab_columns)
+
     crosstab_row_subtotals = []
     if len(rows) > 1:
         crosstab_rows = []
-        # FOR KRAFT AND OTHER THAT FOLLOWS THEIR REPORT
-        # STANDART x[:-2] SHOULD BE USED HERE:
-        # for row in set([x[:-2] for x in crosstab.index]):
-        # TO HAVE THE LAST TWO ROW LEVEL ON THE SAME ROW AND NOT SHOW
-        # ANY AGGREGRATION NORMALLY THESE ARE SR CODE/NAME
-        # OR SKU/PRODUCT DESCRIPTION. NEED TO FIND OF BETTER
-        # WAY TO HANDLE THIS.
-        for row in set([x[:-int(result_level)] for x in crosstab.index]):
+        for row in set([x[:-1] for x in crosstab.index]):
             for i in range(len(rows)):
                 if row[:i+1] not in crosstab_rows:
                     crosstab_rows.append(row[:i+1])
@@ -56,9 +50,12 @@ def crosstab(tryp):
         for row in crosstab_rows:
             result = tuple(['!' + row[-1] + ' Result'
                            for x in range(len(rows) - len(row))])
-            index = row + result
-            row_df = pd.DataFrame({index: crosstab.ix[row].sum()}).T
-            crosstab_row_subtotals.append(row_df)
+            rows_dict = dict([(r, len(tryp.rows) - i - 1) for i, r in enumerate(tryp.rows)])
+            
+            if len(result) in [rows_dict[r] for r in rows_results]: 
+                index = row + result
+                row_df = pd.DataFrame({index: crosstab.ix[row].sum()}).T
+                crosstab_row_subtotals.append(row_df)
         total = {tuple(['!' for x in range(len(rows))]): crosstab.ix[:].sum()}
         total_df = pd.DataFrame(total).T
         crosstab_row_subtotals.append(total_df)

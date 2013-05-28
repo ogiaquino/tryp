@@ -150,6 +150,7 @@ ORDER BY
         <report name='dsr'>
             <dataset>dsr</dataset>
             <rows>Category,Brand,SKU,Description</rows>
+            <rows_results>Category,Brand</rows_results>
             <columns>Region Parent,Region,Distributor</columns>
             <values>Sales Qty,SOH Qty,Sales Value,SOH Value,Sales Volume,SOH Volume</values>
             <computed_values>

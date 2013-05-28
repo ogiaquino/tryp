@@ -135,6 +135,7 @@ ON dsr_data_set."Category" = category.category_name
         <report name='dsr'>
             <dataset>dsr</dataset>
             <rows>Regional,Region,Distributor,SR Code,SR Name</rows>
+            <rows_results>Regional,Region,Distributor</rows_results>
             <columns>Category</columns>
             <values>BSR</values>
             <computed_values>

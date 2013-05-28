@@ -182,6 +182,7 @@ FROM
             <rows>Regional,Region,Distributor,SR Code,SR Name</rows>
             <columns>Category</columns>
             <values>Target,Sell Out Actual</values>
+            <rows_results>Regional,Region,Distributor</rows_results>
             <computed_values>
                 <Ach>dsr_ach</Ach>
             </computed_values>

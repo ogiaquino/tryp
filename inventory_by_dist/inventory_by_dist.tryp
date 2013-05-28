@@ -115,6 +115,7 @@ ORDER BY
             <dataset>dsr</dataset>
             <columns></columns>
             <rows>Regional,Region,Distributor</rows>
+            <rows_results>Regional,Region,Distributor</rows_results>
             <values>Sales_rm,Sales_ctn,SOH_ctn,SOH_rm,Sales_volume,SOH_volume</values>
             <result_level>1</result_level>
             <computed_values>

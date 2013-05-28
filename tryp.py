@@ -8,10 +8,9 @@ from parser import parse
 
 
 class Tryp(object):
-    def __init__(self, reportname, sheetname, filename, dftype, result_level):
+    def __init__(self, reportname, sheetname, filename, dftype):
         self.reportname = reportname
         self.dftype = dftype
-        self.result_level = result_level
         self.report = parse('%s/%s.tryp' % (self.reportname, self.reportname))
 
         self.connection = self.data_connection(self.report['conn_str'])
@@ -23,11 +22,19 @@ class Tryp(object):
         self.values = self.report['values']
         self.labels = self.report['labels']
         self.computed_values = self.report['computed_values'] or []
+        self.rows_results = self.report['rows_results']
 
         self.sheetname = sheetname
         self.filename = filename
 
         self.crosstab = ct(self)
+        if self.computed_values:
+            module = __import__('%s.computed_values' % self.reportname,
+                                fromlist=['computed_values'])
+            self.crosstab = getattr(module, 'computed_values')(self)
+        self.rmodule = __import__(self.reportname, globals(), locals(), ['styles'], - 1)
+        self.plus_row = self.rmodule.styles.plus_row
+        self.column_counter_limit = len(self.values) + len(self.computed_values)  - 1
 
     def data_connection(self, conn_string):
         if self.dftype == 'db':
@@ -54,7 +61,6 @@ if __name__ == '__main__':
     parser.add_argument('--sheetname')
     parser.add_argument('--filename')
     parser.add_argument('--dftype', default='csv')
-    parser.add_argument('--level', default=2)
 
     args = parser.parse_args()
     reportname = args.reportname
@@ -62,6 +68,6 @@ if __name__ == '__main__':
     filename = args.filename or reportname + '.xls'
     dftype = args.dftype
 
-    tryp = Tryp(reportname, sheetname, filename, dftype, args.level)
+    tryp = Tryp(reportname, sheetname, filename, dftype)
 
     to_excel(tryp)

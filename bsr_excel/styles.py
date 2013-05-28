@@ -583,7 +583,7 @@ columns_total = {
     },
 }
 
-def headers(ws, connection=None, crosstab=None):
+def headers(ws, tryp):
     ws.row(3).height = 700
     ws.row(4).height = 700
     ws.set_panes_frozen(True)
@@ -603,3 +603,11 @@ def headers(ws, connection=None, crosstab=None):
     ws.write(1,0,'WEST MALAYSIA & EAST MALAYSIA', exf)
     now = strftime("%d-%b-%Y")
     ws.write(2,0,now, exf)
+    #merge the corner
+    style = easyxf('borders: top medium;')
+    ws.write_merge(0 + tryp.plus_row, len(tryp.columns)+tryp.plus_row, 0,
+                   len(tryp.rows)-1, '', style)
+
+    #borderize thick the last row
+    for i in range(len(tryp.rows) + len(tryp.crosstab.values[0])):
+        ws.write(len(tryp.crosstab.values)+ len(tryp.columns) + tryp.plus_row + 1, i, '', style)
