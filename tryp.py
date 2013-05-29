@@ -70,7 +70,7 @@ if __name__ == '__main__':
     sheetname = args.sheetname or reportname
     filename = args.filename or reportname + '.xls'
     dftype = args.dftype
-    parameters = dict([p.split('=') for p in args.p])
+    parameters = dict([p.split('=') for p in args.p or []])
     tryp = Tryp(reportname, sheetname, filename, dftype, parameters)
 
     to_excel(tryp)
