@@ -1,3 +1,4 @@
+#! virtualenv/bin/python
 import psycopg2
 import pandas.io.sql as psql
 from pandas.io.parsers import read_csv
