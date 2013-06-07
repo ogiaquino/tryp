@@ -22,7 +22,7 @@ def computed_values(tryp):
         if cc not in new_columns:
             new_columns.append(cc)
     for nc in new_columns:
-        dosc_rm = crosstab["SOH_rm"] / crosstab["Average Sales RM"] * wd
+        dosc_rm = crosstab["SOH_rm"] / crosstab["Average Sales RM"] #* wd
         dosc_rm = dosc_rm.replace(np.inf, 0.00)
         dosc_rm = dosc_rm.replace(-np.inf, 0.00)
         crosstab['DOSC RM'] = pd.DataFrame(dosc_rm)
@@ -42,7 +42,7 @@ def computed_values(tryp):
         if cc not in new_columns:
             new_columns.append(cc)
     for nc in new_columns:
-        dosc_ctn = crosstab["SOH_ctn"] / crosstab["Average Sales CTN"] * wd
+        dosc_ctn = crosstab["SOH_ctn"] / crosstab["Average Sales CTN"] #* wd
         dosc_ctn = dosc_ctn.replace(np.inf, 0.00)
         dosc_ctn = dosc_ctn.replace(-np.inf, 0.00)
         crosstab['DOSC CTN'] = pd.DataFrame(dosc_ctn)
@@ -62,7 +62,7 @@ def computed_values(tryp):
         if cc not in new_columns:
             new_columns.append(cc)
     for nc in new_columns:
-        dosc_ton = crosstab["SOH_volume"] / crosstab["Average Sales TONNES"] * wd
+        dosc_ton = crosstab["SOH_volume"] / crosstab["Average Sales TONNES"] #* wd
         dosc_ton = dosc_ton.replace(np.inf, 0.00)
         dosc_ton = dosc_ton.replace(-np.inf, 0.00)
         crosstab['DOSC TONNES'] = pd.DataFrame(dosc_ton)
