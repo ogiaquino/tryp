@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 import styles
-from xlwt import easyxf, Workbook, Pattern
+from xlwt import easyxf, Workbook, Pattern, Font
 
 
 def to_excel(tryp):
@@ -47,6 +47,7 @@ def write_rows_labels(ws, tryp):
             label = str(label).decode("utf-8")
             if '!' not in label:
                 if sn in xf:
+                    #FIXED THIS SHOULDNT BE LIKE THIS
                     if hasattr(rmodule.styles, 'conditional_rows_label'):
                         conditional_rows_labels = rmodule.styles.conditional_rows_label(tryp.connection, xf[sn])
                         if label in conditional_rows_labels['labels']:
@@ -55,15 +56,25 @@ def write_rows_labels(ws, tryp):
                             labels_rows.append(r1)
                             ws.write_merge(r1, r2, c1, c2, label, tet)
                         else:
+                            #FIXED THIS SHOULDNT BE LIKE THIS
                             pat1 = Pattern()
                             pat1.pattern = Pattern.SOLID_PATTERN
                             pat1.pattern_fore_colour = 0x01
                             xf[sn].pattern = pat1
                             if r1 in labels_rows:
-                                pat1 = Pattern()
-                                pat1.pattern = Pattern.SOLID_PATTERN
-                                pat1.pattern_fore_colour = 0x02
-                                xf[sn].pattern = pat1
+                                font = Font()
+                                font.colour_index = 0x02
+                                font.bold = True
+                                font.name = 'sans-serif'
+                                font.height = 160
+                                xf[sn].font = font
+                            else:
+                                font = Font()
+                                font.colour_index = 0x08
+                                font.bold = True
+                                font.name = 'sans-serif'
+                                font.height = 160
+                                xf[sn].font = font
                             ws.write_merge(r1, r2, c1, c2, label, xf[sn])
                     else:
                         ws.write_merge(r1, r2, c1, c2, label, xf[sn])

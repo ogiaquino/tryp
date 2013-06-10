@@ -3017,11 +3017,10 @@ columns_total = {
 
 
 def conditional_rows_label(connection, xf):
-    xf_new = xf
-    pat1 = Pattern()
-    pat1.pattern = Pattern.SOLID_PATTERN
-    pat1.pattern_fore_colour = 0x02
-    xf_new.pattern = pat1
+    xf_str = 'font: name sans-serif, color red,' \
+             'bold on, height 160;' \
+             'pattern: pattern solid, fore-colour white; '
+    xf_new = easyxf(xf_str)
     if connection:
 	conn_string = "host='solar2' port='5432' dbname='atomstore' user='postgres' password='dataNew!1'"
 	conn = psycopg2.connect(conn_string)
@@ -3055,12 +3054,15 @@ def headers(ws, tryp):
     now = strftime("%d-%b-%Y")
     ws.write(2,0,now, exf)
     ws.write(3,0,'Last 75 days', exf)
-    xf_new = exf
-    pat1 = Pattern()
-    pat1.pattern = Pattern.SOLID_PATTERN
-    pat1.pattern_fore_colour = 0x02
-    xf_new.pattern = pat1
-    ws.write(4,0,'* MSL', xf_new)
+
+    
+    xf_str = 'font: name sans-serif, color red,' \
+             'bold on, height 160;' \
+             'pattern: pattern solid, fore-colour white; '
+    exf = easyxf(xf_str)
+    ws.write(4,0,'* MSL', exf)
+
+    
     #merge the corner
     style = easyxf('borders: top medium;')
     ws.write_merge(0 + tryp.plus_row, len(tryp.columns)+tryp.plus_row, 0,
