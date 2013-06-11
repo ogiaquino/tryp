@@ -40,6 +40,15 @@ class Tryp(object):
     def data_connection(self, conn_string, parameters):
         if self.dftype == 'db':
             try:
+                if 'tryp_db' in parameters:
+                    conn = {}
+                    trypdb =  parameters['tryp_db'].split(':')
+                    conn['user'] = trypdb[0]
+                    conn['password'] = trypdb[1]
+                    conn['host'] = trypdb[2]
+                    conn['port'] = trypdb[3]
+                    conn['dbname'] = trypdb[4]
+                    conn_string = "host='%(host)s' port='%(port)s' dbname='%(dbname)s' user='%(user)s' password='%(password)s'" % conn
                 conn = psycopg2.connect(conn_string)
                 return conn
             except Exception, e:
