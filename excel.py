@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 import styles
-from xlwt import easyxf, Workbook, Pattern, Font
+from xlwt import easyxf, Workbook, Pattern, Font, Borders
 
 
 def to_excel(tryp):
@@ -57,10 +57,6 @@ def write_rows_labels(ws, tryp):
                             ws.write_merge(r1, r2, c1, c2, label, tet)
                         else:
                             #FIXED THIS SHOULDNT BE LIKE THIS
-                            pat1 = Pattern()
-                            pat1.pattern = Pattern.SOLID_PATTERN
-                            pat1.pattern_fore_colour = 0x01
-                            xf[sn].pattern = pat1
                             if r1 in labels_rows:
                                 font = Font()
                                 font.colour_index = 0x02
@@ -68,6 +64,11 @@ def write_rows_labels(ws, tryp):
                                 font.name = 'sans-serif'
                                 font.height = 160
                                 xf[sn].font = font
+                                borders = Borders()  
+                                borders.top = 0x01
+                                borders.bottom= 0x01
+                                borders.left = 0x01
+                                xf[sn].borders = borders
                             else:
                                 font = Font()
                                 font.colour_index = 0x08
@@ -75,6 +76,11 @@ def write_rows_labels(ws, tryp):
                                 font.name = 'sans-serif'
                                 font.height = 160
                                 xf[sn].font = font
+                                borders = Borders()  
+                                borders.top = 0x01
+                                borders.bottom= 0x01
+                                borders.left = 0x01
+                                xf[sn].borders = borders
                             ws.write_merge(r1, r2, c1, c2, label, xf[sn])
                     else:
                         ws.write_merge(r1, r2, c1, c2, label, xf[sn])
