@@ -600,7 +600,7 @@ def headers(ws, tryp):
     #xf_str = xf_str + styles[name]['alignment']
     exf = easyxf(xf_str)
     ws.write(0,0,'BAD STOCK RETURN', exf)
-    ws.write(1,0,'WEST MALAYSIA & EAST MALAYSIA', exf)
+    ws.write(1,0,'DISTRIBUTOR', exf)
     now = strftime("%d-%b-%Y")
     ws.write(2,0,now, exf)
     #merge the corner
