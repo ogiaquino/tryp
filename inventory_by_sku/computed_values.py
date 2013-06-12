@@ -34,7 +34,7 @@ def computed_values(tryp):
         doscq = doscq.replace(-np.inf, 0.00)
         crosstab[nc + ('DOSC Volume',)] = pd.DataFrame(doscq.round(1))
 
-    values=["Sales Qty","SOH Qty","DOSC Qty","Sales Value","SOH Value","DOSC Value", "Sales Volume","SOH Volume","DOSC Volume"]
+    values=["Sales Value","SOH Value","DOSC Value", "Sales Qty","SOH Qty","DOSC Qty", "Sales Volume","SOH Volume","DOSC Volume"]
     crosstab_columns = []
     for key in sorted(set([k[:-1] for k in crosstab.keys()])):
         for val in values:
