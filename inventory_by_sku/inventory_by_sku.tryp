@@ -62,7 +62,7 @@ FROM
                     ) AS t
                 WHERE
                     1 = 1
-                    AND stocks.status = 'Active'
+                    AND stocks.status IN ('Active', 'Discontinued', 'To be discontinued')
                     AND stocks.type IN ('New', 'Promotion', 'Standard')
                     AND stocks.date BETWEEN (t.date - '1 day'::interval - '74 day'::interval)
                         AND (t.date - '1 day'::interval)
@@ -88,7 +88,7 @@ FROM
                     ) AS t
                 WHERE
                     1 = 1
-                    AND stocks.status = 'Active'
+                    AND stocks.status IN ('Active', 'Discontinued', 'To be discontinued')
                     AND stocks.type IN ('New', 'Promotion', 'Standard')
                     AND stocks.date = t.date
                 GROUP BY 1, 2
