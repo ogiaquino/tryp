@@ -237,7 +237,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -398,7 +398,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -559,7 +559,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x02,
        "bottom": 0x02
@@ -721,7 +721,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -882,7 +882,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -1044,7 +1044,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x02,
        "bottom": 0x02
@@ -1206,7 +1206,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -1367,7 +1367,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -1527,7 +1527,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x02,
        "bottom": 0x02
@@ -1689,7 +1689,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -1851,7 +1851,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -2013,7 +2013,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -2176,7 +2176,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -2341,7 +2341,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -2504,7 +2504,7 @@ values = {
        "height": "160"
       },
      "border":
-      {"left": 0x01,
+      {"left": 0x02,
        "right": 0x01,
        "top": 0x01,
        "bottom": 0x01
@@ -3020,10 +3020,11 @@ def conditional_rows_label(connection, xf):
     xf_str = 'font: name sans-serif, color red,' \
              'bold on, height 160;' \
              'pattern: pattern solid, fore-colour white; '
-    borders = Borders()  
+    borders = Borders()
     borders.top = 0x01
     borders.bottom = 0x01
     borders.left = 0x01
+    borders.right = 0x01
     xf_new = easyxf(xf_str)
     xf_new.borders = borders
     return {'labels': {

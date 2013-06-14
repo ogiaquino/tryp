@@ -26,6 +26,29 @@ def write_rows_labels(ws, tryp):
     rmodule = tryp.rmodule
     xf = styles.get_styles(tryp.reportname, 'rows_labels')
     labels_rows = []
+
+    font_red = Font()
+    font_red.colour_index = 0x02
+    font_red.bold = True
+    font_red.name = 'sans-serif'
+    font_red.height = 160
+    borders_red = Borders()
+    borders_red.top = 0x01
+    borders_red.bottom= 0x01
+    #borders_red.left = 0x01
+    #borders_red.right = 0x02
+
+    font_white = Font()
+    font_white.colour_index = 0x08
+    font_white.bold = True
+    font_white.name = 'sans-serif'
+    font_white.height = 160
+    borders_white = Borders()
+    borders_white.top = 0x01
+    borders_white.bottom= 0x01
+    #borders_white.left = 0x01
+    #borders_white.right = 0x02
+
     for i in range(len(rows)):
         sn = i
         ci = [x[i] for x in crosstab.index]
@@ -58,29 +81,11 @@ def write_rows_labels(ws, tryp):
                         else:
                             #FIXED THIS SHOULDNT BE LIKE THIS
                             if r1 in labels_rows:
-                                font = Font()
-                                font.colour_index = 0x02
-                                font.bold = True
-                                font.name = 'sans-serif'
-                                font.height = 160
-                                xf[sn].font = font
-                                borders = Borders()  
-                                borders.top = 0x01
-                                borders.bottom= 0x01
-                                borders.left = 0x01
-                                xf[sn].borders = borders
+                                xf[sn].font = font_red
+                                #xf[sn].borders = borders_red
                             else:
-                                font = Font()
-                                font.colour_index = 0x08
-                                font.bold = True
-                                font.name = 'sans-serif'
-                                font.height = 160
-                                xf[sn].font = font
-                                borders = Borders()  
-                                borders.top = 0x01
-                                borders.bottom= 0x01
-                                borders.left = 0x01
-                                xf[sn].borders = borders
+                                xf[sn].font = font_white
+                                #xf[sn].borders = borders_white
                             ws.write_merge(r1, r2, c1, c2, label, xf[sn])
                     else:
                         ws.write_merge(r1, r2, c1, c2, label, xf[sn])
