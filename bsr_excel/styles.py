@@ -599,10 +599,10 @@ def headers(ws, tryp):
              'pattern: pattern solid, fore-colour white; '
     #xf_str = xf_str + styles[name]['alignment']
     exf = easyxf(xf_str)
-    ws.write(0,0,'BAD STOCK RETURN', exf)
-    ws.write(1,0,'DISTRIBUTOR', exf)
+    ws.write_merge(0,0,0,2,'BAD STOCK RETURN', exf)
+    ws.write_merge(1,1,0,2,'DISTRIBUTOR', exf)
     now = strftime("%d-%b-%Y")
-    ws.write(2,0,now, exf)
+    ws.write_merge(2,2,0,2,now, exf)
     #merge the corner
     style = easyxf('borders: top medium;')
     ws.write_merge(0 + tryp.plus_row, len(tryp.columns)+tryp.plus_row, 0,

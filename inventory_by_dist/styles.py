@@ -1309,7 +1309,7 @@ def headers(ws, tryp):
     ws.set_horz_split_pos(7)
     ws.set_vert_split_pos(3)
     ws.col(0).width = 3000
-    ws.col(2).width = 5000
+    ws.col(2).width = 7100
     ws.show_grid = False
     for i in range(len(tryp.crosstab.values[0])):
         ws.col(i + 3).width = 2800
@@ -1317,12 +1317,12 @@ def headers(ws, tryp):
              'bold on, height 160;' \
              'pattern: pattern solid, fore-colour white; '
     exf = easyxf(xf_str)
-    ws.write(0,0,'Inventory by Dist', exf)
-    ws.write(1,0,'Avg Daily Sales = Sales / 75', exf)
-    ws.write(2,0,'Days Of Stock Covered = Stock On Hand / Avg Daily Sales', exf)
+    ws.write_merge(0,0,0,2,'Inventory by Dist', exf)
+    ws.write_merge(1,1,0,2,'Avg Daily Sales = Sales / 75', exf)
+    ws.write_merge(2,2,0,2,'Days Of Stock Covered = Stock On Hand / Avg Daily Sales', exf)
     now = strftime("%d-%b-%Y")
-    ws.write(3,0,now, exf)
-    ws.write(4,0,'Last 75 days', exf)
+    ws.write_merge(3,3,0,2,now, exf)
+    ws.write_merge(4,4,0,2,'Last 75 days', exf)
     #merge the corner
     style = easyxf('borders: top medium;')
     ws.write_merge(0 + tryp.plus_row, len(tryp.columns)+tryp.plus_row, 0,

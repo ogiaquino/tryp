@@ -835,10 +835,10 @@ def headers(ws, tryp):
              'bold on, height 160;' \
              'pattern: pattern solid, fore-colour white; '
     exf = easyxf(xf_str)
-    ws.write(0,0,'SELL OUT - DAILY SALES REPORT', exf)
-    ws.write(1,0,'DISTRIBUTOR', exf)
+    ws.write_merge(0,0,0,2,'SELL OUT - DAILY SALES REPORT', exf)
+    ws.write_merge(1,1,0,2,'DISTRIBUTOR', exf)
     now = strftime("%d-%b-%Y")
-    ws.write(2,0,now, exf)
+    ws.write_merge(2,2,0,2,now, exf)
 
     selling_days = selling_days(connection)
     elapse_days = elapse_days(connection)

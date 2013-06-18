@@ -3292,7 +3292,7 @@ def headers(ws, tryp):
     ws.set_panes_frozen(True)
     ws.set_horz_split_pos(9)
     ws.set_vert_split_pos(4)
-    ws.col(1).width = 6000
+    ws.col(1).width = 6300
     ws.col(2).width = 3500
     ws.col(3).width = 10500
     ws.row(8).height = 1100 
@@ -3303,18 +3303,18 @@ def headers(ws, tryp):
              'bold on, height 160;' \
              'pattern: pattern solid, fore-colour white; '
     exf = easyxf(xf_str)
-    ws.write(0,0,'Inventory by SKU', exf)
-    ws.write(1,0,'Days Of Stock Covered = Stock On Hand / Avg Daily Sales', exf)
+    ws.write_merge(0,0,0,2,'Inventory by SKU', exf)
+    ws.write_merge(1,1,0,2,'Days Of Stock Covered = Stock On Hand/Avg Daily Sales', exf)
     now = strftime("%d-%b-%Y")
-    ws.write(2,0,now, exf)
-    ws.write(3,0,'Last 75 days', exf)
+    ws.write_merge(2,2,0,2,now, exf)
+    ws.write_merge(3,3,0,2,'Last 75 days', exf)
 
     
     xf_str = 'font: name sans-serif, color red,' \
              'bold on, height 160;' \
              'pattern: pattern solid, fore-colour white; '
     exf = easyxf(xf_str)
-    ws.write(4,0,'* MSL', exf)
+    ws.write_merge(4,4,0,2,'* MSL', exf)
 
     
     #merge the corner
