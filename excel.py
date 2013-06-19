@@ -52,7 +52,10 @@ def write_rows_labels(ws, tryp):
     for i in range(len(rows)):
         sn = i
         ci = [x[i] for x in crosstab.index]
-        label_group = [list(g) for k, g in itertools.groupby(ci)]
+        if i < len(rows)-1:
+            label_group = [list(g) for k, g in itertools.groupby(ci)]
+        else:
+            label_group = [[x] for x in ci]
         count = -1
         index = []
         for group in label_group:
