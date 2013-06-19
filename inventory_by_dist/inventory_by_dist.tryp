@@ -159,7 +159,7 @@ ORDER BY
                     </ave_sales_rm>
                     <dosc_rm>
                         <key>DOSC RM</key>
-                        <label>Days of Stock Covered ($)</label>
+                        <label>Days of Stock Covered</label>
                     </dosc_rm>
                     <ave_sales_ctn>
                         <key>Average Sales CTN</key>
@@ -167,7 +167,7 @@ ORDER BY
                     </ave_sales_ctn>
                     <dosc_ctn>
                         <key>DOSC CTN</key>
-                        <label>Days of Stock Covered (CTN)</label>
+                        <label>Days of Stock Covered</label>
                     </dosc_ctn>
                     <ave_sales_vol>
                         <key>Average Sales TONNES</key>
@@ -175,7 +175,7 @@ ORDER BY
                     </ave_sales_vol>
                     <dosc_vol>
                         <key>DOSC TONNES</key>
-                        <label>Days of Stock Covered (TONNES)</label>
+                        <label>Days of Stock Covered</label>
                     </dosc_vol>
                 </values>
             </labels>

@@ -3310,11 +3310,11 @@ def headers(ws, tryp):
     ws.write_merge(3,3,0,2,'Last 75 days', exf)
 
     
-    xf_str = 'font: name sans-serif, color red,' \
+    xf_str = 'font: name sans-serif, color black,' \
              'bold on, height 160;' \
-             'pattern: pattern solid, fore-colour white; '
+             'pattern: pattern solid, fore-colour red; '
     exf = easyxf(xf_str)
-    ws.write_merge(4,4,0,2,'* MSL', exf)
+    ws.write(4,0,'* MSL', exf)
 
     
     #merge the corner
