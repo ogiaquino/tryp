@@ -288,6 +288,7 @@ def write_rows_totals_labels(ws, tryp):
                     label = mrk[-1].replace('!', '')
                     index = ((i + 1) * 10 + (i + 1)) * -1
                 label = str(label).decode("utf-8")
+                label = label + ' Result'
                 sn = get_rows_total_style_name(crosstab, i)
                 if sn in xf:
                     ws.write_merge(r1, r2, c1, c2, label, xf[sn])

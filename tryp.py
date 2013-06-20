@@ -4,7 +4,7 @@ import pandas.io.sql as psql
 from pandas.io.parsers import read_csv
 
 from excel import to_excel
-from crosstab import crosstab as ct
+from dataset import Dataset
 from parser import parse
 
 
@@ -28,7 +28,7 @@ class Tryp(object):
         self.sheetname = sheetname
         self.filename = filename
 
-        self.crosstab = ct(self)
+        self.crosstab = Dataset(self.df, self.rows, self.columns, self.values, self.rows_results).crosstab
         if self.computed_values:
             module = __import__('%s.computed_values' % self.reportname,
                                 fromlist=['computed_values'])

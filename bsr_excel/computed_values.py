@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
-from crosstab import crosstab as ct
+from dataset import Dataset
 
 
 def computed_values(tryp):
     crosstab = tryp.crosstab
     tryp.values = ['Gross Sales']
-    gross = ct(tryp)
+    gross = Dataset(tryp.df, tryp.rows, tryp.columns,
+               tryp.values, tryp.rows_results).crosstab
     new_columns = []
     for cc in crosstab.columns:
         if cc[:-1] not in new_columns:
