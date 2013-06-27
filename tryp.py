@@ -14,7 +14,8 @@ class Tryp(object):
         self.dftype = dftype
         self.report = parse('%s/%s.tryp' % (self.reportname, self.reportname))
 
-        self.connection = self.data_connection(self.report['conn_str'], parameters)
+        self.connection = self.data_connection(self.report['conn_str'],
+                                               parameters)
         self.df = self.data_frame(self.report['query'],
                                   self.connection, dftype, parameters)
 
@@ -28,21 +29,23 @@ class Tryp(object):
         self.sheetname = sheetname
         self.filename = filename
 
-        self.crosstab = Dataset(self.df, self.rows, self.columns, self.values, self.rows_results).crosstab
+        self.crosstab = Dataset(self.df, self.rows, self.columns, self.values,
+                                self.rows_results).crosstab
         if self.computed_values:
             module = __import__('%s.computed_values' % self.reportname,
                                 fromlist=['computed_values'])
             self.crosstab = getattr(module, 'computed_values')(self)
-        self.rmodule = __import__(self.reportname, globals(), locals(), ['styles'], - 1)
+        self.rmodule = __import__(self.reportname, globals(), locals(),
+                                  ['styles'], - 1)
         self.plus_row = self.rmodule.styles.plus_row
-        self.column_counter_limit = len(self.values) + len(self.computed_values)  - 1
+        self.column_counter_limit = len(self.values) + len(self.computed_values) - 1
 
     def data_connection(self, conn_string, parameters):
         if self.dftype == 'db':
             try:
                 if 'tryp_db' in parameters:
                     conn = {}
-                    trypdb =  parameters['tryp_db'].split(':')
+                    trypdb = parameters['tryp_db'].split(':')
                     conn['user'] = trypdb[0]
                     conn['password'] = trypdb[1]
                     conn['host'] = trypdb[2]
@@ -73,7 +76,6 @@ if __name__ == '__main__':
     parser.add_argument('--filename')
     parser.add_argument('--dftype', default='csv')
     parser.add_argument('-p', action='append')
-
 
     args = parser.parse_args()
     reportname = args.reportname
