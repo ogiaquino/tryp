@@ -36,7 +36,7 @@ SELECT
                         SELECT
                             dim_sales_representatives.id AS sales_representative_id,
                             category1.parent_code AS "Category",
-                            sum(fact_invoices.standard_value) AS amount
+                            sum(fact_invoices.standard_original_value) AS amount
                         FROM
                             mv_fact_invoices AS fact_invoices
                             JOIN dim_calendar
