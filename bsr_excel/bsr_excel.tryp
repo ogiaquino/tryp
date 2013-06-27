@@ -35,7 +35,7 @@ FROM
         SELECT
             sales_representative_id,
             product_category_id,
-            sum(fact_invoices.standard_value) AS amount
+            sum(fact_invoices.standard_original_value) AS amount
         FROM
             mv_fact_invoices AS fact_invoices
             JOIN dim_calendar
@@ -60,7 +60,7 @@ FROM
         SELECT
             sales_representative_id,
             product_category_id,
-            sum(fact_goods_return_notes.standard_value) AS amount
+            sum(fact_goods_return_notes.standard_original_value) AS amount
         FROM
             mv_fact_goods_return_notes AS fact_goods_return_notes
             JOIN dim_calendar
