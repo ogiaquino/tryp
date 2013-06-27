@@ -35,8 +35,6 @@ def write_rows_labels(ws, tryp):
     borders_red = Borders()
     borders_red.top = 0x01
     borders_red.bottom= 0x01
-    #borders_red.left = 0x01
-    #borders_red.right = 0x02
 
     font_white = Font()
     font_white.colour_index = 0x08
@@ -46,8 +44,6 @@ def write_rows_labels(ws, tryp):
     borders_white = Borders()
     borders_white.top = 0x01
     borders_white.bottom= 0x01
-    #borders_white.left = 0x01
-    #borders_white.right = 0x02
 
     for i in range(len(rows)):
         sn = i
@@ -85,10 +81,8 @@ def write_rows_labels(ws, tryp):
                             #FIXED THIS SHOULDNT BE LIKE THIS
                             if r1 in labels_rows:
                                 xf[sn].font = font_red
-                                #xf[sn].borders = borders_red
                             else:
                                 xf[sn].font = font_white
-                                #xf[sn].borders = borders_white
                             ws.write_merge(r1, r2, c1, c2, label, xf[sn])
                     else:
                         ws.write_merge(r1, r2, c1, c2, label, xf[sn])
@@ -195,12 +189,6 @@ def write_values(ws, tryp):
         conditional_formatting = None
 
     xf = styles.get_styles(reportname, 'values')
-    #pat1 = Pattern()
-    #pat1.pattern = Pattern.SOLID_PATTERN
-    #pat1.pattern_fore_colour = 0x02
-    #pat2 = Pattern()
-    #pat2.pattern = Pattern.SOLID_PATTERN
-    #pat2.pattern_fore_colour = 0x01
     for iv, value in enumerate(crosstab.values):
         for il, label in enumerate(value):
             r = iv + len(columns) + 1 + plus_row
@@ -211,14 +199,6 @@ def write_values(ws, tryp):
             if sn in xf:
                 if conditional_formatting:
                     xf[sn] = conditional_formatting(xf[sn], header_info, label)
-                #if labels_rows:
-                #    newxf = xf[sn]
-                #    if r in labels_rows:
-                #        newxf.pattern = pat1
-                #    else:
-                #        newxf.pattern = pat2
-                #    ws.write(r, c, label, newxf)
-                #else:
                 ws.write(r, c, label, xf[sn])
             else:
                 ws.write(r, c, label)
