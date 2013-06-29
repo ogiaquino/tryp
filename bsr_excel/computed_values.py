@@ -18,7 +18,7 @@ def computed_values(tryp):
         ach = ach.replace(-np.inf, 0.00)
         crosstab[nc + ('percentage',)] = pd.DataFrame(ach.round(1))
 
-    sorted_keys = ['!',
+    sorted_keys = ['',
                    'BISCUITS',
                    'SNACKS',
                    'CHEESE',

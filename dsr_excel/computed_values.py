@@ -18,7 +18,7 @@ def computed_values(tryp):
         crosstab[nc + ('Ach',)] = \
             pd.DataFrame(ach.round(1))
 
-    sorted_keys = ['!',
+    sorted_keys = ['',
                    'BISCUITS',
                    'SNACKS',
                    'CHEESE',
