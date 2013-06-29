@@ -11,15 +11,7 @@ class Dataset(object):
         if columns:
             ct = self._columns_totals(df, rows, columns, values, ct)
         ct = self._rows_totals(rows, rows_total, ct)
-
-        col = map(lambda column: tuple([c.replace('!', '') for c in column]),
-                  ct.columns)
-        col = pd.MultiIndex.from_tuples(col, names=ct.columns.names)
-        idx = map(lambda index: tuple([i.replace('!', '') for i in index]),
-                  ct.index)
-        idx = pd.MultiIndex.from_tuples(idx, names=ct.index.names)
-        renamed = pd.DataFrame(ct.values, index=idx, columns=col)
-        return renamed
+        return self._rename(ct)
 
     def _columns_totals(self, df, rows, columns, values, ct):
         ## CREATE SUBTOTALS FOR EACH COLUMNS
@@ -85,3 +77,23 @@ class Dataset(object):
         ct = pd.concat([ct] + ct_row_subtotals)
         ct = ct.sort_index(axis=0)
         return ct
+
+    def _rename(self, ct):
+        if isinstance(ct.columns, pd.MultiIndex):
+            col = map(lambda column: tuple([c.replace('!', '') for c in column]),
+                      ct.columns)
+            col = pd.MultiIndex.from_tuples(col, names=ct.columns.names)
+        elif isinstance(ct.columns, pd.Index):
+            col = [c.replace('!', '') for c in ct.columns]
+            col = pd.Index(col)
+
+        if isinstance(ct.index, pd.MultiIndex):
+            idx = map(lambda index: tuple([i.replace('!', '') for i in index]),
+                      ct.index)
+            idx = pd.MultiIndex.from_tuples(idx, names=ct.index.names)
+        elif isintance(ct.index, pd.Index):
+            idx = [c.replace('!', '') for c in ct.index]
+            idx = pd.Index(col)
+
+        renamed = pd.DataFrame(ct.values, index=idx, columns=col)
+        return renamed
