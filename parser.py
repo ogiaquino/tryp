@@ -102,6 +102,7 @@ def parse_tryp(tryp_file):
     labels = get_labels(report)
     computed_values = get_computed_values(report)
     rows_results = get_rows_results(report)
+    print "rows_results: ", rows_results == _get_rows_totals(data["crosstab"])
 
     return {
         "query": query,
@@ -130,3 +131,6 @@ def _get_columns(crosstab):
 
 def _get_rows(crosstab):
     return crosstab["rows"]
+
+def _get_rows_totals(crosstab):
+    return crosstab['rows_totals']
