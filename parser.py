@@ -92,10 +92,12 @@ def parse_tryp(tryp_file):
     dataset = get_dataset(root, report)
     query = get_query(dataset)
     conn_str = get_conn_str(root, dataset)
-    print conn_str == _get_connection_str(data['connections'], 'olap')
+    print "connections: ", conn_str == _get_connection_str(data["connections"], "olap")
 
     columns = get_columns(report)
+    print "columns: ", columns == _get_columns(data["crosstab"])
     rows = get_rows(report)
+    print "rows: ", rows == _get_rows(data["crosstab"])
     values = get_values(report)
     labels = get_labels(report)
     computed_values = get_computed_values(report)
@@ -120,3 +122,11 @@ def _get_connection_str(connections, name):
                "user='%(user)s' password='%(password)s'" % \
                connections[name]
     return conn_str
+
+
+def _get_columns(crosstab):
+    return crosstab["columns"]
+
+
+def _get_rows(crosstab):
+    return crosstab["rows"]

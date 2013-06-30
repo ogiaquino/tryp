@@ -7,5 +7,9 @@
    "user": "postgres",
    "password": "data01"
   }
+ },
+ "crosstab": {
+  "columns": ["Category"],
+  "rows": ["Regional","Region","Distributor","SR Code","SR Name"]
  }
 }
