@@ -1,0 +1,11 @@
+{
+ "connections": {
+  "olap": {
+   "host": "localhost",
+   "port": "5433",
+   "dbname": "atomstore_olap",
+   "user": "postgres",
+   "password": "data01"
+  }
+ }
+}

@@ -1,3 +1,4 @@
+import json
 import xml.etree.ElementTree as ET
 
 
@@ -43,6 +44,7 @@ def get_values(report):
     values = report.find("values").text.split(',')
     return values
 
+
 def get_rows_results(report):
     rows = report.find("rows_results").text.split(',')
     return rows
@@ -77,6 +79,11 @@ def get_report(root):
 
 
 def parse_tryp(tryp_file):
+    # Try json format
+    from pprint import pprint
+    with open(tryp_file.split('/')[0] + '/dsr_excel.json') as data_file:
+        data = json.load(data_file)
+
     tryp_reports = []
     tree = ET.parse(tryp_file)
     root = tree.getroot()
@@ -85,6 +92,7 @@ def parse_tryp(tryp_file):
     dataset = get_dataset(root, report)
     query = get_query(dataset)
     conn_str = get_conn_str(root, dataset)
+    print conn_str == _get_connection_str(data['connections'], 'olap')
 
     columns = get_columns(report)
     rows = get_rows(report)
@@ -105,3 +113,10 @@ def parse_tryp(tryp_file):
     }
 
 parse = parse_tryp
+
+
+def _get_connection_str(connections, name):
+    conn_str = "host='%(host)s' port='%(port)s' dbname='%(dbname)s' " \
+               "user='%(user)s' password='%(password)s'" % \
+               connections[name]
+    return conn_str

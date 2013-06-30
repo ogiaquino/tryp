@@ -2,11 +2,11 @@
 <tryp>
     <connections>
         <connection name="OLAP">
-            <host>solar2</host>
+            <host>localhost</host>
             <port>5433</port>
             <database>atomstore_olap</database>
             <user>postgres</user>
-            <password>dataNew!1</password>
+            <password>data01</password>
         </connection>
     </connections>
     <datasets>
