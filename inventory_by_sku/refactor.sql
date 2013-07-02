@@ -21,7 +21,9 @@ stock_on_hand AS (
         ON calendar_id = dim_calendar.id
     WHERE
         dim_calendar.date = now()::date
-        AND dim_products.type != 'Point of sales'
+        --AND dim_products.type != 'Point of sales'
+        AND dim_products.status IN ('Active', 'Discontinued', 'To be discontinued')
+        AND dim_products.type IN ('New', 'Promotion', 'Standard')
         AND dim_sites.principal_code = 'kraft'
         --AND dim_sites.dome_identifier || '.' || dim_sites.principal_code IN (%(security_filter)s)
         AND dim_sites.active IS TRUE
@@ -50,12 +52,20 @@ sales AS (
     WHERE
         dim_calendar.date BETWEEN (now()::date - '1 day'::interval - '74 day'::interval)
             AND (now()::date - '1 day'::interval)
-        AND dim_products.type != 'Point of sales'
+        --AND dim_products.type != 'Point of sales'
+        AND dim_products.status IN ('Active', 'Discontinued', 'To be discontinued')
+        AND dim_products.type IN ('New', 'Promotion', 'Standard')
         AND dim_sites.principal_code = 'kraft'
         --AND dim_sites.dome_identifier || '.' || dim_sites.principal_code IN (%(security_filter)s)
         AND dim_sites.active IS TRUE
+        AND invoices.delivered_quantity > 0
 )
 
+SELECT
+    sum(soh_value),
+    sum("Sales Value")
+FROM
+(
 SELECT
     "Category",
     "Brand",
@@ -67,7 +77,7 @@ SELECT
     sum(sales_standard_value) AS "Sales Value",
     sum(sales_converted_quantity) AS "Sales Qty",
     sum(sales_volume) AS "Sales Volume",
-    sum(soh_standard_value) AS "SOH Value",
+    sum(soh_standard_value) AS soh_value,
     sum(soh_converted_quantity) AS "SOH Qty",
     sum(soh_volume) AS "SOH Volume"
 FROM
@@ -121,4 +131,5 @@ FROM
         AND brands.extended IS TRUE
         AND brands.parent_level = 2
 
-) as FOO GROUP BY 1,2,3,4,5,6,7;
+) as FOO GROUP BY 1,2,3,4,5,6,7
+) as TET
