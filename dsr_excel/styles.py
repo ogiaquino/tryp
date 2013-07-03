@@ -783,43 +783,10 @@ def conditional_formatting(xf, header_info, value):
 
 
 def headers(ws, tryp):
-    connection = tryp.connection
-    def selling_days(connection):
-        if connection:
-            now = strftime("%Y-%m-%d")
-            query = """
-                SELECT
-                    count(*)
-                FROM
-                    dim_calendar
-                WHERE
-                    date BETWEEN date_trunc('mon', coalesce('%s', now())::date)
-                    AND date_trunc('mon', coalesce('%s', now())::date) +
-                        '1 mon'::interval - '1 day'::interval
-                AND principal_code = 'kraft'
-                AND holiday = 'N'
-            """ % (now, now)
-            df = psql.frame_query(query, con=connection)
-            return df['count'][0]
+    def selling_days():
         return 1
 
-    def elapse_days(connection):
-        if connection:
-            now = strftime("%Y-%m-%d")
-            query = """
-                SELECT
-                    count(*)
-                FROM
-                    dim_calendar
-                WHERE
-                    date
-                    BETWEEN date_trunc('mon', coalesce('%s', now())::date)
-                    AND coalesce('%s', now())::date
-                    AND principal_code = 'kraft'
-                    AND holiday = 'N'
-            """ % (now, now)
-            df = psql.frame_query(query, con=connection)
-            return df['count'][0]
+    def elapse_days():
         return 1
     ws.row(3).height = 700
     ws.row(4).height = 700
@@ -840,8 +807,8 @@ def headers(ws, tryp):
     now = strftime("%d-%b-%Y")
     ws.write_merge(2,2,0,2,now, exf)
 
-    selling_days = selling_days(connection)
-    elapse_days = elapse_days(connection)
+    selling_days = selling_days()
+    elapse_days = elapse_days()
     elapse_percentage = (elapse_days / selling_days) * 100
     ws.write(0,3,'Selling Days', exf)
     ws.write(1,3,'Days Elapse', exf)

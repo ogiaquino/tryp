@@ -1,17 +1,14 @@
 {
- "connections": {
-  "olap": {
-   "host": "localhost",
-   "port": "5433",
-   "dbname": "atomstore_olap",
-   "user": "postgres",
-   "password": "data01"
-  }
- },
  "crosstab": {
   "columns": ["Category"],
   "rows": ["Regional","Region","Distributor","SR Code","SR Name"],
   "values": ["Target","Sell Out Actual"],
-  "rows_totals": ["Regional","Region","Distributor"]
+  "rows_totals": ["Regional","Region","Distributor"],
+  "labels": {"values": {
+              "Ach": "% Ach", 
+              "Target": "Target", 
+              "Sell Out Actual": "Sell Out Actual"
+            }
+  }
  }
 }

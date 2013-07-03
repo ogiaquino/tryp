@@ -211,7 +211,6 @@ def write_columns_totals_labels(ws, tryp):
     values = tryp.values
     crosstab = tryp.crosstab
     plus_row = tryp.plus_row
-    computed_values = tryp.computed_values
     xf = styles.get_styles(reportname, 'columns_total')
     merge_columns = {}
 
@@ -227,8 +226,6 @@ def write_columns_totals_labels(ws, tryp):
                 r2 = len(columns) - 1 + plus_row
                 c1 = merge_columns[mck] + len(rows)
                 c2 = merge_columns[mck] + len(rows) + len(values) - 1
-                if computed_values:
-                    c2 = c2 + len(computed_values)
                 if mck[-1] == '!':
                     label = 'Total Result'
                 else:

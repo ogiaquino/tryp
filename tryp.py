@@ -5,40 +5,31 @@ from pandas.io.parsers import read_csv
 
 from excel import to_excel
 from dataset import Dataset
-from parser import parse
+from jsonparser import parse
 
 
 class Tryp(object):
     def __init__(self, reportname, sheetname, filename, dftype, parameters):
         self.reportname = reportname
-        self.dftype = dftype
-        self.report = parse('%s/%s.tryp' % (self.reportname, self.reportname))
+        self.report = parse('%s/%s.json' % (self.reportname, self.reportname))
 
-        self.connection = self.data_connection(self.report['conn_str'],
-                                               parameters)
-        self.df = self.data_frame(self.report['query'],
-                                  self.connection, dftype, parameters)
+        self.df = self.data_frame()
 
         self.rows = self.report['rows']
         self.columns = self.report['columns']
         self.values = self.report['values']
         self.labels = self.report['labels']
-        self.computed_values = self.report['computed_values'] or []
-        self.rows_results = self.report['rows_results']
+        self.rows_results = self.report['rows_totals']
 
         self.sheetname = sheetname
         self.filename = filename
 
         self.crosstab = Dataset(self.df, self.rows, self.columns, self.values,
                                 self.rows_results).crosstab
-        if self.computed_values:
-            module = __import__('%s.computed_values' % self.reportname,
-                                fromlist=['computed_values'])
-            self.crosstab = getattr(module, 'computed_values')(self)
         self.rmodule = __import__(self.reportname, globals(), locals(),
                                   ['styles'], - 1)
         self.plus_row = self.rmodule.styles.plus_row
-        self.column_counter_limit = len(self.values) + len(self.computed_values) - 1
+        self.column_counter_limit = len(self.values)
 
     def data_connection(self, conn_string, parameters):
         if self.dftype == 'db':
@@ -59,12 +50,8 @@ class Tryp(object):
         else:
             return None
 
-    def data_frame(self, query, connection, dftype, parameters):
-        if dftype == 'csv':
-            df = read_csv('csv/%s.%s' % (self.reportname, 'csv'))
-        if dftype == 'db':
-            query = query % parameters
-            df = psql.frame_query(query, con=connection)
+    def data_frame(self):
+        df = read_csv('csv/%s.%s' % (self.reportname, 'csv'))
         return df
 
 
