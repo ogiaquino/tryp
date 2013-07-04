@@ -6,3 +6,7 @@ python:
 install: pip install numpy pandas xlwt psycopg2 nose
 # command to run tests, e.g. python setup.py test
 script: nosetests -sv
+
+branches:
+  only:
+    - master
