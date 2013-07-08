@@ -5,7 +5,7 @@ from pandas.io.parsers import read_csv
 
 from excel import to_excel
 from dataset import Dataset
-from jsonparser import parse
+from parser import parse
 
 
 class Tryp(object):
