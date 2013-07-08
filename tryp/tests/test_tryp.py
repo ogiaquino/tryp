@@ -1,7 +1,7 @@
 import os
 import tempfile
 import unittest
-from tryp.jsonparser import parse_tryp 
+from tryp.parser import parse_tryp 
 
 
 class TestParser(unittest.TestCase):
