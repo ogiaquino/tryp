@@ -1,18 +1,4 @@
 import json
-import jsonschema
-
-
-schema = {
-    "crosstab": {
-        "columns": [],
-        "rows": [],
-        "values": [],
-        "rows_totals": [],
-        "labels": {
-            "values": {}
-        }
-    }
-}
 
 
 def parse_tryp(tryp_file):

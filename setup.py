@@ -5,7 +5,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-requires = ['pandas', 'xlwt', 'psycopg2', 'jsonschema']
+requires = ['pandas', 'xlwt', 'psycopg2']
 
 setup(name='tryp',
       version='0.0',
