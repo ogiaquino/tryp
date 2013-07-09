@@ -6,46 +6,36 @@ from parser import parse
 
 
 class Tryp(object):
-    def __init__(self, reportname, sheetname, filename, dftype, parameters):
-        self.reportname = reportname
-        self.report = parse('%s/%s.tryp' % (self.reportname, self.reportname))
+    def __init__(self, tryp_file, csv_file):
+        self.report = parse(tryp_file)
 
-        self.df = self.data_frame()
-
+        self.df = self.data_frame(csv_file)
         self.rows = self.report['rows']
         self.columns = self.report['columns']
         self.values = self.report['values']
         self.labels = self.report['labels']
         self.rows_totals = self.report['rows_totals']
 
-        self.sheetname = sheetname
-        self.filename = filename
+        self.sheetname = 'Sheet1' 
+        self.filename = 'output.xls' 
 
         self.crosstab = Dataset(self.df, self.rows, self.columns, self.values,
                                 self.rows_totals).crosstab
 
-    def data_frame(self):
-        df = read_csv('csv/%s.%s' % (self.reportname, 'csv'))
+    def data_frame(self, csv_file):
+        df = read_csv(csv_file)
         return df
 
 
 def main():
         import argparse
-        parser = argparse.ArgumentParser(description='Generate Report.')
-        parser.add_argument('--reportname')
-        parser.add_argument('--sheetname')
-        parser.add_argument('--filename')
-        parser.add_argument('--dftype', default='csv')
-        parser.add_argument('-p', action='append')
-
+        parser = argparse.ArgumentParser(description='Generate Excel File.')
+        parser.add_argument('-f')
+        parser.add_argument('-d')
         args = parser.parse_args()
-        reportname = args.reportname
-        sheetname = args.sheetname or reportname
-        filename = args.filename or reportname + '.xls'
-        dftype = args.dftype
-        parameters = dict([p.split('=') for p in args.p or []])
-        tryp = Tryp(reportname, sheetname, filename, dftype, parameters)
-
+        tryp_file = args.f
+        csv_file = args.d
+        tryp = Tryp(tryp_file, csv_file)
         to_excel(tryp)
 
 if __name__ == '__main__':

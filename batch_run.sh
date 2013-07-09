@@ -1,3 +1,3 @@
 pyclean .
 rm *.xls
-trypgen --reportname=dsr_excel
+trypgen -f dsr_excel.tryp -d dsr_excel.csv

@@ -46,7 +46,6 @@ def write_rows_labels(ws, tryp):
 
 
 def write_columns_labels(ws, tryp):
-    reportname = tryp.reportname
     rows = tryp.rows
     columns = tryp.columns
     crosstab = tryp.crosstab
@@ -73,7 +72,6 @@ def write_columns_labels(ws, tryp):
 
 
 def write_values_labels(ws, tryp):
-    reportname = tryp.reportname
     rows = tryp.rows
     columns = tryp.columns
     labels = tryp.labels
@@ -93,7 +91,6 @@ def write_values_labels(ws, tryp):
 
 
 def write_values(ws, tryp):
-    reportname = tryp.reportname
     rows = tryp.rows
     columns = tryp.columns
     crosstab = tryp.crosstab
