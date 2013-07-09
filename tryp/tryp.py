@@ -1,6 +1,3 @@
-#! virtualenv/bin/python
-import psycopg2
-import pandas.io.sql as psql
 from pandas.io.parsers import read_csv
 
 from excel import to_excel
@@ -19,36 +16,13 @@ class Tryp(object):
         self.columns = self.report['columns']
         self.values = self.report['values']
         self.labels = self.report['labels']
-        self.rows_results = self.report['rows_totals']
+        self.rows_totals = self.report['rows_totals']
 
         self.sheetname = sheetname
         self.filename = filename
 
         self.crosstab = Dataset(self.df, self.rows, self.columns, self.values,
-                                self.rows_results).crosstab
-        self.rmodule = __import__(self.reportname, globals(), locals(),
-                                  ['styles'], - 1)
-        self.plus_row = self.rmodule.styles.plus_row
-        self.column_counter_limit = len(self.values)
-
-    def data_connection(self, conn_string, parameters):
-        if self.dftype == 'db':
-            try:
-                if 'tryp_db' in parameters:
-                    conn = {}
-                    trypdb = parameters['tryp_db'].split(':')
-                    conn['user'] = trypdb[0]
-                    conn['password'] = trypdb[1]
-                    conn['host'] = trypdb[2]
-                    conn['port'] = trypdb[3]
-                    conn['dbname'] = trypdb[4]
-                    conn_string = "host='%(host)s' port='%(port)s' dbname='%(dbname)s' user='%(user)s' password='%(password)s'" % conn
-                conn = psycopg2.connect(conn_string)
-                return conn
-            except Exception, e:
-                return None
-        else:
-            return None
+                                self.rows_totals).crosstab
 
     def data_frame(self):
         df = read_csv('csv/%s.%s' % (self.reportname, 'csv'))
