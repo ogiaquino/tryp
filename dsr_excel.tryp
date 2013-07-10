@@ -4,6 +4,7 @@
   "rows": ["Regional","Region","Distributor","SR Code","SR Name"],
   "values": ["Target","Sell Out Actual"],
   "rows_totals": ["Regional","Region","Distributor"],
+  "columns_totals": ["Category"],
   "labels": {"values": {
               "Ach": "% Ach", 
               "Target": "Target", 

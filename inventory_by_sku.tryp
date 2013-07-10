@@ -4,6 +4,7 @@
   "rows": ["Category", "Brand", "SKU", "Description"],
   "values": ["Sales Qty", "SOH Qty", "Sales Value", "SOH Value", "Sales Volume", "SOH Volume"],
   "rows_totals": ["Category", "Brand"],
+  "columns_totals": ["Region Parent", "Region", "Distributor"],
   "labels": {"values": {
               "Sales Qty": "Sales Qty",
               "SOH Qty": "SOH Qty", 

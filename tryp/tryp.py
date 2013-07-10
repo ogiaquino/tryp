@@ -15,6 +15,7 @@ class Tryp(object):
         self.values = self.report['values']
         self.labels = self.report['labels']
         self.rows_totals = self.report['rows_totals']
+        self.columns_totals = self.report['columns_totals']
 
         self.excel = {}
         self.excel['filename'] = output_file
