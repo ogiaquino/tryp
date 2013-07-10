@@ -1,4 +1,5 @@
 import itertools
+import pandas as pd
 from xlwt import Workbook
 
 
@@ -18,31 +19,38 @@ def write_rows_labels(ws, tryp):
     rows = tryp.rows
     columns = tryp.columns
     crosstab = tryp.crosstab
-    labels_rows = []
+    rows_totals = tryp.rows_totals
 
-    for i in range(len(rows)):
-        sn = i
-        ci = [x[i] for x in crosstab.index]
-        if i < len(rows)-1:
-            label_group = [list(g) for k, g in itertools.groupby(ci)]
-        else:
-            label_group = [[x] for x in ci]
-        count = -1
-        index = []
-        for group in label_group:
-            index.append([])
-            for g in group:
-                count = count + 1
-                index[-1].append(count)
+    for ir in range(len(rows_totals)):
+        index = crosstab.index
+        labels = pd.Series(map(lambda x: x[ir], index)).drop_duplicates()
+        for il, idx in enumerate(labels.index):
+            if il == len(labels.index) - 1:
+                print idx, len(crosstab.index)
+            else:
+                print idx, labels.index[il + 1] - 1
+    
 
-        for x in index:
-            r1 = x[0] + len(columns) + 1
-            r2 = x[-1] + len(columns) + 1
-            c1 = i
-            c2 = i
-            label = ci[x[0]]
-            label = str(label).decode("utf-8")
-            ws.write_merge(r1, r2, c1, c2, label)
+    #for i in range(len(rows)):
+    #    sn = i
+    #    ci = [x[i] for x in crosstab.index]
+    #    label_group = [list(g) for k, g in itertools.groupby(ci)]
+    #    count = -1
+    #    index = []
+    #    for group in label_group:
+    #        index.append([])
+    #        for g in group:
+    #            count = count + 1
+    #            index[-1].append(count)
+
+    #    for x in index:
+    #        r1 = x[0] + len(columns) + 1
+    #        r2 = x[-1] + len(columns) + 1
+    #        c1 = i
+    #        c2 = i
+    #        label = ci[x[0]]
+    #        label = str(label).decode("utf-8")
+    #        ws.write_merge(r1, r2, c1, c2, label)
 
 
 def write_columns_labels(ws, tryp):
@@ -61,6 +69,7 @@ def write_columns_labels(ws, tryp):
             for g in group:
                 count = count + 1
                 index[-1].append(count)
+
         for x in index:
             r1 = i
             r2 = i

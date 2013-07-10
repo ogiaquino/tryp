@@ -1,0 +1,17 @@
+{
+ "crosstab": {
+  "columns": ["Region Parent", "Region", "Distributor"],
+  "rows": ["Category", "Brand", "SKU", "Description"],
+  "values": ["Sales Qty", "SOH Qty", "Sales Value", "SOH Value", "Sales Volume", "SOH Volume"],
+  "rows_totals": ["Category", "Brand"],
+  "labels": {"values": {
+              "Sales Qty": "Sales Qty",
+              "SOH Qty": "SOH Qty", 
+              "Sales Value": "Sales Value", 
+              "SOH Value": "SOH Value", 
+              "Sales Volume": "Sales Volume", 
+              "SOH Volume": "SOH Volume"
+            }
+  }
+ }
+}
