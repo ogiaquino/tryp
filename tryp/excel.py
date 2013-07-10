@@ -8,76 +8,56 @@ def to_excel(tryp):
     filename = tryp.excel['filename']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
-    write_rows_labels(ws, tryp)
+    write_index(ws, tryp)
     write_columns_labels(ws, tryp)
     write_values_labels(ws, tryp)
     write_values(ws, tryp)
     wb.save(filename)
 
 
-def write_rows_labels(ws, tryp):
-    rows = tryp.rows
-    columns = tryp.columns
-    crosstab = tryp.crosstab
-    rows_totals = tryp.rows_totals
+def _labels(indexes, index_width, total_width, axis=0):
+    labels = []
+    for ir in range(index_width):
+        lseries = pd.Series(map(lambda x: x[ir], indexes))
+        if ir <= total_width:
+            lseries = lseries.drop_duplicates()
 
-    for ir in range(len(rows_totals)):
-        index = crosstab.index
-        labels = pd.Series(map(lambda x: x[ir], index)).drop_duplicates()
-        for il, idx in enumerate(labels.index):
-            if il == len(labels.index) - 1:
-                print idx, len(crosstab.index)
+        for il, idx in enumerate(lseries.index):
+            label = lseries[idx].decode("utf-8")
+            if il == len(lseries.index) - 1:
+                if axis == 0:
+                    labels.append((idx, len(indexes) - 1, ir, ir, label))
+                if axis == 1:
+                    labels.append((ir, ir, idx, len(indexes) - 1, label))
             else:
-                print idx, labels.index[il + 1] - 1
-    
+                if axis == 0:
+                    labels.append((idx, lseries.index[il + 1] - 1, ir, ir,
+                                   label))
+                if axis == 1:
+                    labels.append((ir, ir, idx, lseries.index[il + 1] - 1,
+                                   label))
+    return labels
 
-    #for i in range(len(rows)):
-    #    sn = i
-    #    ci = [x[i] for x in crosstab.index]
-    #    label_group = [list(g) for k, g in itertools.groupby(ci)]
-    #    count = -1
-    #    index = []
-    #    for group in label_group:
-    #        index.append([])
-    #        for g in group:
-    #            count = count + 1
-    #            index[-1].append(count)
 
-    #    for x in index:
-    #        r1 = x[0] + len(columns) + 1
-    #        r2 = x[-1] + len(columns) + 1
-    #        c1 = i
-    #        c2 = i
-    #        label = ci[x[0]]
-    #        label = str(label).decode("utf-8")
-    #        ws.write_merge(r1, r2, c1, c2, label)
+def write_index(ws, tryp):
+    indexes = tryp.crosstab.index
+    index_width = len(tryp.rows)
+    total_width = len(tryp.rows_totals)
+    for label in _labels(indexes, index_width, total_width, 0):
+        ws.write_merge(*label)
 
 
 def write_columns_labels(ws, tryp):
     rows = tryp.rows
-    columns = tryp.columns
-    crosstab = tryp.crosstab
-
-    for i in range(len(columns)):
-        sn = i
-        cc = [x[i] for x in crosstab.columns]
-        label_group = [list(g) for k, g in itertools.groupby(cc)]
-        count = -1
-        index = []
-        for group in label_group:
-            index.append([])
-            for g in group:
-                count = count + 1
-                index[-1].append(count)
-
-        for x in index:
-            r1 = i
-            r2 = i
-            c1 = x[0] + len(rows)
-            c2 = x[-1] + len(rows)
-            label = cc[x[0]]
-            label = str(label).decode("utf-8")
-            ws.write_merge(r1, r2, c1, c2, label)
+    indexes = tryp.crosstab.columns
+    index_width = len(tryp.columns)
+    total_width = len(tryp.columns_totals)
+    for label in _labels(indexes, index_width, total_width, 1):
+        ws.write_merge(label[0],
+                       label[1],
+                       label[2] + len(rows),
+                       label[3] + len(rows),
+                       label[4])
 
 
 def write_values_labels(ws, tryp):
