@@ -3,8 +3,8 @@ from xlwt import Workbook
 
 
 def to_excel(tryp):
-    sheetname = tryp.sheetname
-    filename = tryp.filename
+    sheetname = tryp.excel['sheetname']
+    filename = tryp.excel['filename']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
     write_rows_labels(ws, tryp)
