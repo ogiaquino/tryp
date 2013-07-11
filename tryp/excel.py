@@ -31,6 +31,7 @@ def merge_labels(indexes, index_width, total_width):
 
 
 def write_index(ws, tryp):
+    columns = tryp.columns
     indexes = tryp.crosstab.index
     index_width = len(tryp.rows)
     total_width = len(tryp.rows_totals)
@@ -38,8 +39,8 @@ def write_index(ws, tryp):
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
-            r1 = label[0]
-            r2 = label[1]
+            r1 = label[0] + len(columns) + 1
+            r2 = label[1] + len(columns) + 1
             c1 = k
             c2 = k
             label = label[2]
