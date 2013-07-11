@@ -1,0 +1,18 @@
+{
+ "crosstab": {
+  "columns": [],
+  "rows": ["Regional","Region","Distributor"],
+  "values": ["Sales_rm","Sales_ctn","SOH_ctn","SOH_rm","Sales_volume","SOH_volume"],
+  "rows_totals": ["Regional", "Region", "Distributor"],
+  "columns_totals": [],
+  "labels": {"values": {
+              "Sales_rm": "Sales_rm",
+              "Sales_ctn": "Sales_ctn",
+              "SOH_ctn": "SOH_ctn",
+              "SOH_rm": "SOH_rm",
+              "Sales_volume": "Sales_volume",
+              "SOH_volume": "SOH_volume"
+            }
+  }
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "crosstab": {
+  "columns": ["Category"],
+  "rows": ["Regional","Region","Distributor","SR Code","SR Name"],
+  "values": ["BSR"],
+  "rows_totals": ["Regional","Region","Distributor"],
+  "columns_totals": [],
+  "labels": {"values": {
+              "BSR": "BSR"
+            }
+  }
+ }
+}
