@@ -11,7 +11,7 @@ class TestDataset(unittest.TestCase):
         rows = ['region', 'area', 'distributor']
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
-        rows_total = ['region','area','distributor']
+        rows_total = ['region', 'area', 'distributor']
 
         ct = Dataset(df, rows, columns, values, rows_total).crosstab
         expected_df = pd.read_csv('%s/crosstab.csv' % data_loc)
@@ -28,6 +28,6 @@ class TestDataset(unittest.TestCase):
             # since read_csv convert empty labels to NaN
             # need to fix this later
             if i == 0:
-                expected_val[0:3] = ['','','']
+                expected_val[0:3] = ['', '', '']
             expected_val = tuple(expected_val)
             assert expected_val == ct_val
