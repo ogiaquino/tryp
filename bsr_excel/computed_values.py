@@ -7,7 +7,7 @@ def computed_values(tryp):
     crosstab = tryp.crosstab
     tryp.values = ['Gross Sales']
     gross = Dataset(tryp.df, tryp.rows, tryp.columns,
-               tryp.values, tryp.rows_results).crosstab
+                    tryp.values, tryp.rows_results).crosstab
     new_columns = []
     for cc in crosstab.columns:
         if cc[:-1] not in new_columns:
