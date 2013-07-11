@@ -34,7 +34,7 @@ def write_rows_labels(ws, tryp):
     font_red.height = 160
     borders_red = Borders()
     borders_red.top = 0x01
-    borders_red.bottom= 0x01
+    borders_red.bottom = 0x01
 
     font_white = Font()
     font_white.colour_index = 0x08
@@ -43,7 +43,7 @@ def write_rows_labels(ws, tryp):
     font_white.height = 160
     borders_white = Borders()
     borders_white.top = 0x01
-    borders_white.bottom= 0x01
+    borders_white.bottom = 0x01
 
     for i in range(len(rows)):
         sn = i
@@ -170,7 +170,7 @@ def get_values_style_name(crosstab, row, column):
         cc_col = cc_col[-1]
 
     cc = [x[0] for x in crosstab.columns[column]
-            if '!' in x] + [cc_col]
+          if '!' in x] + [cc_col]
     cc = ''.join(cc)
     return ci + '%' + cc
 
@@ -235,7 +235,8 @@ def write_columns_totals_labels(ws, tryp):
                     label = mck[-1].replace('!', '')
                 label = str(label).decode("utf-8")
                 if sn in xf:
-                    slabel = styles.get_labels(reportname, 'columns_total_labels')
+                    slabel = styles.get_labels(reportname,
+                                               'columns_total_labels')
                     if sn in slabel:
                         label = label.replace(' Result', slabel[sn])
                     ws.write_merge(r1, r2, c1, c2, label, xf[sn])
