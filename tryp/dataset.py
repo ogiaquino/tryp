@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
+from pandas.core.index import MultiIndex
 
 
 class Dataset(object):
     def __init__(self, df, rows, columns, values, rows_total):
         self.crosstab = self._crosstab(df, rows, columns, values, rows_total)
+        self.crosstab.values_labels = self._values_labels(self.crosstab)
 
     def _crosstab(self, df, rows, columns, values, rows_total):
         ct = df.groupby(rows + columns).sum()[values].unstack(columns)
@@ -12,6 +14,11 @@ class Dataset(object):
             ct = self._columns_totals(df, rows, columns, values, ct)
         ct = self._rows_totals(rows, rows_total, ct)
         return self._rename(ct)
+
+    def _values_labels(self, ct):
+        if isinstance(ct.columns, MultiIndex):
+            return map(lambda x: x[-1], ct.columns)
+        return ct.columns
 
     def _columns_totals(self, df, rows, columns, values, ct):
         ## CREATE SUBTOTALS FOR EACH COLUMNS
@@ -80,7 +87,8 @@ class Dataset(object):
 
     def _rename(self, ct):
         if isinstance(ct.columns, pd.MultiIndex):
-            col = map(lambda column: tuple([c.replace('!', '') for c in column]),
+            col = map(lambda column: tuple([c.replace('!', '')
+                                            for c in column]),
                       ct.columns)
             col = pd.MultiIndex.from_tuples(col, names=ct.columns.names)
         elif isinstance(ct.columns, pd.Index):

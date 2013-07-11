@@ -67,9 +67,9 @@ def write_values_labels(ws, tryp):
     rows = tryp.rows
     columns = tryp.columns
     labels = tryp.labels
-    crosstab = tryp.crosstab
+    values_labels = tryp.crosstab.values_labels
 
-    for i, cc in enumerate(map(lambda x: x[-1], crosstab.columns)):
+    for i, cc in enumerate(values_labels):
         r = len(columns)
         c = len(rows) + i
         label = cc
