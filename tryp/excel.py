@@ -1,4 +1,3 @@
-import itertools
 import pandas as pd
 from xlwt import Workbook
 
@@ -9,15 +8,16 @@ def to_excel(tryp):
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
     write_index(ws, tryp)
-    write_columns_labels(ws, tryp)
+    write_columns(ws, tryp)
     write_values_labels(ws, tryp)
     write_values(ws, tryp)
     wb.save(filename)
 
 
-def _labels(indexes, index_width, total_width, axis=0):
-    labels = []
+def _merge_labels(indexes, index_width, total_width):
+    labels = {}
     for ir in range(index_width):
+        labels[ir] = []
         lseries = pd.Series(map(lambda x: x[ir], indexes))
         if ir <= total_width:
             lseries = lseries.drop_duplicates()
@@ -25,16 +25,9 @@ def _labels(indexes, index_width, total_width, axis=0):
         for il, idx in enumerate(lseries.index):
             label = lseries[idx].decode("utf-8")
             if il == len(lseries.index) - 1:
-                if axis == 0:
-                    labels.append((idx, len(indexes) - 1, ir, ir, label))
-                if axis == 1:
-                    labels.append((ir, ir, idx, len(indexes) - 1, label))
+                labels[ir].append((idx, len(indexes) - 1, label))
             else:
-                if axis == 0:
-                    labels.append((idx, lseries.index[il + 1] - 1, ir, ir,
-                                   label))
-                if axis == 1:
-                    labels.append((ir, ir, idx, lseries.index[il + 1] - 1,
+                labels[ir].append((idx, lseries.index[il + 1] - 1,
                                    label))
     return labels
 
@@ -43,21 +36,33 @@ def write_index(ws, tryp):
     indexes = tryp.crosstab.index
     index_width = len(tryp.rows)
     total_width = len(tryp.rows_totals)
-    for label in _labels(indexes, index_width, total_width, 0):
-        ws.write_merge(*label)
+    labels = _merge_labels(indexes, index_width, total_width)
+
+    for k in sorted(labels.keys()):
+        for label in labels[k]:
+            r1 = label[0]
+            r2 = label[1]
+            c1 = k
+            c2 = k
+            label = label[2]
+            ws.write_merge(r1, r2, c1, c2, label)
 
 
-def write_columns_labels(ws, tryp):
+def write_columns(ws, tryp):
     rows = tryp.rows
     indexes = tryp.crosstab.columns
     index_width = len(tryp.columns)
     total_width = len(tryp.columns_totals)
-    for label in _labels(indexes, index_width, total_width, 1):
-        ws.write_merge(label[0],
-                       label[1],
-                       label[2] + len(rows),
-                       label[3] + len(rows),
-                       label[4])
+    labels = _merge_labels(indexes, index_width, total_width)
+
+    for k in sorted(labels.keys()):
+        for label in labels[k]:
+            r1 = k
+            r2 = k
+            c1 = label[0] + len(rows)
+            c2 = label[1] + len(rows)
+            label = label[2]
+            ws.write_merge(r1, r2, c1, c2, label)
 
 
 def write_values_labels(ws, tryp):
@@ -66,15 +71,10 @@ def write_values_labels(ws, tryp):
     labels = tryp.labels
     crosstab = tryp.crosstab
 
-    for i, cc in enumerate(crosstab.columns):
+    for i, cc in enumerate(map(lambda x: x[-1], crosstab.columns)):
         r = len(columns)
         c = len(rows) + i
-        if isinstance(cc,  basestring):
-            label = cc
-        else:
-            label = cc[-1]
-        if labels:
-            label = labels['values'][label]
+        label = cc
         label = str(label).decode("utf-8")
         ws.write(r, c, label)
 
