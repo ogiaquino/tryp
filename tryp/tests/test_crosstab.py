@@ -1,18 +1,20 @@
+import os
 import unittest
 import pandas as pd
 from tryp.dataset import Dataset
 
+data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
 class TestDataset(unittest.TestCase):
     def test_crosstab(self):
-        df = pd.read_csv('./tests/data/fixture.csv')
+        df = pd.read_csv('%s/fixture.csv' % data_loc)
         rows = ['region', 'area', 'distributor']
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
         rows_total = ['region', 'area', 'distributor']
 
         ct = Dataset(df, rows, columns, values, rows_total).crosstab
-        expected_df = pd.read_csv('./tests/data/crosstab.csv')
+        expected_df = pd.read_csv('%s/crosstab.csv' % data_loc)
         ct.fillna(0.0, inplace=True)
         expected_df.fillna(0.0, inplace=True)
 

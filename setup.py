@@ -11,4 +11,7 @@ setup(name='tryp',
       version='0.0',
       description='tryp',
       install_requires=requires,
-     )
+      entry_points={
+          'console_scripts': ['trypgen = tryp.tryp:main']
+          }
+      )

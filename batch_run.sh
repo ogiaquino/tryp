@@ -1,6 +1,3 @@
 pyclean .
 rm *.xls
-python tryp.py --reportname=bsr_excel
-python tryp.py --reportname=dsr_excel
-python tryp.py --reportname=inventory_by_dist
-python tryp.py --reportname=inventory_by_sku
+trypgen -f inventory_by_sku.tryp -d inventory_by_sku.csv -o output.xls
