@@ -1,7 +1,7 @@
 import os
 import tempfile
 import unittest
-from tryp.parser import parse_tryp 
+from tryp.parser import parse_tryp
 
 
 class TestParser(unittest.TestCase):
@@ -15,8 +15,8 @@ class TestParser(unittest.TestCase):
               "values": ["Target","Sell Out Actual"],
               "rows_totals": ["Regional","Region","Distributor"],
               "labels": {"values": {
-                          "Ach": "% Ach", 
-                          "Target": "Target", 
+                          "Ach": "% Ach",
+                          "Target": "Target",
                           "Sell Out Actual": "Sell Out Actual"
                         }
               }
