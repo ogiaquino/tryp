@@ -18,7 +18,8 @@ def merge_labels(indexes, index_width, total_width):
     labels = {}
     for ir in range(index_width):
         labels[ir] = []
-        series = pd.Series(map(lambda x: x[ir], indexes))
+        #series = pd.Series(map(lambda x: x[ir], indexes))
+        series = pd.Series(zip(*indexes)[ir])
         if ir <= total_width:
             series = series.drop_duplicates()
 
