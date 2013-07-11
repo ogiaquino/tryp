@@ -5,6 +5,7 @@ from tryp.dataset import Dataset
 
 data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
+
 class TestDataset(unittest.TestCase):
     def test_crosstab(self):
         df = pd.read_csv('%s/fixture.csv' % data_loc)
