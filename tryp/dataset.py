@@ -1,6 +1,9 @@
+import imp
 import pandas as pd
 import numpy as np
 from pandas.core.index import MultiIndex
+
+foo = imp.load_source('dsr_excel.computed_values', '')
 
 
 class Dataset(object):
