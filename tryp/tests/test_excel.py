@@ -1,7 +1,7 @@
 import os
 import unittest
 import pandas as pd
-from tryp.excel import *
+from tryp.excel import Excel
 from tryp.dataset import Dataset
 
 data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
@@ -45,7 +45,8 @@ class TestExcel(unittest.TestCase):
                                             (13, 13, u'HEBAT'),
                                             (14, 14, u'PENGEDAR')]}
 
-        labels = merge_labels(ct.index, 3, 2)
+        excel = Excel()
+        labels = excel.merge_labels(ct.index, 3, 2)
         assert labels == merge_labels_expected_result
         assert len(labels) == len(rows)
         for i in labels:
