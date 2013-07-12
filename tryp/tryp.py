@@ -24,6 +24,9 @@ class Tryp(object):
         self.crosstab = Dataset(self.df, self.rows, self.columns, self.values,
                                 self.rows_totals).crosstab
 
+    def to_excel(self):
+        return to_excel(self)
+
     def data_frame(self, csv_file):
         df = read_csv(csv_file)
         return df
@@ -39,8 +42,7 @@ def main():
         tryp_file = args.f
         output_file = args.o
         csv_file = args.d
-        tryp = Tryp(tryp_file, csv_file, output_file)
-        to_excel(tryp)
+        Tryp(tryp_file, csv_file, output_file).to_excel()
 
 if __name__ == '__main__':
     main()
