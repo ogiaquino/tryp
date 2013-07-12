@@ -2,7 +2,7 @@
  "crosstab": {
   "columns": ["Category"],
   "rows": ["Regional","Region","Distributor","SR Code","SR Name"],
-  "values": ["Target","Sell Out Actual"],
+  "values": ["Target","Sell Out Actual", "Ach"],
   "rows_totals": ["Regional","Region","Distributor"],
   "columns_totals": ["Category"],
   "labels": {"values": {

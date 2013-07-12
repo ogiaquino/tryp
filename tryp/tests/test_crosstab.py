@@ -12,9 +12,18 @@ class TestCrosstab(unittest.TestCase):
         rows = ['region', 'area', 'distributor']
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
-        rows_total = ['region', 'area', 'distributor']
+        rows_totals = ['region', 'area', 'distributor']
 
-        ct = Dataset(df, rows, columns, values, rows_total).crosstab
+        trypobj = type('tryp', (object,),
+                       {'df': df,
+                        'rows': rows,
+                        'columns': columns,
+                        'values': values,
+                        'rows_totals': rows_totals,
+                        'extmodule': None
+                        })()
+
+        ct = Dataset(trypobj).crosstab
         expected_df = pd.read_csv('%s/crosstab.csv' % data_loc)
         ct.fillna(0.0, inplace=True)
         expected_df.fillna(0.0, inplace=True)

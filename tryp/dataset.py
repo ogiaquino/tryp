@@ -1,25 +1,35 @@
 import imp
 import pandas as pd
 import numpy as np
-from pandas.core.index import MultiIndex
-
-foo = imp.load_source('dsr_excel.computed_values', '')
 
 
 class Dataset(object):
-    def __init__(self, df, rows, columns, values, rows_total):
-        self.crosstab = self._crosstab(df, rows, columns, values, rows_total)
+    def __init__(self, tryp):
+        self.df = tryp.df
+        self.rows = tryp.rows
+        self.columns = tryp.columns
+        self.values = tryp.values
+        self.rows_totals = tryp.rows_totals
+        self.crosstab = self._crosstab(self.df,
+                                       self.rows,
+                                       self.columns,
+                                       self.values,
+                                       self.rows_totals)
+        if tryp.extmodule:
+            extmodule = tryp.extmodule
+            extmodule = imp.load_source(tryp.extmodule[0], tryp.extmodule[1])
+            self.crosstab = extmodule.extend(self)
         self.crosstab.values_labels = self._values_labels(self.crosstab)
 
-    def _crosstab(self, df, rows, columns, values, rows_total):
+    def _crosstab(self, df, rows, columns, values, rows_totals):
         ct = df.groupby(rows + columns).sum()[values].unstack(columns)
         if columns:
             ct = self._columns_totals(df, rows, columns, values, ct)
-        ct = self._rows_totals(rows, rows_total, ct)
+        ct = self._rows_totals(rows, rows_totals, ct)
         return self._rename(ct)
 
     def _values_labels(self, ct):
-        if isinstance(ct.columns, MultiIndex):
+        if isinstance(ct.columns, pd.MultiIndex):
             return map(lambda x: x[-1], ct.columns)
         return ct.columns
 
@@ -57,7 +67,7 @@ class Dataset(object):
         ct = pd.DataFrame(ct, columns=sorted_columns)
         return ct
 
-    def _rows_totals(self, rows, rows_total, ct):
+    def _rows_totals(self, rows, rows_totals, ct):
         ct_row_subtotals = []
         if len(rows) > 1:
             ct_rows = []
@@ -72,7 +82,7 @@ class Dataset(object):
                 rows_dict = dict([(r, len(rows) - i - 1) for i, r in
                                   enumerate(rows)])
 
-                if len(result) in [rows_dict[r] for r in rows_total]:
+                if len(result) in [rows_dict[r] for r in rows_totals]:
                     index = row + result
                     row_df = pd.DataFrame({index: ct.ix[row].sum()}).T
                     ct_row_subtotals.append(row_df)

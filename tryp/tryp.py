@@ -1,3 +1,4 @@
+import os
 from pandas.io.parsers import read_csv
 
 from excel import to_excel
@@ -8,7 +9,6 @@ from parser import parse
 class Tryp(object):
     def __init__(self, tryp_file, csv_file, output_file):
         self.report = parse(tryp_file)
-
         self.df = self.data_frame(csv_file)
         self.rows = self.report['rows']
         self.columns = self.report['columns']
@@ -21,8 +21,16 @@ class Tryp(object):
         self.excel['filename'] = output_file
         self.excel['sheetname'] = 'Sheet1'
 
-        self.crosstab = Dataset(self.df, self.rows, self.columns, self.values,
-                                self.rows_totals).crosstab
+        self.extmodule = self.is_extmodule_exist(tryp_file)
+        self.crosstab = Dataset(self).crosstab
+
+    def is_extmodule_exist(self, tryp_file):
+        tryp_path = os.path.abspath(tryp_file)
+        tryp_path, tryp_file = os.path.split(tryp_file)
+        tryp_filename = os.path.splitext(tryp_file)[0]
+        extmodule = os.path.join(tryp_path, tryp_filename + '.py')
+        if os.path.exists(extmodule):
+            return (tryp_filename, extmodule)
 
     def to_excel(self):
         return to_excel(self)

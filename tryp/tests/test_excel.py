@@ -13,10 +13,18 @@ class TestExcel(unittest.TestCase):
         rows = ['region', 'area', 'distributor']
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
-        rows_total = ['region', 'area']
+        rows_totals = ['region', 'area']
 
-        ct = Dataset(df, rows, columns, values, rows_total).crosstab
+        trypobj = type('tryp', (object,),
+                       {'df': df,
+                        'rows': rows,
+                        'columns': columns,
+                        'values': values,
+                        'rows_totals': rows_totals,
+                        'extmodule': None
+                        })()
 
+        ct = Dataset(trypobj).crosstab
         merge_labels_expected_result = {0: [(0, 0, u''),
                                             (1, 7, u'Central'),
                                             (8, 14, u'East')],
