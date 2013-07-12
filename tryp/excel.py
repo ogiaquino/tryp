@@ -16,18 +16,23 @@ def to_excel(tryp):
 
 def merge_labels(indexes, index_width, total_width):
     labels = {}
-    for ir in range(index_width):
-        labels[ir] = []
-        #series = pd.Series(map(lambda x: x[ir], indexes))
-        series = pd.Series(zip(*indexes)[ir])
-        if ir <= total_width:
-            series = series.drop_duplicates()
 
+    def __labels(k, series):
+        labels[k] = []
         lseries = series.index.tolist()
         lseries.append(len(indexes))
         for il, idx in enumerate(lseries[:-1]):
-            label = series[idx].decode("utf-8")
-            labels[ir].append((idx, lseries[il + 1] - 1, label))
+            labels[k].append((idx, lseries[il + 1] - 1, series[idx]))
+
+    for ir in range(total_width):
+        series = pd.Series(zip(*indexes)[ir])
+        series = series.drop_duplicates()
+        __labels(ir, series)
+
+    for ir in range(total_width, index_width):
+        series = pd.Series(zip(*indexes)[ir])
+        __labels(ir, series)
+
     return labels
 
 
@@ -45,7 +50,7 @@ def write_index(ws, tryp):
             c1 = k
             c2 = k
             label = label[2]
-            ws.write_merge(r1, r2, c1, c2, label)
+            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
 
 
 def write_columns(ws, tryp):
@@ -62,7 +67,7 @@ def write_columns(ws, tryp):
             c1 = label[0] + len(rows)
             c2 = label[1] + len(rows)
             label = label[2]
-            ws.write_merge(r1, r2, c1, c2, label)
+            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
 
 
 def write_values_labels(ws, tryp):
