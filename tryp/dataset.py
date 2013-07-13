@@ -15,11 +15,13 @@ class Dataset(object):
                                        self.columns,
                                        self.values,
                                        self.rows_totals)
+        self.crosstab.values_labels = self._values_labels(self.crosstab)
+
+    def _extend(self, extmodule):
         if tryp.extmodule:
             extmodule = tryp.extmodule
             extmodule = imp.load_source(tryp.extmodule[0], tryp.extmodule[1])
             self.crosstab = extmodule.extend(self)
-        self.crosstab.values_labels = self._values_labels(self.crosstab)
 
     def _crosstab(self, df, rows, columns, values, rows_totals):
         ct = df.groupby(rows + columns).sum()[values].unstack(columns)
