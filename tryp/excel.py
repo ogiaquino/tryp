@@ -2,43 +2,43 @@ import pandas as pd
 from xlwt import Workbook
 
 
-def to_excel(tryp):
-    sheetname = tryp.excel['sheetname']
-    filename = tryp.excel['filename']
+def to_excel(ct):
+    sheetname = ct.excel['sheetname']
+    filename = ct.excel['filename']
     wb = Workbook()
-    tryp.ws = wb.add_sheet(sheetname)
-    write_axes(tryp)
-    write_values(tryp)
+    ws = wb.add_sheet(sheetname)
+    write_axes(ct, ws)
+    write_values(ct, ws)
     wb.save(filename)
 
 
-def write_axes(tryp):
+def write_axes(ct, ws):
     def _write_axes(idx):
         r1 = idx['r1']
         r2 = idx['r2']
         c1 = idx['c1']
         c2 = idx['c2']
         label = idx['label']
-        tryp.ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
+        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
 
-    for idx in _index(tryp):
+    for idx in _index(ct):
         _write_axes(idx)
 
-    for idx in _columns(tryp):
+    for idx in _columns(ct):
         _write_axes(idx)
 
 
-def write_values(tryp):
+def write_values(ct, ws):
     def _write_values(idx):
         r = idx['r']
         c = idx['c']
         label = idx['label']
-        tryp.ws.write(r, c, label)
+        ws.write(r, c, label)
 
-    for idx in _values_labels(tryp):
+    for idx in _values_labels(ct):
         _write_values(idx)
 
-    for idx in _values(tryp):
+    for idx in _values(ct):
         _write_values(idx)
 
 
@@ -64,12 +64,11 @@ def _merge_labels(indexes, index_width, total_width):
     return labels
 
 
-def _index(tryp):
-    columns = tryp.columns
-    indexes = tryp.crosstab.index
-    index_width = len(tryp.rows)
-    total_width = len(tryp.rows_totals)
-    labels = _merge_labels(indexes, index_width, total_width)
+def _index(ct):
+    columns = ct.levels.columns
+    index_width = len(ct.levels.rows)
+    total_width = len(ct.rows_totals)
+    labels = _merge_labels(ct.index, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -81,12 +80,11 @@ def _index(tryp):
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label}
 
 
-def _columns(tryp):
-    rows = tryp.rows
-    indexes = tryp.crosstab.columns
-    index_width = len(tryp.columns)
-    total_width = len(tryp.columns_totals)
-    labels = _merge_labels(indexes, index_width, total_width)
+def _columns(ct):
+    rows = ct.levels.rows
+    index_width = len(ct.levels.columns)
+    total_width = len(ct.columns_totals)
+    labels = _merge_labels(ct.columns, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -98,26 +96,24 @@ def _columns(tryp):
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label}
 
 
-def _values_labels(tryp):
-    rows = tryp.rows
-    columns = tryp.columns
-    labels = tryp.labels
-    values_labels = tryp.crosstab.values_labels
+def _values_labels(ct):
+    levels_rows = ct.levels.rows
+    levels_columns = ct.levels.columns
+    levels_values = ct.levels.values
 
-    for i, cc in enumerate(values_labels):
-        r = len(columns)
-        c = len(rows) + i
+    for i, cc in enumerate(levels_values):
+        r = len(levels_columns)
+        c = len(levels_rows) + i
         label = cc
         yield {'r': r, 'c': c, 'label': label}
 
 
-def _values(tryp):
-    rows = tryp.rows
-    columns = tryp.columns
-    crosstab = tryp.crosstab
+def _values(ct):
+    levels_rows = ct.levels.rows
+    levels_columns = ct.levels.columns
 
-    for iv, value in enumerate(crosstab.values):
+    for iv, value in enumerate(ct.values):
         for il, label in enumerate(value):
-            r = iv + len(columns) + 1
-            c = il + len(rows)
+            r = iv + len(levels_columns) + 1
+            c = il + len(levels_rows)
             yield {'r': r, 'c': c, 'label': label}

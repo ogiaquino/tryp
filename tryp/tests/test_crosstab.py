@@ -1,7 +1,7 @@
 import os
 import unittest
 import pandas as pd
-from tryp.dataset import Dataset
+from tryp.crosstab import Crosstab
 
 data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
@@ -13,6 +13,11 @@ class TestCrosstab(unittest.TestCase):
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
         rows_totals = ['region', 'area', 'distributor']
+        columns_totals = ['region', 'area', 'distributor']
+
+        excel = {}
+        excel['filename'] = 'filename'
+        excel['sheetname'] = 'Sheet1'
 
         trypobj = type('tryp', (object,),
                        {'df': df,
@@ -20,10 +25,12 @@ class TestCrosstab(unittest.TestCase):
                         'columns': columns,
                         'values': values,
                         'rows_totals': rows_totals,
-                        'extmodule': None
+                        'columns_totals': columns_totals,
+                        'extmodule': None,
+                        'excel': excel
                         })()
 
-        ct = Dataset(trypobj).crosstab
+        ct = Crosstab(trypobj)
         expected_df = pd.read_csv('%s/crosstab.csv' % data_loc)
         ct.fillna(0.0, inplace=True)
         expected_df.fillna(0.0, inplace=True)

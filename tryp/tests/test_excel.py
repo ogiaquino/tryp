@@ -2,7 +2,7 @@ import os
 import unittest
 import pandas as pd
 from tryp.excel import _merge_labels
-from tryp.dataset import Dataset
+from tryp.crosstab import Crosstab
 
 data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
@@ -14,6 +14,11 @@ class TestExcel(unittest.TestCase):
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
         rows_totals = ['region', 'area']
+        columns_totals = ['region', 'area', 'distributor']
+
+        excel = {}
+        excel['filename'] = 'filename'
+        excel['sheetname'] = 'Sheet1'
 
         trypobj = type('tryp', (object,),
                        {'df': df,
@@ -21,10 +26,12 @@ class TestExcel(unittest.TestCase):
                         'columns': columns,
                         'values': values,
                         'rows_totals': rows_totals,
-                        'extmodule': None
+                        'columns_totals': columns_totals,
+                        'extmodule': None,
+                        'excel': excel
                         })()
 
-        ct = Dataset(trypobj).crosstab
+        ct = Crosstab(trypobj)
         merge_labels_expected_result = {0: [(0, 0, u''),
                                             (1, 7, u'Central'),
                                             (8, 14, u'East')],

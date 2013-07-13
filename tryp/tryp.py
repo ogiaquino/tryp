@@ -1,9 +1,7 @@
 import os
 from pandas.io.parsers import read_csv
-
-from excel import to_excel
-from dataset import Dataset
 from parser import parse
+from crosstab import Crosstab
 
 
 class Tryp(object):
@@ -22,7 +20,7 @@ class Tryp(object):
         self.excel['sheetname'] = 'Sheet1'
 
         self.extmodule = self.is_extmodule_exist(tryp_file)
-        self.crosstab = Dataset(self).crosstab
+        self.crosstab = Crosstab(self)
 
     def is_extmodule_exist(self, tryp_file):
         tryp_path = os.path.abspath(tryp_file)
@@ -32,8 +30,6 @@ class Tryp(object):
         if os.path.exists(extmodule):
             return (tryp_filename, extmodule)
 
-    def to_excel(self):
-        return to_excel(self)
 
     def data_frame(self, csv_file):
         df = read_csv(csv_file)
@@ -50,7 +46,7 @@ def main():
         tryp_file = args.f
         output_file = args.o
         csv_file = args.d
-        Tryp(tryp_file, csv_file, output_file).to_excel()
+        Tryp(tryp_file, csv_file, output_file).crosstab.to_excel()
 
 if __name__ == '__main__':
     main()

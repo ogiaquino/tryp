@@ -2,20 +2,35 @@ import imp
 import pandas as pd
 import numpy as np
 
+from excel import to_excel as to_excel
 
-class Dataset(object):
-    def __init__(self, tryp):
-        self.df = tryp.df
-        self.rows = tryp.rows
-        self.columns = tryp.columns
-        self.values = tryp.values
-        self.rows_totals = tryp.rows_totals
-        self.crosstab = self._crosstab(self.df,
-                                       self.rows,
-                                       self.columns,
-                                       self.values,
-                                       self.rows_totals)
-        self.crosstab.values_labels = self._values_labels(self.crosstab)
+class Levels(object):
+    pass
+
+class Crosstab(object):
+    def __init__(self, tryp_crosstab):
+        ct = self._crosstab(tryp_crosstab.df,
+                            tryp_crosstab.rows,
+                            tryp_crosstab.columns,
+                            tryp_crosstab.values,
+                            tryp_crosstab.rows_totals)
+
+        self.levels = Levels()
+        self.levels.rows = tryp_crosstab.rows
+        self.levels.columns = tryp_crosstab.columns
+        self.levels.values = self._levels_values(ct)
+        self.index = ct.index
+        self.columns = ct.columns
+        self.values = ct.values
+        self.rows_totals = tryp_crosstab.rows_totals
+        self.columns_totals = tryp_crosstab.columns_totals
+        self.excel = tryp_crosstab.excel
+
+        self.fillna = ct.fillna
+        self.to_records = ct.to_records
+
+    def to_excel(self):
+        to_excel(self)
 
     def _extend(self, extmodule):
         if tryp.extmodule:
@@ -30,7 +45,7 @@ class Dataset(object):
         ct = self._rows_totals(rows, rows_totals, ct)
         return self._rename(ct)
 
-    def _values_labels(self, ct):
+    def _levels_values(self, ct):
         if isinstance(ct.columns, pd.MultiIndex):
             return map(lambda x: x[-1], ct.columns)
         return ct.columns
