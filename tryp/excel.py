@@ -68,7 +68,7 @@ def _index(ct):
     columns = ct.levels.columns
     index_width = len(ct.levels.rows)
     total_width = len(ct.rows_totals)
-    labels = _merge_labels(ct.index, index_width, total_width)
+    labels = _merge_labels(ct.df.index, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -84,7 +84,7 @@ def _columns(ct):
     rows = ct.levels.rows
     index_width = len(ct.levels.columns)
     total_width = len(ct.columns_totals)
-    labels = _merge_labels(ct.columns, index_width, total_width)
+    labels = _merge_labels(ct.df.columns, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -112,7 +112,7 @@ def _values(ct):
     levels_rows = ct.levels.rows
     levels_columns = ct.levels.columns
 
-    for iv, value in enumerate(ct.values):
+    for iv, value in enumerate(ct.df.values):
         for il, label in enumerate(value):
             r = iv + len(levels_columns) + 1
             c = il + len(levels_rows)

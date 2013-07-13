@@ -60,8 +60,8 @@ class TestExcel(unittest.TestCase):
                                             (13, 13, u'HEBAT'),
                                             (14, 14, u'PENGEDAR')]}
 
-        labels = _merge_labels(ct.index, 3, 2)
+        labels = _merge_labels(ct.df.index, 3, 2)
         assert labels == merge_labels_expected_result
         assert len(labels) == len(rows)
         for i in labels:
-            assert len(ct.index) - 1 == labels[i][-1][1]
+            assert len(ct.df.index) - 1 == labels[i][-1][1]

@@ -9,7 +9,7 @@ class Levels(object):
 
 class Crosstab(object):
     def __init__(self, tryp_crosstab):
-        ct = self._crosstab(tryp_crosstab.df,
+        self.df = self._crosstab(tryp_crosstab.df,
                             tryp_crosstab.rows,
                             tryp_crosstab.columns,
                             tryp_crosstab.values,
@@ -18,16 +18,10 @@ class Crosstab(object):
         self.levels = Levels()
         self.levels.rows = tryp_crosstab.rows
         self.levels.columns = tryp_crosstab.columns
-        self.levels.values = self._levels_values(ct)
-        self.index = ct.index
-        self.columns = ct.columns
-        self.values = ct.values
+        self.levels.values = self._levels_values(self.df)
         self.rows_totals = tryp_crosstab.rows_totals
         self.columns_totals = tryp_crosstab.columns_totals
         self.excel = tryp_crosstab.excel
-
-        self.fillna = ct.fillna
-        self.to_records = ct.to_records
 
     def to_excel(self):
         to_excel(self)
