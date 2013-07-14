@@ -24,15 +24,16 @@ class Crosstab(object):
         self.rows_totals = meta.rows_totals
         self.columns_totals = meta.columns_totals
         self.excel = meta.excel
+        self._extend(meta.extmodule)
+            
 
     def to_excel(self):
         to_excel(self)
 
     def _extend(self, extmodule):
-        if tryp.extmodule:
-            extmodule = tryp.extmodule
-            extmodule = imp.load_source(tryp.extmodule[0], tryp.extmodule[1])
-            self.crosstab = extmodule.extend(self)
+        if extmodule:
+            extmodule = imp.load_source(extmodule[0], extmodule[1])
+            extmodule.extend(self)
 
     def _crosstab(self, df, rows, columns, values, rows_totals):
         ct = df.groupby(rows + columns).sum()[values].unstack(columns)
