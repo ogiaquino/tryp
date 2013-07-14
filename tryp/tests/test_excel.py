@@ -1,14 +1,14 @@
 import os
 import unittest
 import pandas as pd
-from tryp.excel import _merge_labels
+from tryp.excel import _merge_indexes
 from tryp.crosstab import Crosstab
 
 data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
 
 class TestExcel(unittest.TestCase):
-    def test_merge_labels(self):
+    def test_merge_indexes(self):
         df = pd.read_csv('%s/fixture.csv' % data_loc)
         rows = ['region', 'area', 'distributor']
         columns = ['salesrep', 'retailer']
@@ -32,7 +32,7 @@ class TestExcel(unittest.TestCase):
                         })()
 
         ct = Crosstab(trypobj)
-        merge_labels_expected_result = {0: [(0, 0, u''),
+        merge_indexes_expected_result = {0: [(0, 0, u''),
                                             (1, 7, u'Central'),
                                             (8, 14, u'East')],
 
@@ -60,8 +60,8 @@ class TestExcel(unittest.TestCase):
                                             (13, 13, u'HEBAT'),
                                             (14, 14, u'PENGEDAR')]}
 
-        labels = _merge_labels(ct.df.index, 3, 2)
-        assert labels == merge_labels_expected_result
-        assert len(labels) == len(rows)
-        for i in labels:
-            assert len(ct.df.index) - 1 == labels[i][-1][1]
+        indexes = _merge_indexes(ct.df.index, 3, 2)
+        assert indexes == merge_indexes_expected_result
+        assert len(indexes) == len(rows)
+        for i in indexes:
+            assert len(ct.df.index) - 1 == indexes[i][-1][1]

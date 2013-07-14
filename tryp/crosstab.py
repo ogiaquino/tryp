@@ -4,16 +4,18 @@ import numpy as np
 
 from excel import to_excel as to_excel
 
+
 class Levels(object):
     pass
+
 
 class Crosstab(object):
     def __init__(self, tryp_crosstab):
         self.df = self._crosstab(tryp_crosstab.df,
-                            tryp_crosstab.rows,
-                            tryp_crosstab.columns,
-                            tryp_crosstab.values,
-                            tryp_crosstab.rows_totals)
+                                 tryp_crosstab.rows,
+                                 tryp_crosstab.columns,
+                                 tryp_crosstab.values,
+                                 tryp_crosstab.rows_totals)
 
         self.levels = Levels()
         self.levels.rows = tryp_crosstab.rows

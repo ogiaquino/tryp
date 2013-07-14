@@ -42,7 +42,7 @@ def write_values(ct, ws):
         _write_values(idx)
 
 
-def _merge_labels(indexes, index_width, total_width):
+def _merge_indexes(indexes, index_width, total_width):
     labels = {}
 
     def __labels(k, series):
@@ -68,7 +68,7 @@ def _index(ct):
     columns = ct.levels.columns
     index_width = len(ct.levels.rows)
     total_width = len(ct.rows_totals)
-    labels = _merge_labels(ct.df.index, index_width, total_width)
+    labels = _merge_indexes(ct.df.index, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -84,7 +84,7 @@ def _columns(ct):
     rows = ct.levels.rows
     index_width = len(ct.levels.columns)
     total_width = len(ct.columns_totals)
-    labels = _merge_labels(ct.df.columns, index_width, total_width)
+    labels = _merge_indexes(ct.df.columns, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
