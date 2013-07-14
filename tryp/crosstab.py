@@ -20,12 +20,12 @@ class Crosstab(object):
         self.levels = Levels()
         self.levels.rows = meta.rows
         self.levels.columns = meta.columns
-        self.levels.values = self._levels_values(self.df)
+        self.levels.values = meta.values
         self.rows_totals = meta.rows_totals
         self.columns_totals = meta.columns_totals
+        self.values_labels =  self._values_labels(self.df)
         self.excel = meta.excel
         self._extend(meta.extmodule)
-            
 
     def to_excel(self):
         to_excel(self)
@@ -42,7 +42,7 @@ class Crosstab(object):
         ct = self._rows_totals(rows, rows_totals, ct)
         return self._rename(ct)
 
-    def _levels_values(self, ct):
+    def _values_labels(self, ct):
         if isinstance(ct.columns, pd.MultiIndex):
             return map(lambda x: x[-1], ct.columns)
         return ct.columns

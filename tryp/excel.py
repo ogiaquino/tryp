@@ -99,7 +99,7 @@ def _columns(ct):
 def _values_labels(ct):
     levels_rows = ct.levels.rows
     levels_columns = ct.levels.columns
-    levels_values = ct.levels.values
+    levels_values = ct.values_labels
 
     for i, cc in enumerate(levels_values):
         r = len(levels_columns)
