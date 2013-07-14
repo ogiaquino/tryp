@@ -4,9 +4,9 @@ from parser import parse
 from crosstab import Crosstab
 
 
-class Tryp(object):
+class MetaCrosstab(object):
     def __init__(self, tryp_file, csv_file, output_file):
-        self.report = parse(tryp_file)
+        self.report = parse(tryp_file, 'crosstab')
         self.df = self.data_frame(csv_file)
         self.rows = self.report['rows']
         self.columns = self.report['columns']
@@ -14,13 +14,10 @@ class Tryp(object):
         self.labels = self.report['labels']
         self.rows_totals = self.report['rows_totals']
         self.columns_totals = self.report['columns_totals']
-
         self.excel = {}
         self.excel['filename'] = output_file
         self.excel['sheetname'] = os.path.splitext(output_file)[0]
-
         self.extmodule = self.is_extmodule_exist(tryp_file)
-        self.crosstab = Crosstab(self)
 
     def is_extmodule_exist(self, tryp_file):
         tryp_path = os.path.abspath(tryp_file)
@@ -30,10 +27,15 @@ class Tryp(object):
         if os.path.exists(extmodule):
             return (tryp_filename, extmodule)
 
-
     def data_frame(self, csv_file):
         df = read_csv(csv_file)
         return df
+
+
+class Tryp(object):
+    def __init__(self, tryp_file, csv_file, output_file):
+        meta = MetaCrosstab(tryp_file, csv_file, output_file)
+        self.crosstab = Crosstab(meta)
 
 
 def main():

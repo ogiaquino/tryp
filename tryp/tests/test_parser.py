@@ -25,7 +25,7 @@ class TestParser(unittest.TestCase):
             }
             """)
         tryp_file.close()
-        json = parse_tryp(tryp_file.name)
+        json = parse_tryp(tryp_file.name, "crosstab")
 
         assert len(json) == 6
         assert "columns" in json

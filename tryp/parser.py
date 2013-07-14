@@ -1,9 +1,9 @@
 import json
 
 
-def parse_tryp(tryp_file):
+def parse_tryp(tryp_file, reportobj):
     with open(tryp_file) as data_file:
         data = json.load(data_file)
-        return data["crosstab"]
+        return data[reportobj]
 
 parse = parse_tryp
