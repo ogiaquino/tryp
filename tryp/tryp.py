@@ -17,7 +17,7 @@ class Tryp(object):
 
         self.excel = {}
         self.excel['filename'] = output_file
-        self.excel['sheetname'] = 'Sheet1'
+        self.excel['sheetname'] = os.path.splitext(output_file)[0]
 
         self.extmodule = self.is_extmodule_exist(tryp_file)
         self.crosstab = Crosstab(self)
