@@ -23,7 +23,6 @@ class Crosstab(object):
         self.levels.values = meta.values
         self.rows_totals = meta.rows_totals
         self.columns_totals = meta.columns_totals
-        self.values_labels =  self._values_labels(self.df)
         self.excel = meta.excel
         self._extend(meta.extmodule)
 
@@ -34,6 +33,7 @@ class Crosstab(object):
         if extmodule:
             extmodule = imp.load_source(extmodule[0], extmodule[1])
             extmodule.extend(self)
+        self.values_labels =  self._values_labels(self.df)
 
     def _crosstab(self, df, rows, columns, values, rows_totals):
         ct = df.groupby(rows + columns).sum()[values].unstack(columns)
