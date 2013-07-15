@@ -117,3 +117,13 @@ def _values(ct):
             r = iv + len(levels_columns) + 1
             c = il + len(levels_rows)
             yield {'r': r, 'c': c, 'label': label}
+
+
+def _get_levels(ct, x, y):
+    ilevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.rows)])
+    clevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.columns)])
+    vlevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.values)])
+
+    return (ilevels[len(set(ct.df.index[x]))],
+            clevels[len(set(ct.df.columns[y])) - 1],
+            vlevels[(y % len(ct.levels.values) + 1) or len(ct.levels.values)])
