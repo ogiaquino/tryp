@@ -132,3 +132,12 @@ class Crosstab(object):
 
         renamed = pd.DataFrame(df.values, index=idx, columns=col)
         return renamed
+
+    @property
+    def axes(self):
+        index = dict([(k + 1, v) for k, v in enumerate(self.levels.index)])
+        columns = dict([(k + 1, v) for k, v in enumerate(self.levels.columns)])
+        values = dict([(k + 1, v) for k, v in enumerate(self.levels.values)])
+        return {'index': index,
+                'columns': columns,
+                'values': values}
