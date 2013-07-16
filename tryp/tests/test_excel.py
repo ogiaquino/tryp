@@ -1,7 +1,7 @@
 import os
 import unittest
 import pandas as pd
-from tryp.excel import _merge_indexes
+from tryp.excel import merge_indexes
 from tryp.crosstab import Crosstab
 
 data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
@@ -60,7 +60,7 @@ class TestExcel(unittest.TestCase):
                                             (13, 13, u'HEBAT'),
                                             (14, 14, u'PENGEDAR')]}
 
-        indexes = _merge_indexes(ct.df.index, 3, 2)
+        indexes = merge_indexes(ct.df.index, 3, 2)
         assert indexes == merge_indexes_expected_result
         assert len(indexes) == len(index)
         for i in indexes:
