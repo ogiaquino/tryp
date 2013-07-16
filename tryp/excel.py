@@ -1,5 +1,6 @@
 import pandas as pd
 from xlwt import Workbook
+from style import style_values
 
 
 def to_excel(ct):
@@ -21,28 +22,28 @@ def write_axes(ct, ws):
         label = idx['label']
         ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
 
-    for idx in _index(ct):
+    for idx in index(ct):
         _write_axes(idx)
 
-    for idx in _columns(ct):
+    for idx in columns(ct):
         _write_axes(idx)
 
 
 def write_values(ct, ws):
-    def _write_values(idx):
+    def _write_values(idx, style):
         r = idx['r']
         c = idx['c']
         label = idx['label']
-        ws.write(r, c, label)
+        ws.write(r, c, label, style)
 
-    for idx in _values_labels(ct):
-        _write_values(idx)
+    for idx in values_labels(ct):
+        _write_values(idx, style_values(ct, idx))
 
-    for idx in _values(ct):
-        _write_values(idx)
+    for idx in values(ct):
+        _write_values(idx, style_values(ct, idx))
 
 
-def _merge_indexes(indexes, index_width, total_width):
+def merge_indexes(indexes, index_width, total_width):
     labels = {}
 
     def __labels(k, series):
@@ -64,11 +65,11 @@ def _merge_indexes(indexes, index_width, total_width):
     return labels
 
 
-def _index(ct):
+def index(ct):
     columns = ct.levels.columns
     index_width = len(ct.levels.index)
     total_width = len(ct.index_totals)
-    labels = _merge_indexes(ct.df.index, index_width, total_width)
+    labels = merge_indexes(ct.df.index, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -80,11 +81,11 @@ def _index(ct):
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label}
 
 
-def _columns(ct):
+def columns(ct):
     index = ct.levels.index
     columns_width = len(ct.levels.columns)
     total_width = len(ct.columns_totals)
-    labels = _merge_indexes(ct.df.columns, columns_width, total_width)
+    labels = merge_indexes(ct.df.columns, columns_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -96,7 +97,7 @@ def _columns(ct):
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label}
 
 
-def _values_labels(ct):
+def values_labels(ct):
     levels_index = ct.levels.index
     levels_columns = ct.levels.columns
     levels_values = ct.values_labels
@@ -108,7 +109,7 @@ def _values_labels(ct):
         yield {'r': r, 'c': c, 'label': label}
 
 
-def _values(ct):
+def values(ct):
     levels_index = ct.levels.index
     levels_columns = ct.levels.columns
 
@@ -117,13 +118,3 @@ def _values(ct):
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)
             yield {'r': r, 'c': c, 'label': label}
-
-
-def _get_levels(ct, x, y):
-    ilevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.index)])
-    clevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.columns)])
-    vlevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.values)])
-
-    return (ilevels[len(set(ct.df.index[x]))],
-            clevels[len(set(ct.df.columns[y])) - 1],
-            vlevels[(y % len(ct.levels.values) + 1) or len(ct.levels.values)])
