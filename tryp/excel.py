@@ -66,8 +66,8 @@ def _merge_indexes(indexes, index_width, total_width):
 
 def _index(ct):
     columns = ct.levels.columns
-    index_width = len(ct.levels.rows)
-    total_width = len(ct.rows_totals)
+    index_width = len(ct.levels.index)
+    total_width = len(ct.index_totals)
     labels = _merge_indexes(ct.df.index, index_width, total_width)
 
     for k in sorted(labels.keys()):
@@ -81,46 +81,46 @@ def _index(ct):
 
 
 def _columns(ct):
-    rows = ct.levels.rows
-    index_width = len(ct.levels.columns)
+    index = ct.levels.index
+    columns_width = len(ct.levels.columns)
     total_width = len(ct.columns_totals)
-    labels = _merge_indexes(ct.df.columns, index_width, total_width)
+    labels = _merge_indexes(ct.df.columns, columns_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
             r1 = k
             r2 = k
-            c1 = label[0] + len(rows)
-            c2 = label[1] + len(rows)
+            c1 = label[0] + len(index)
+            c2 = label[1] + len(index)
             label = label[2]
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label}
 
 
 def _values_labels(ct):
-    levels_rows = ct.levels.rows
+    levels_index = ct.levels.index
     levels_columns = ct.levels.columns
     levels_values = ct.values_labels
 
     for i, cc in enumerate(levels_values):
         r = len(levels_columns)
-        c = len(levels_rows) + i
+        c = len(levels_index) + i
         label = cc
         yield {'r': r, 'c': c, 'label': label}
 
 
 def _values(ct):
-    levels_rows = ct.levels.rows
+    levels_index = ct.levels.index
     levels_columns = ct.levels.columns
 
     for iv, value in enumerate(ct.df.values):
         for il, label in enumerate(value):
             r = iv + len(levels_columns) + 1
-            c = il + len(levels_rows)
+            c = il + len(levels_index)
             yield {'r': r, 'c': c, 'label': label}
 
 
 def _get_levels(ct, x, y):
-    ilevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.rows)])
+    ilevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.index)])
     clevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.columns)])
     vlevels = dict([(k + 1, v) for k, v in enumerate(ct.levels.values)])
 

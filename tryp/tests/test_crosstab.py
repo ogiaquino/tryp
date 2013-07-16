@@ -9,10 +9,10 @@ data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
 class TestCrosstab(unittest.TestCase):
     def test_crosstab(self):
         df = pd.read_csv('%s/fixture.csv' % data_loc)
-        rows = ['region', 'area', 'distributor']
+        index = ['region', 'area', 'distributor']
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
-        rows_totals = ['region', 'area', 'distributor']
+        index_totals = ['region', 'area', 'distributor']
         columns_totals = ['region', 'area', 'distributor']
 
         excel = {}
@@ -21,10 +21,10 @@ class TestCrosstab(unittest.TestCase):
 
         trypobj = type('tryp', (object,),
                        {'df': df,
-                        'rows': rows,
+                        'index': index,
                         'columns': columns,
                         'values': values,
-                        'rows_totals': rows_totals,
+                        'index_totals': index_totals,
                         'columns_totals': columns_totals,
                         'extmodule': None,
                         'excel': excel

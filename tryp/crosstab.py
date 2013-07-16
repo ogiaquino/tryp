@@ -12,16 +12,16 @@ class Levels(object):
 class Crosstab(object):
     def __init__(self, meta):
         self.df = self._crosstab(meta.df,
-                                 meta.rows,
+                                 meta.index,
                                  meta.columns,
                                  meta.values,
-                                 meta.rows_totals)
+                                 meta.index_totals)
 
         self.levels = Levels()
-        self.levels.rows = meta.rows
+        self.levels.index = meta.index
         self.levels.columns = meta.columns
         self.levels.values = meta.values
-        self.rows_totals = meta.rows_totals
+        self.index_totals = meta.index_totals
         self.columns_totals = meta.columns_totals
         self.excel = meta.excel
         self._extend(meta.extmodule)
@@ -35,22 +35,22 @@ class Crosstab(object):
             extmodule.extend(self)
         self.values_labels = self._values_labels(self.df)
 
-    def _crosstab(self, df, rows, columns, values, rows_totals):
-        ct = df.groupby(rows + columns).sum()[values].unstack(columns)
+    def _crosstab(self, df, index, columns, values, index_totals):
+        ctdf = df.groupby(index + columns).sum()[values].unstack(columns)
         if columns:
-            ct = self._columns_totals(df, rows, columns, values, ct)
-        ct = self._rows_totals(rows, rows_totals, ct)
-        return self._rename(ct)
+            ctdf = self._columns_totals(df, index, columns, values, ctdf)
+        ctdf = self._index_totals(index, index_totals, ctdf)
+        return self._rename(ctdf)
 
     def _values_labels(self, ct):
         if isinstance(ct.columns, pd.MultiIndex):
             return map(lambda x: x[-1], ct.columns)
         return ct.columns
 
-    def _columns_totals(self, df, rows, columns, values, ct):
+    def _columns_totals(self, df, index, columns, values, ct):
         ## CREATE SUBTOTALS FOR EACH COLUMNS
         for i in range(1, len(columns)):
-            subtotal = df.groupby(rows + columns[:i]).sum()[values]. \
+            subtotal = df.groupby(index + columns[:i]).sum()[values]. \
                 unstack(columns[:i])
 
             for col in subtotal.columns:
@@ -62,7 +62,7 @@ class Crosstab(object):
 
         ## CREATE GRAND TOTAL
         for value in values:
-            total = df.groupby(rows + columns[-1:]).sum()
+            total = df.groupby(index + columns[-1:]).sum()
             key = (value,) + tuple(['!'] * len(columns))
             ct[key] = total[value].unstack(columns[-1:]).sum(axis=1)
         ## END
@@ -81,54 +81,54 @@ class Crosstab(object):
         ct = pd.DataFrame(ct, columns=sorted_columns)
         return ct
 
-    def _rows_totals(self, rows, rows_totals, ct):
-        ct_row_subtotals = []
-        if len(rows) > 1:
-            ct_rows = []
-            for row in set([x[:-1] for x in ct.index]):
-                for i in range(len(rows)):
-                    if row[:i+1] not in ct_rows:
-                        ct_rows.append(row[:i+1])
+    def _index_totals(self, index, index_totals, df):
+        df_index_subtotals = []
+        if len(index) > 1:
+            df_index = []
+            for idx in set([x[:-1] for x in df.index]):
+                for i in range(len(index)):
+                    if idx[:i+1] not in df_index:
+                        df_index.append(idx[:i+1])
 
-            for row in ct_rows:
-                result = tuple(['!' + row[-1]
-                               for x in range(len(rows) - len(row))])
-                rows_dict = dict([(r, len(rows) - i - 1) for i, r in
-                                  enumerate(rows)])
+            for idx in df_index:
+                result = tuple(['!' + idx[-1]
+                               for x in range(len(index) - len(idx))])
+                index_dict = dict([(r, len(index) - i - 1) for i, r in
+                                  enumerate(index)])
 
-                if len(result) in [rows_dict[r] for r in rows_totals]:
-                    index = row + result
-                    row_df = pd.DataFrame({index: ct.ix[row].sum()}).T
-                    ct_row_subtotals.append(row_df)
+                if len(result) in [index_dict[r] for r in index_totals]:
+                    idxr = idx + result
+                    index_df = pd.DataFrame({idxr: df.ix[idx].sum()}).T
+                    df_index_subtotals.append(index_df)
 
-            total = {tuple(['!'] * len(rows)): ct.ix[:].sum()}
+            total = {tuple(['!'] * len(index)): df.ix[:].sum()}
             total_df = pd.DataFrame(total).T
-            ct_row_subtotals.append(total_df)
+            df_index_subtotals.append(total_df)
         else:
             total_df = pd.DataFrame({'!': ct.ix[:].sum()}).T
-            ct_row_subtotals.append(total_df)
+            ct_index_subtotals.append(total_df)
 
-        ct = pd.concat([ct] + ct_row_subtotals)
-        ct = ct.sort_index(axis=0)
-        return ct
+        df = pd.concat([df] + df_index_subtotals)
+        df = df.sort_index(axis=0)
+        return df
 
-    def _rename(self, ct):
-        if isinstance(ct.columns, pd.MultiIndex):
+    def _rename(self, df):
+        if isinstance(df.columns, pd.MultiIndex):
             col = map(lambda column: tuple([c.replace('!', '')
                                             for c in column]),
-                      ct.columns)
-            col = pd.MultiIndex.from_tuples(col, names=ct.columns.names)
-        elif isinstance(ct.columns, pd.Index):
-            col = [c.replace('!', '') for c in ct.columns]
+                      df.columns)
+            col = pd.MultiIndex.from_tuples(col, names=df.columns.names)
+        elif isinstance(df.columns, pd.Index):
+            col = [c.replace('!', '') for c in df.columns]
             col = pd.Index(col)
 
-        if isinstance(ct.index, pd.MultiIndex):
+        if isinstance(df.index, pd.MultiIndex):
             idx = map(lambda index: tuple([i.replace('!', '') for i in index]),
-                      ct.index)
-            idx = pd.MultiIndex.from_tuples(idx, names=ct.index.names)
-        elif isintance(ct.index, pd.Index):
-            idx = [c.replace('!', '') for c in ct.index]
+                      df.index)
+            idx = pd.MultiIndex.from_tuples(idx, names=df.index.names)
+        elif isintance(df.index, pd.Index):
+            idx = [c.replace('!', '') for c in df.index]
             idx = pd.Index(col)
 
-        renamed = pd.DataFrame(ct.values, index=idx, columns=col)
+        renamed = pd.DataFrame(df.values, index=idx, columns=col)
         return renamed

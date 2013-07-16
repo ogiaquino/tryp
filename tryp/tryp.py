@@ -8,11 +8,11 @@ class MetaCrosstab(object):
     def __init__(self, tryp_file, csv_file, output_file):
         self.report = parse(tryp_file, 'crosstab')
         self.df = self.data_frame(csv_file)
-        self.rows = self.report['rows']
+        self.index = self.report['index']
         self.columns = self.report['columns']
         self.values = self.report['values']
         self.labels = self.report['labels']
-        self.rows_totals = self.report['rows_totals']
+        self.index_totals = self.report['index_totals']
         self.columns_totals = self.report['columns_totals']
         self.excel = {}
         self.excel['filename'] = output_file

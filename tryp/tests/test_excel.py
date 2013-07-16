@@ -10,10 +10,10 @@ data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'
 class TestExcel(unittest.TestCase):
     def test_merge_indexes(self):
         df = pd.read_csv('%s/fixture.csv' % data_loc)
-        rows = ['region', 'area', 'distributor']
+        index = ['region', 'area', 'distributor']
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
-        rows_totals = ['region', 'area']
+        index_totals = ['region', 'area']
         columns_totals = ['region', 'area', 'distributor']
 
         excel = {}
@@ -22,10 +22,10 @@ class TestExcel(unittest.TestCase):
 
         trypobj = type('tryp', (object,),
                        {'df': df,
-                        'rows': rows,
+                        'index': index,
                         'columns': columns,
                         'values': values,
-                        'rows_totals': rows_totals,
+                        'index_totals': index_totals,
                         'columns_totals': columns_totals,
                         'extmodule': None,
                         'excel': excel
@@ -62,6 +62,6 @@ class TestExcel(unittest.TestCase):
 
         indexes = _merge_indexes(ct.df.index, 3, 2)
         assert indexes == merge_indexes_expected_result
-        assert len(indexes) == len(rows)
+        assert len(indexes) == len(index)
         for i in indexes:
             assert len(ct.df.index) - 1 == indexes[i][-1][1]

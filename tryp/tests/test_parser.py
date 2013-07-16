@@ -11,9 +11,9 @@ class TestParser(unittest.TestCase):
             {
              "crosstab": {
               "columns": ["Category"],
-              "rows": ["Regional","Region","Distributor","SR Code","SR Name"],
+              "index": ["Regional","Region","Distributor","SR Code","SR Name"],
               "values": ["Target","Sell Out Actual"],
-              "rows_totals": ["Regional","Region","Distributor"],
+              "index_totals": ["Regional","Region","Distributor"],
               "columns_totals": ["Category"],
               "labels": {"values": {
                           "Ach": "% Ach",
@@ -29,15 +29,15 @@ class TestParser(unittest.TestCase):
 
         assert len(json) == 6
         assert "columns" in json
-        assert "rows" in json
+        assert "index" in json
         assert "values" in json
-        assert "rows_totals" in json
+        assert "index_totals" in json
         assert "columns_totals" in json
         assert "labels" in json
         assert isinstance(json['columns'], list)
-        assert isinstance(json['rows'], list)
+        assert isinstance(json['index'], list)
         assert isinstance(json['values'], list)
-        assert isinstance(json['rows_totals'], list)
+        assert isinstance(json['index_totals'], list)
         assert isinstance(json['columns_totals'], list)
         assert isinstance(json['labels'], dict)
         os.remove(tryp_file.name)
