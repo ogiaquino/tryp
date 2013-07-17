@@ -1,6 +1,5 @@
 import pandas as pd
 from xlwt import Workbook
-from style import style_values
 
 
 def to_excel(ct):
@@ -30,17 +29,17 @@ def write_axes(ct, ws):
 
 
 def write_values(ct, ws):
-    def _write_values(idx, style):
+    def _write_values(idx):
         r = idx['r']
         c = idx['c']
         label = idx['label']
-        ws.write(r, c, label, style)
+        ws.write(r, c, label)
 
     for idx in values_labels(ct):
-        _write_values(idx, style_values(ct, idx))
+        _write_values(idx)
 
     for idx in values(ct):
-        _write_values(idx, style_values(ct, idx))
+        _write_values(idx)
 
 
 def merge_indexes(indexes, index_width, total_width):
