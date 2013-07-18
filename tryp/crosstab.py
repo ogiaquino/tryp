@@ -34,6 +34,7 @@ class Crosstab(object):
             extmodule = imp.load_source(extmodule[0], extmodule[1])
             extmodule.extend(self)
         self.values_labels = self._values_labels(self.df)
+        self.axes = self._axes()
 
     def _crosstab(self, df, index, columns, values, index_totals):
         ctdf = df.groupby(index + columns).sum()[values].unstack(columns)
@@ -133,11 +134,21 @@ class Crosstab(object):
         renamed = pd.DataFrame(df.values, index=idx, columns=col)
         return renamed
 
-    @property
-    def axes(self):
-        index = dict([(k + 1, v) for k, v in enumerate(self.levels.index)])
-        columns = dict([(k + 1, v) for k, v in enumerate(self.levels.columns)])
-        values = dict([(k + 1, v) for k, v in enumerate(self.levels.values)])
-        return {'index': index,
-                'columns': columns,
-                'values': values}
+    def _axes(self):
+        idx = dict([(k + 1, v) for k, v in enumerate(self.levels.index)])
+        col = dict([(k + 1, v) for k, v in enumerate(self.levels.columns)])
+        val = dict([(k + 1, v) for k, v in enumerate(self.levels.values)])
+        return {'index': idx, 'columns': col, 'values': val}
+
+    def get_axes(self, x, y, dimension):
+        a = []
+        index = self.axes['index']
+        columns = self.axes['columns']
+        values = self.axes['values']
+        if dimension == 'values':
+            a.append(index[len(set(self.df.index[x]))])
+            if columns:
+                a.append(columns[len(set(self.df.columns[y])) - 1])
+            a.append(values[(y % len(self.levels.values) + 1) or
+                     len(ct.levels.values)])
+        return a

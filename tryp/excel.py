@@ -1,4 +1,5 @@
 import pandas as pd
+import style
 from xlwt import Workbook
 
 
@@ -13,33 +14,43 @@ def to_excel(ct):
 
 
 def write_axes(ct, ws):
-    def _write_axes(idx):
-        r1 = idx['r1']
-        r2 = idx['r2']
-        c1 = idx['c1']
-        c2 = idx['c2']
-        label = idx['label']
-        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
-
     for idx in index(ct):
-        _write_axes(idx)
+        _write_axes(ct, ws, idx)
 
     for idx in columns(ct):
-        _write_axes(idx)
+        _write_axes(ct, ws, idx)
+
+
+def _write_axes(ct, ws, idx):
+    r1 = idx['r1']
+    r2 = idx['r2']
+    c1 = idx['c1']
+    c2 = idx['c2']
+    label = idx['label']
+    ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
 
 
 def write_values(ct, ws):
-    def _write_values(idx):
-        r = idx['r']
-        c = idx['c']
-        label = idx['label']
-        ws.write(r, c, label)
-
     for idx in values_labels(ct):
-        _write_values(idx)
+        _write_values_labels(ct, ws, idx)
 
     for idx in values(ct):
-        _write_values(idx)
+        _write_values(ct, ws, idx)
+
+
+@style.values
+def _write_values(ct, ws, idx):
+    r = idx['r']
+    c = idx['c']
+    label = idx['label']
+    ws.write(r, c, label)
+
+
+def _write_values_labels(ct, ws, idx):
+    r = idx['r']
+    c = idx['c']
+    label = idx['label']
+    ws.write(r, c, label)
 
 
 def merge_indexes(indexes, index_width, total_width):
@@ -116,4 +127,5 @@ def values(ct):
         for il, label in enumerate(value):
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)
-            yield {'r': r, 'c': c, 'label': label}
+            axes = ct.get_axes(iv, il, 'values')
+            yield {'r': r, 'c': c, 'label': label, 'axes': axes}
