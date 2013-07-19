@@ -8,6 +8,7 @@ def to_excel(ct):
     filename = ct.excel['filename']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
+    style.styles(ct)
     write_axes(ct, ws)
     write_values(ct, ws)
     wb.save(filename)
