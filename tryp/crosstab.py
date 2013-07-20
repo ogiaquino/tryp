@@ -11,11 +11,6 @@ class Levels(object):
 
 class Crosstab(object):
     def __init__(self, meta):
-        self.df = self._crosstab(meta.df,
-                                 meta.index,
-                                 meta.columns,
-                                 meta.values,
-                                 meta.index_totals)
 
         self.levels = Levels()
         self.levels.index = meta.index
@@ -24,6 +19,11 @@ class Crosstab(object):
         self.index_totals = meta.index_totals
         self.columns_totals = meta.columns_totals
         self.excel = meta.excel
+        self.df = self._crosstab(meta.df,
+                                 meta.index,
+                                 meta.columns,
+                                 meta.values,
+                                 meta.index_totals)
         self._extend(meta.extmodule)
 
     def to_excel(self):
@@ -111,6 +111,15 @@ class Crosstab(object):
 
         df = pd.concat([df] + df_index_subtotals)
         df = df.sort_index(axis=0)
+
+        for idx in df.index:
+            subtotal = len([x for x in idx if '!' in x])
+            if subtotal:
+                sub = self.levels.index[:-subtotal]
+                sub + sub[-1:] * (len(self.levels.index) - len(sub))
+            else:
+                self.levels.index
+
         return df
 
     def _rename(self, df):
@@ -135,9 +144,9 @@ class Crosstab(object):
         return renamed
 
     def _axes(self):
-        idx = dict([(k + 1, v) for k, v in enumerate(self.levels.index)])
-        col = dict([(k + 1, v) for k, v in enumerate(self.levels.columns)])
-        val = dict([(k + 1, v) for k, v in enumerate(self.levels.values)])
+        idx = dict([(k, v) for k, v in enumerate(reversed(self.levels.index))])
+        col = dict([(k, v) for k, v in enumerate(self.levels.columns)])
+        val = dict([(k, v) for k, v in enumerate(self.levels.values)])
         return {'index': idx, 'columns': col, 'values': val}
 
     def get_axes(self, x, y, dimension):
