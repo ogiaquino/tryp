@@ -2,6 +2,7 @@ import imp
 import pandas as pd
 import numpy as np
 
+from collections import OrderedDict
 from excel import to_excel as to_excel
 
 
@@ -34,7 +35,6 @@ class Crosstab(object):
             extmodule = imp.load_source(extmodule[0], extmodule[1])
             extmodule.extend(self)
         self.values_labels = self._values_labels(self.df)
-        self.axes = self._axes()
 
     def _crosstab(self, df, index, columns, values, index_totals):
         ctdf = df.groupby(index + columns).sum()[values].unstack(columns)
@@ -112,14 +112,7 @@ class Crosstab(object):
         df = pd.concat([df] + df_index_subtotals)
         df = df.sort_index(axis=0)
 
-        for idx in df.index:
-            subtotal = len([x for x in idx if '!' in x])
-            if subtotal:
-                sub = self.levels.index[:-subtotal]
-                sub + sub[-1:] * (len(self.levels.index) - len(sub))
-            else:
-                self.levels.index
-
+        self.get_columns_axis(df)
         return df
 
     def _rename(self, df):
@@ -143,21 +136,27 @@ class Crosstab(object):
         renamed = pd.DataFrame(df.values, index=idx, columns=col)
         return renamed
 
-    def _axes(self):
-        idx = dict([(k, v) for k, v in enumerate(reversed(self.levels.index))])
-        col = dict([(k, v) for k, v in enumerate(self.levels.columns)])
-        val = dict([(k, v) for k, v in enumerate(self.levels.values)])
-        return {'index': idx, 'columns': col, 'values': val}
+    def get_index_axis(self, df):
+        subs = []
+        for idx in df.index:
+            subtotal = len([x for x in idx if '!' in x])
+            if subtotal:
+                sub = self.levels.index[:-subtotal]
+                sub = sub + sub[-1:] * (len(self.levels.index) - len(sub))
+                subs.append(sub)
+            else:
+                subs.append(self.levels.index)
+        return subs
 
-    def get_axes(self, x, y, dimension):
-        a = []
-        index = self.axes['index']
-        columns = self.axes['columns']
-        values = self.axes['values']
-        if dimension == 'values':
-            a.append(index[len(set(self.df.index[x]))])
-            if columns:
-                a.append(columns[len(set(self.df.columns[y])) - 1])
-            a.append(values[(y % len(self.levels.values) + 1) or
-                     len(ct.levels.values)])
-        return a
+    def get_columns_axis(self, df):
+        d = OrderedDict()
+
+        for idx in map(lambda x: x[:-1], df.columns):
+            subtotal = len([x for x in idx if '!' in x])
+            if subtotal:
+                sub = self.levels.columns[:-subtotal]
+                sub = sub + sub[-1:] * (len(self.levels.columns) - len(sub))
+                d[tuple([x.replace('!','') for x in idx])] = sub
+            else:
+                d[idx] = self.levels.columns
+        return d
