@@ -128,5 +128,4 @@ def values(ct):
         for il, label in enumerate(value):
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)
-            axes = ct.get_axes(iv, il, 'values')
-            yield {'r': r, 'c': c, 'label': label, 'axes': axes}
+            yield {'r': r, 'c': c, 'label': label}
