@@ -2,9 +2,23 @@ import imp
 import pandas as pd
 import numpy as np
 
+from itertools import cycle, islice
 from collections import OrderedDict
 from excel import to_excel as to_excel
 
+
+def roundrobin(*iterables):
+    "roundrobin('ABC', 'D', 'EF') --> A D E B F C"
+    # Recipe credited to George Sakkis
+    pending = len(iterables)
+    nexts = cycle(iter(it).next for it in iterables)
+    while pending:
+        try:
+            for next in nexts:
+                yield next()
+        except StopIteration:
+            pending -= 1
+            nexts = cycle(islice(nexts, pending))
 
 class Levels(object):
     pass
@@ -24,7 +38,7 @@ class Crosstab(object):
                                  meta.index,
                                  meta.columns,
                                  meta.values,
-                                 meta.index_totals)
+                                )
         self._extend(meta.extmodule)
 
     def to_excel(self):
@@ -36,11 +50,11 @@ class Crosstab(object):
             extmodule.extend(self)
         self.values_labels = self._values_labels(self.df)
 
-    def _crosstab(self, df, index, columns, values, index_totals):
+    def _crosstab(self, df, index, columns, values):
         ctdf = df.groupby(index + columns).sum()[values].unstack(columns)
         if columns:
             ctdf = self._columns_totals(df, index, columns, values, ctdf)
-        ctdf = self._index_totals(index, index_totals, ctdf)
+        ctdf = self._index_totals(index, ctdf)
         return self._rename(ctdf)
 
     def _values_labels(self, ct):
@@ -82,37 +96,42 @@ class Crosstab(object):
         ct = pd.DataFrame(ct, columns=sorted_columns)
         return ct
 
-    def _index_totals(self, index, index_totals, df):
-        df_index_subtotals = []
-        if len(index) > 1:
-            df_index = []
-            for idx in set([x[:-1] for x in df.index]):
-                for i in range(len(index)):
-                    if idx[:i+1] not in df_index:
-                        df_index.append(idx[:i+1])
+    def _index_totals(self, index, df):
+        sorter = []
+        subtotals = []
 
-            for idx in df_index:
-                result = tuple(['!' + idx[-1]
-                               for x in range(len(index) - len(idx))])
-                index_dict = dict([(r, len(index) - i - 1) for i, r in
-                                  enumerate(index)])
+        nans = (np.NaN,) * len(self.index_totals)
+        sorter = [[x for x in roundrobin(idx, nans)]  for idx in df.index]
 
-                if len(result) in [index_dict[r] for r in index_totals]:
-                    idxr = idx + result
-                    index_df = pd.DataFrame({idxr: df.ix[idx].sum()}).T
-                    df_index_subtotals.append(index_df)
+        for i in range(len(self.index_totals)):
+            for idx in set([x[:i+1] for x in df.index]):
+                sindex = idx + (idx[-1],) * (len(index) - len(idx))
+                stotal = pd.DataFrame({sindex: df.ix[idx].sum()}).T
+                subtotals.append(stotal)
 
-            total = {tuple(['!'] * len(index)): df.ix[:].sum()}
-            total_df = pd.DataFrame(total).T
-            df_index_subtotals.append(total_df)
-        else:
-            total_df = pd.DataFrame({'!': ct.ix[:].sum()}).T
-            ct_index_subtotals.append(total_df)
+                rank = [np.NaN] * len(self.index_totals)                        
+                rank[len(idx) - 1] = 1                                     
+                sorter.append([x for x in roundrobin(sindex, rank)])
 
-        df = pd.concat([df] + df_index_subtotals)
-        df = df.sort_index(axis=0)
+        gindex = tuple([''] * len(index))
+        gtotal = pd.DataFrame({gindex: df.ix[:].sum()}).T
+        subtotals.append(gtotal)
 
-        self.get_columns_axis(df)
+        rank = [1] * len(self.index_totals)                        
+        sorter.append([x for x in roundrobin(gindex, tuple(rank))])
+
+        df = pd.concat([df] + subtotals)
+
+        sorter = zip(*sorter)
+        lexsort = np.lexsort([x for x in reversed(sorter)])
+
+        sorted_index=[]
+        for lx in lexsort:
+            index = zip(*df.index)
+            lex = tuple([index[x][lx] for x in range(len(index))])
+            sorted_index.append(lex)
+
+        df = pd.DataFrame(df, index=sorted_index)
         return df
 
     def _rename(self, df):
