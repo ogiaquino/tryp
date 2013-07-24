@@ -24,7 +24,7 @@ Setting up Tryp
 
 .. code-block :: python
 
-   python setup.py nosetests
+   python setup.py test 
 
 
 .. image:: https://travis-ci.org/ogiaquino/tryp.png
