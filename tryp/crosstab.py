@@ -158,7 +158,6 @@ class Crosstab(object):
     def get_index_axis(self, df):
         subs = []
         for idx in df.index:
-            subtotal = len([x for x in idx if '!' in x])
             if subtotal:
                 sub = self.levels.index[:-subtotal]
                 sub = sub + sub[-1:] * (len(self.levels.index) - len(sub))
@@ -171,7 +170,6 @@ class Crosstab(object):
         d = OrderedDict()
 
         for idx in map(lambda x: x[:-1], df.columns):
-            subtotal = len([x for x in idx if '!' in x])
             if subtotal:
                 sub = self.levels.columns[:-subtotal]
                 sub = sub + sub[-1:] * (len(self.levels.columns) - len(sub))
