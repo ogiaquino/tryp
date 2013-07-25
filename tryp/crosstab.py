@@ -57,9 +57,7 @@ class Crosstab(object):
                 unstack(columns[:i])
 
             for col in subtotal.columns:
-                ext = []
-                for _ in range(len(col), len(columns) + 1):
-                    ext.append('' + col[-1])
+                ext = ['' + col[-1]] * (len(columns) - len(col) + 1)
                 ct[col + tuple(ext)] = subtotal[col]
                 rank = [np.NaN] * len(self.columns_totals)
                 rank[len(col[1:]) - 1] = 1
