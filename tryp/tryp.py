@@ -41,9 +41,9 @@ class Tryp(object):
 def main():
         import argparse
         parser = argparse.ArgumentParser(description='Generate Excel File.')
-        parser.add_argument('-f')
-        parser.add_argument('-d')
-        parser.add_argument('-o')
+        parser.add_argument('-f', '--file', help='Tryp design file')
+        parser.add_argument('-d', '--data', help='Input data file')
+        parser.add_argument('-o', '--output', help='Output file')
         args = parser.parse_args()
         tryp_file = args.f
         output_file = args.o
