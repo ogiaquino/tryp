@@ -61,21 +61,20 @@ class Crosstab(object):
                 for _ in range(len(col), len(columns) + 1):
                     ext.append('' + col[-1])
                 ct[col + tuple(ext)] = subtotal[col]
-
                 rank = [np.NaN] * len(self.columns_totals)
                 rank[len(col[1:]) - 1] = 1
                 rank = [x for x in roundrobin(col[1:] + tuple(ext), rank)]
                 sorter.append(rank)
         ## END
 
-        ## CREATE GRAND TOTAL
+        ## CREATE COLUMNS GRAND TOTAL
         for value in values:
             total = df.groupby(index + columns[-1:]).sum()
-            key = tuple([''] * len(columns))
-            gkey = (value,) + tuple([''] * len(columns))
-            ct[gkey] = total[value].unstack(columns[-1:]).sum(axis=1)
+            label = tuple([''] * len(columns))
+            key = (value,) + label
+            ct[key] = total[value].unstack(columns[-1:]).sum(axis=1)
             rank = [1] * len(self.columns_totals)
-            rank = [x for x in roundrobin(key, tuple(rank))]
+            rank = [x for x in roundrobin(label, tuple(rank))]
             sorter.append(rank)
         ## END
 
@@ -92,22 +91,25 @@ class Crosstab(object):
         nans = (np.NaN,) * len(self.index_totals)
         sorter = [[x for x in roundrobin(idx, nans)] for idx in df.index]
 
+        ## CREATE SUBTOTALS FOR EACH INDEX
         subtotals = []
         for i in range(len(self.index_totals)):
             for idx in set([x[:i+1] for x in df.index]):
                 sindex = idx + (idx[-1],) * (len(index) - len(idx))
                 stotal = pd.DataFrame({sindex: df.ix[idx].sum()}).T
                 subtotals.append(stotal)
-
                 rank = [np.NaN] * len(self.index_totals)
                 rank[len(idx) - 1] = 1
                 sorter.append([x for x in roundrobin(sindex, rank)])
+        ## END
 
+        ## CREATE INDEX GRAND TOTAL
         gindex = tuple([''] * len(index))
         gtotal = pd.DataFrame({gindex: df.ix[:].sum()}).T
         subtotals.append(gtotal)
         rank = [1] * len(self.index_totals)
         sorter.append([x for x in roundrobin(gindex, tuple(rank))])
+        ## END
 
         df = pd.concat([df] + subtotals)
         return self._sorter(df, sorter, df.index, 0)
