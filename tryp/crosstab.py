@@ -71,9 +71,7 @@ class Crosstab(object):
             label = tuple([''] * len(columns))
             key = (value,) + label
             ct[key] = total[value].unstack(columns[-1:]).sum(axis=1)
-            rank = [1] * len(self.columns_totals)
-            rank = [x for x in roundrobin(label, tuple(rank))]
-            sorter.append(rank)
+            sorter.append(tuple([1,] * len(columns)))
         ## END
 
         ## REORDER AXIS 1 SO THAT AGGREGATES ARE THE LAST LEVEL
@@ -105,8 +103,7 @@ class Crosstab(object):
         gindex = tuple([''] * len(index))
         gtotal = pd.DataFrame({gindex: df.ix[:].sum()}).T
         subtotals.append(gtotal)
-        rank = [1] * len(self.index_totals)
-        sorter.append([x for x in roundrobin(gindex, tuple(rank))])
+        sorter.append(tuple([1,] * len(index)))
         ## END
 
         df = pd.concat([df] + subtotals)
