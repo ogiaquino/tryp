@@ -1,5 +1,4 @@
 import pandas as pd
-import style
 from xlwt import Workbook
 
 
@@ -8,7 +7,6 @@ def to_excel(ct):
     filename = ct.excel['filename']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
-    style.styles(ct)
     write_axes(ct, ws)
     write_values(ct, ws)
     wb.save(filename)
@@ -18,8 +16,9 @@ def write_axes(ct, ws):
     for idx in index(ct):
         _write_axes(ct, ws, idx)
 
-    for idx in columns(ct):
-        _write_axes(ct, ws, idx)
+    if ct.levels.columns:
+        for idx in columns(ct):
+            _write_axes(ct, ws, idx)
 
 
 def _write_axes(ct, ws, idx):
@@ -39,7 +38,6 @@ def write_values(ct, ws):
         _write_values(ct, ws, idx)
 
 
-@style.values
 def _write_values(ct, ws, idx):
     r = idx['r']
     c = idx['c']
@@ -95,7 +93,7 @@ def index(ct):
 def columns(ct):
     index = ct.levels.index
     columns_width = len(ct.levels.columns)
-    total_width = len(ct.columns_totals)
+    total_width = len(ct.columns_totals) + 1
     labels = merge_indexes(ct.df.columns, columns_width, total_width)
 
     for k in sorted(labels.keys()):
