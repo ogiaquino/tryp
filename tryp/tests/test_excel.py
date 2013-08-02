@@ -21,47 +21,47 @@ class TestExcel(unittest.TestCase):
         excel['sheetname'] = 'Sheet1'
 
         trypobj = type('tryp', (object,),
-                       {'df': df,
-                        'index': index,
-                        'columns': columns,
-                        'values': values,
-                        'index_totals': index_totals,
-                        'columns_totals': columns_totals,
+                       {'source_dataframe': df,
+                        'yaxis': index,
+                        'xaxis': columns,
+                        'zaxis': values,
+                        'visible_yaxis_summary': index_totals,
+                        'visible_xaxis_summary': columns_totals,
                         'extmodule': None,
                         'excel': excel
                         })()
 
         ct = Crosstab(trypobj)
         merge_indexes_expected_result = {0: [(0, 0, u''),
-                                            (1, 7, u'Central'),
-                                            (8, 14, u'East')],
+                                             (1, 7, u'Central'),
+                                             (8, 14, u'East')],
 
-                                        1: [(0, 0, u''),
-                                            (1, 1, u'Central'),
-                                            (2, 4, u'Butterworth'),
-                                            (5, 7, u'Ipoh'),
-                                            (8, 8, u'East'),
-                                            (9, 11, u'JB'),
-                                            (12, 14, u'PJ')],
+                                         1: [(0, 0, u''),
+                                             (1, 1, u'Central'),
+                                             (2, 4, u'Butterworth'),
+                                             (5, 7, u'Ipoh'),
+                                             (8, 8, u'East'),
+                                             (9, 11, u'JB'),
+                                             (12, 14, u'PJ')],
 
-                                        2: [(0, 0, u''),
-                                            (1, 1, u'Central'),
-                                            (2, 2, u'Butterworth'),
-                                            (3, 3, u'HINMARKETING'),
-                                            (4, 4, u'KWANGHENG'),
-                                            (5, 5, u'Ipoh'),
-                                            (6, 6, u'CORESYN'),
-                                            (7, 7, u'SGHEDERAN'),
-                                            (8, 8, u'East'),
-                                            (9, 9, u'JB'),
-                                            (10, 10, u'LEIWAH'),
-                                            (11, 11, u'WONDERF&B'),
-                                            (12, 12, u'PJ'),
-                                            (13, 13, u'HEBAT'),
-                                            (14, 14, u'PENGEDAR')]}
+                                         2: [(0, 0, u''),
+                                             (1, 1, u'Central'),
+                                             (2, 2, u'Butterworth'),
+                                             (3, 3, u'HINMARKETING'),
+                                             (4, 4, u'KWANGHENG'),
+                                             (5, 5, u'Ipoh'),
+                                             (6, 6, u'CORESYN'),
+                                             (7, 7, u'SGHEDERAN'),
+                                             (8, 8, u'East'),
+                                             (9, 9, u'JB'),
+                                             (10, 10, u'LEIWAH'),
+                                             (11, 11, u'WONDERF&B'),
+                                             (12, 12, u'PJ'),
+                                             (13, 13, u'HEBAT'),
+                                             (14, 14, u'PENGEDAR')]}
 
-        indexes = merge_indexes(ct.df.index, 3, 2)
+        indexes = merge_indexes(ct.ctdataframe.index, 3, 2)
         assert indexes == merge_indexes_expected_result
         assert len(indexes) == len(index)
         for i in indexes:
-            assert len(ct.df.index) - 1 == indexes[i][-1][1]
+            assert len(ct.ctdataframe.index) - 1 == indexes[i][-1][1]

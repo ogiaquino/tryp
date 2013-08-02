@@ -6,25 +6,21 @@ from common import roundrobin
 from excel import to_excel as to_excel
 
 
-class Levels(object):
-    pass
-
-
 class Crosstab(object):
-    def __init__(self, meta):
+    def __init__(self, metadata):
 
-        self.levels = Levels()
-        self.levels.index = meta.index
-        self.levels.columns = meta.columns
-        self.levels.values = meta.values
-        self.index_totals = meta.index_totals
-        self.columns_totals = meta.columns_totals
-        self.excel = meta.excel
-        self.df = self._crosstab(meta.df,
-                                 meta.index,
-                                 meta.columns,
-                                 meta.values)
-        self._extend(meta.extmodule)
+        self.xaxis = metadata.xaxis
+        self.yaxis = metadata.yaxis
+        self.zaxis = metadata.zaxis
+        self.visible_xaxis_summary = metadata.visible_xaxis_summary
+        self.visible_yaxis_summary = metadata.visible_yaxis_summary
+        self.source_dataframe = metadata.source_dataframe
+        self.excel = metadata.excel
+        self.ctdataframe = self._crosstab(self.source_dataframe,
+                                          self.yaxis,
+                                          self.xaxis,
+                                          self.zaxis)
+        self._extend(metadata.extmodule)
 
     def to_excel(self):
         to_excel(self)
@@ -33,7 +29,7 @@ class Crosstab(object):
         if extmodule:
             extmodule = imp.load_source(extmodule[0], extmodule[1])
             extmodule.extend(self)
-        self.values_labels = self._values_labels(self.df)
+        self.values_labels = self._values_labels(self.ctdataframe)
 
     def _crosstab(self, df, index, columns, values):
         ctdf = df.groupby(index + columns).sum()[values].unstack(columns)
@@ -48,7 +44,7 @@ class Crosstab(object):
 
     def _columns_totals(self, df, index, columns, values, ct):
         sorter = []
-        nans = (np.NaN,) * len(self.columns_totals)
+        nans = (np.NaN,) * len(self.visible_xaxis_summary)
         sorter = [[x for x in roundrobin(col[1:], nans)] for col in ct.columns]
 
         ## CREATE SUBTOTALS FOR EACH COLUMNS
@@ -59,7 +55,7 @@ class Crosstab(object):
             for col in subtotal.columns:
                 ext = ['' + col[-1]] * (len(columns) - len(col) + 1)
                 ct[col + tuple(ext)] = subtotal[col]
-                rank = [np.NaN] * len(self.columns_totals)
+                rank = [np.NaN] * len(self.visible_xaxis_summary)
                 rank[len(col[1:]) - 1] = 1
                 rank = [x for x in roundrobin(col[1:] + tuple(ext), rank)]
                 sorter.append(rank)
@@ -86,17 +82,17 @@ class Crosstab(object):
 
     def _index_totals(self, index, df):
         sorter = []
-        nans = (np.NaN,) * len(self.index_totals)
+        nans = (np.NaN,) * len(self.visible_yaxis_summary)
         sorter = [[x for x in roundrobin(idx, nans)] for idx in df.index]
 
         ## CREATE SUBTOTALS FOR EACH INDEX
         subtotals = []
-        for i in range(len(self.index_totals)):
+        for i in range(len(self.visible_yaxis_summary)):
             for idx in set([x[:i+1] for x in df.index]):
                 sindex = idx + (idx[-1],) * (len(index) - len(idx))
                 stotal = pd.DataFrame({sindex: df.ix[idx].sum()}).T
                 subtotals.append(stotal)
-                rank = [np.NaN] * len(self.index_totals)
+                rank = [np.NaN] * len(self.visible_yaxis_summary)
                 rank[len(idx) - 1] = 1
                 sorter.append([x for x in roundrobin(sindex, rank)])
         ## END
@@ -105,7 +101,7 @@ class Crosstab(object):
         gindex = tuple([''] * len(index))
         gtotal = pd.DataFrame({gindex: df.ix[:].sum()}).T
         subtotals.append(gtotal)
-        rank = [np.NaN] * len(self.index_totals)
+        rank = [np.NaN] * len(self.visible_yaxis_summary)
         rank[0] = 1
         sorter.append([x for x in roundrobin(gindex, rank)])
         ## END

@@ -20,24 +20,24 @@ class TestCrosstab(unittest.TestCase):
         excel['sheetname'] = 'Sheet1'
 
         trypobj = type('tryp', (object,),
-                       {'df': df,
-                        'index': index,
-                        'columns': columns,
-                        'values': values,
-                        'index_totals': index_totals,
-                        'columns_totals': columns_totals,
+                       {'source_dataframe': df,
+                        'yaxis': index,
+                        'xaxis': columns,
+                        'zaxis': values,
+                        'visible_yaxis_summary': index_totals,
+                        'visible_xaxis_summary': columns_totals,
                         'extmodule': None,
                         'excel': excel
                         })()
 
         ct = Crosstab(trypobj)
         expected_df = pd.read_csv('%s/crosstab.csv' % data_loc)
-        ct.df.fillna(0.0, inplace=True)
+        ct.ctdataframe.fillna(0.0, inplace=True)
         expected_df.fillna(0.0, inplace=True)
 
-        for i in range(len(ct.df.to_records())):
-            ct_val = ct.df.to_records()[i]
-            ct_val = ct.df.to_records()[i]
+        for i in range(len(ct.ctdataframe.to_records())):
+            ct_val = ct.ctdataframe.to_records()[i]
+            ct_val = ct.ctdataframe.to_records()[i]
             ct_val = tuple(ct_val)
             expected_val = list(expected_df.to_records()[i])[1:]
 

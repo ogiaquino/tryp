@@ -16,7 +16,7 @@ def write_axes(ct, ws):
     for idx in index(ct):
         _write_axes(ct, ws, idx)
 
-    if ct.levels.columns:
+    if ct.xaxis:
         for idx in columns(ct):
             _write_axes(ct, ws, idx)
 
@@ -75,10 +75,10 @@ def merge_indexes(indexes, index_width, total_width):
 
 
 def index(ct):
-    columns = ct.levels.columns
-    index_width = len(ct.levels.index)
-    total_width = len(ct.index_totals)
-    labels = merge_indexes(ct.df.index, index_width, total_width)
+    columns = ct.xaxis
+    index_width = len(ct.yaxis)
+    total_width = len(ct.visible_yaxis_summary)
+    labels = merge_indexes(ct.ctdataframe.index, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -91,10 +91,10 @@ def index(ct):
 
 
 def columns(ct):
-    index = ct.levels.index
-    columns_width = len(ct.levels.columns)
-    total_width = len(ct.columns_totals) + 1
-    labels = merge_indexes(ct.df.columns, columns_width, total_width)
+    index = ct.yaxis
+    columns_width = len(ct.xaxis)
+    total_width = len(ct.visible_xaxis_summary) + 1
+    labels = merge_indexes(ct.ctdataframe.columns, columns_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -107,8 +107,8 @@ def columns(ct):
 
 
 def values_labels(ct):
-    levels_index = ct.levels.index
-    levels_columns = ct.levels.columns
+    levels_index = ct.yaxis
+    levels_columns = ct.xaxis
     levels_values = ct.values_labels
 
     for i, cc in enumerate(levels_values):
@@ -119,10 +119,10 @@ def values_labels(ct):
 
 
 def values(ct):
-    levels_index = ct.levels.index
-    levels_columns = ct.levels.columns
+    levels_index = ct.yaxis
+    levels_columns = ct.xaxis
 
-    for iv, value in enumerate(ct.df.values):
+    for iv, value in enumerate(ct.ctdataframe.values):
         for il, label in enumerate(value):
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)

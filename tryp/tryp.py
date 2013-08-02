@@ -4,16 +4,15 @@ from parser import parse
 from crosstab import Crosstab
 
 
-class MetaCrosstab(object):
+class CrosstabMetaData(object):
     def __init__(self, tryp_file, csv_file, output_file):
         self.report = parse(tryp_file, 'crosstab')
-        self.df = self.data_frame(csv_file)
-        self.index = self.report['index']
-        self.columns = self.report['columns']
-        self.values = self.report['values']
-        self.labels = self.report['labels']
-        self.index_totals = self.report['index_totals']
-        self.columns_totals = self.report['columns_totals']
+        self.source_dataframe = self.data_frame(csv_file)
+        self.xaxis = self.report['xaxis']
+        self.yaxis = self.report['yaxis']
+        self.zaxis = self.report['zaxis']
+        self.visible_yaxis_summary = self.report['visible_yaxis_summary']
+        self.visible_xaxis_summary = self.report['visible_xaxis_summary']
         self.excel = {}
         self.excel['filename'] = output_file
         self.excel['sheetname'] = os.path.splitext(output_file)[0]
@@ -34,8 +33,8 @@ class MetaCrosstab(object):
 
 class Tryp(object):
     def __init__(self, tryp_file, csv_file, output_file):
-        meta = MetaCrosstab(tryp_file, csv_file, output_file)
-        self.crosstab = Crosstab(meta)
+        ctmeta = CrosstabMetaData(tryp_file, csv_file, output_file)
+        self.crosstab = Crosstab(ctmeta)
 
 
 def main():
