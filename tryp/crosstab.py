@@ -58,10 +58,9 @@ class Crosstab(object):
             for col in subtotal.columns:
                 scolumns = col + (col[-1],) * (len(xaxis) - len(col) + 1)
                 ctdf[scolumns] = subtotal[col]
-                rank = self._rank(scolumns[1:],
-                                  len(col[1:]) - 1,
-                                  self.visible_xaxis_summary)
-                sorter.append(rank)
+                sorter.append(self._rank(scolumns[1:],
+                                         len(col[1:]) - 1,
+                                         self.visible_xaxis_summary))
         ## END
 
         ## CREATE COLUMNS GRAND TOTAL
@@ -73,8 +72,7 @@ class Crosstab(object):
         ## END
 
         ## REORDER AXIS 1 SO THAT AGGREGATES ARE THE LAST LEVEL
-        order = range(1, len(xaxis) + 1)
-        order.append(0)
+        order = range(1, len(xaxis) + 1) + [0]
         ct = ctdf.reorder_levels(order, axis=1)
         ## END
 
