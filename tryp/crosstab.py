@@ -66,11 +66,10 @@ class Crosstab(object):
 
         ## CREATE COLUMNS GRAND TOTAL
         for value in zaxis:
-            total = source_dataframe.groupby(yaxis + xaxis[-1:]).sum()
-            label = tuple([''] * len(xaxis))
-            key = (value,) + label
-            ctdf[key] = total[value].unstack(xaxis[-1:]).sum(axis=1)
-            sorter.append(self._rank(label, 0, xaxis))
+            total = source_dataframe.groupby(yaxis + xaxis[-1:]).sum()[value]
+            keys = tuple([''] * len(xaxis))
+            ctdf[(value,) + keys] = total.unstack(xaxis[-1:]).sum(axis=1)
+            sorter.append(self._rank(keys, 0, xaxis))
         ## END
 
         ## REORDER AXIS 1 SO THAT AGGREGATES ARE THE LAST LEVEL
