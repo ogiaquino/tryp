@@ -60,8 +60,8 @@ class TestExcel(unittest.TestCase):
                                              (13, 13, u'HEBAT'),
                                              (14, 14, u'PENGEDAR')]}
 
-        indexes = merge_indexes(ct.ctdataframe.index, 3, 2)
+        indexes = merge_indexes(ct.dataframe.index, 3, 2)
         assert indexes == merge_indexes_expected_result
         assert len(indexes) == len(index)
         for i in indexes:
-            assert len(ct.ctdataframe.index) - 1 == indexes[i][-1][1]
+            assert len(ct.dataframe.index) - 1 == indexes[i][-1][1]

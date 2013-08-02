@@ -78,7 +78,7 @@ def index(ct):
     columns = ct.xaxis
     index_width = len(ct.yaxis)
     total_width = len(ct.visible_yaxis_summary)
-    labels = merge_indexes(ct.ctdataframe.index, index_width, total_width)
+    labels = merge_indexes(ct.dataframe.index, index_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -94,7 +94,7 @@ def columns(ct):
     index = ct.yaxis
     columns_width = len(ct.xaxis)
     total_width = len(ct.visible_xaxis_summary) + 1
-    labels = merge_indexes(ct.ctdataframe.columns, columns_width, total_width)
+    labels = merge_indexes(ct.dataframe.columns, columns_width, total_width)
 
     for k in sorted(labels.keys()):
         for label in labels[k]:
@@ -122,7 +122,7 @@ def values(ct):
     levels_index = ct.yaxis
     levels_columns = ct.xaxis
 
-    for iv, value in enumerate(ct.ctdataframe.values):
+    for iv, value in enumerate(ct.dataframe.values):
         for il, label in enumerate(value):
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)

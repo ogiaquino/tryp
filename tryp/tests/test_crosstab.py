@@ -32,12 +32,12 @@ class TestCrosstab(unittest.TestCase):
 
         ct = Crosstab(trypobj)
         expected_df = pd.read_csv('%s/crosstab.csv' % data_loc)
-        ct.ctdataframe.fillna(0.0, inplace=True)
+        ct.dataframe.fillna(0.0, inplace=True)
         expected_df.fillna(0.0, inplace=True)
 
-        for i in range(len(ct.ctdataframe.to_records())):
-            ct_val = ct.ctdataframe.to_records()[i]
-            ct_val = ct.ctdataframe.to_records()[i]
+        for i in range(len(ct.dataframe.to_records())):
+            ct_val = ct.dataframe.to_records()[i]
+            ct_val = ct.dataframe.to_records()[i]
             ct_val = tuple(ct_val)
             expected_val = list(expected_df.to_records()[i])[1:]
 
