@@ -13,9 +13,8 @@ class Crosstab(object):
         self.zaxis = metadata.zaxis
         self.visible_xaxis_summary = metadata.visible_xaxis_summary
         self.visible_yaxis_summary = metadata.visible_yaxis_summary
-        self.source_dataframe = metadata.source_dataframe
         self.excel = metadata.excel
-        self.dataframe = self._crosstab(self.source_dataframe,
+        self.dataframe = self._crosstab(metadata.source_dataframe,
                                         self.xaxis,
                                         self.yaxis,
                                         self.zaxis)
@@ -79,8 +78,7 @@ class Crosstab(object):
         return self._sorter(ct, sorter, ct.columns, 1)
 
     def _yaxis_summary(self, yaxis, df):
-        sorter = self._init_sorter(self.visible_yaxis_summary,
-                                   df.index)
+        sorter = self._init_sorter(self.visible_yaxis_summary, df.index)
 
         ## CREATE SUBTOTALS FOR EACH INDEX
         subtotals = []
