@@ -47,23 +47,18 @@ class Crosstab(object):
         return ct.columns
 
     def _xaxis_summary(self, source_dataframe, xaxis, yaxis, zaxis, ctdf):
-        sorter = self._init_sorter(self.visible_xaxis_summary,
-                                   [col[1:] for col in ctdf.columns])
         for idx in ctdf.columns:
             self.xcoord.append(self.xaxis[-1])
 
         ## CREATE SUBTOTALS FOR EACH COLUMNS
-        for i in range(1, len(self.visible_xaxis_summary)):
-            subtotal = source_dataframe.groupby(xaxis[:i] + yaxis).sum()[zaxis]
-            subtotal = subtotal[zaxis].unstack(xaxis[:i])
-
+        for i in range(0, len(self.visible_xaxis_summary)):
+            subtotal = source_dataframe.groupby(xaxis[:i+1] + yaxis).sum()[zaxis]
+            subtotal = subtotal[zaxis].unstack(xaxis[:i+1])
+        
             for col in subtotal.columns:
                 scolumns = col + (col[-1],) * (len(xaxis) - len(col) + 1)
                 ctdf[scolumns] = subtotal[col]
                 self.xcoord.append(self.visible_xaxis_summary[i])
-                sorter.append(self._rank(scolumns[1:],
-                                         len(col[1:]) - 1,
-                                         self.visible_xaxis_summary))
         ## END
 
         ## CREATE COLUMNS GRAND TOTAL
@@ -72,7 +67,6 @@ class Crosstab(object):
             keys = tuple([''] * len(xaxis))
             ctdf[(value,) + keys] = total.unstack(xaxis[-1:]).sum(axis=1)
             self.xcoord.append('')
-            sorter.append(self._rank(keys, 0, xaxis))
         ## END
 
         ## REORDER AXIS 1 SO THAT AGGREGATES ARE THE LAST LEVEL
@@ -80,8 +74,7 @@ class Crosstab(object):
         ct = ctdf.reorder_levels(order, axis=1)
         ## END
 
-        print len(self.xcoord), len(sorter)
-        return self._sorter(ct, sorter, ct.columns, 1)
+        return ct.reindex_axis(axis=1, labels=self._sort_axis(ct.columns, self.visible_xaxis_summary, self.xcoord))
 
     def _yaxis_summary(self, yaxis, df):
         for idx in df.index:
@@ -105,38 +98,23 @@ class Crosstab(object):
         ## END
 
         df = pd.concat([df] + subtotals)
-        return self._sort_yaxis(df)
+        return df.reindex_axis(axis=0, labels=self._sort_axis(df.index, self.visible_yaxis_summary, self.ycoord))
 
-    def _sort_yaxis(self, df):
+    def _sort_axis(self, axis, visible_axis, coord):
         sorter = []
-        for i, idx in enumerate(df.index):
-            if self.ycoord[i] in  self.visible_yaxis_summary:
-                nans = [np.NaN,] * (self.visible_yaxis_summary.index(self.ycoord[i])+ 1)
-                nans[self.visible_yaxis_summary.index(self.ycoord[i])] = 1
+        for i, idx in enumerate(axis):
+            if coord[i] in visible_axis:
+                nans = [np.NaN,] * (visible_axis.index(coord[i])+ 1)
+                nans[visible_axis.index(coord[i])] = 1
                 sorter.append([x for x in roundrobin(idx, nans)])
             else:
-                nans = (np.NaN,) * len(self.visible_yaxis_summary)
+                nans = (np.NaN,) * len(visible_axis)
                 sorter.append([x for x in roundrobin(idx, nans)])
-        return self._sorter(df, sorter, df.index, 0)
 
-    def _rank(self, keys, ranking, axis):
-        rank = [np.NaN] * len(axis)
-        rank[ranking] = 1
-        rank = [x for x in roundrobin(keys, rank)]
-        return rank
-
-    def _init_sorter(self, visible_axis_summary, axis_labels):
-        sorter = []
-        nans = (np.NaN,) * len(visible_axis_summary)
-        sorter = [[x for x in roundrobin(al, nans)] for al in axis_labels]
-        return sorter
-
-    def _sorter(self, df, sorter, index, axis):
-        sorter = zip(*sorter)
-        lexsort = np.lexsort([x for x in reversed(sorter)])
+        lexsort = np.lexsort([x for x in reversed(zip(*sorter))])
         sorted_index = []
         for lx in lexsort:
-            idx = zip(*index)
+            idx = zip(*axis)
             lex = tuple([idx[x][lx] for x in range(len(idx))])
             sorted_index.append(lex)
-        return df.reindex_axis(axis=axis, labels=sorted_index)
+        return sorted_index
