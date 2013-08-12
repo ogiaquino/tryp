@@ -52,9 +52,9 @@ class Crosstab(object):
 
         ## CREATE SUBTOTALS FOR EACH COLUMNS
         for i in range(0, len(self.visible_xaxis_summary)):
-            subtotal = source_dataframe.groupby(xaxis[:i+1] + yaxis).sum()[zaxis]
-            subtotal = subtotal[zaxis].unstack(xaxis[:i+1])
-        
+            subtotal = source_dataframe.groupby(xaxis[:i+1] + yaxis)
+            subtotal = subtotal.sum()[zaxis].unstack(xaxis[:i+1])
+
             for col in subtotal.columns:
                 scolumns = col + (col[-1],) * (len(xaxis) - len(col) + 1)
                 ctdf[scolumns] = subtotal[col]
@@ -74,9 +74,12 @@ class Crosstab(object):
         ct = ctdf.reorder_levels(order, axis=1)
         ## END
 
-        print self.zaxis
-        sorted_columns = self._sort_axis(ct.columns, self.visible_xaxis_summary, self.xcoord)
-        sorted_columns = map(lambda x: x[0][:-1] + (x[1],) , zip(sorted_columns, self.zaxis * (len(sorted_columns) / len(self.zaxis))))
+        sorted_columns = self._sort_axis(ct.columns,
+                                         self.visible_xaxis_summary,
+                                         self.xcoord)
+        zas = self.zaxis * (len(sorted_columns) / len(self.zaxis))
+        sorted_columns = map(lambda x: x[0][:-1] + (x[1],),
+                             zip(sorted_columns, zas))
 
         return ct.reindex_axis(axis=1, labels=sorted_columns)
 
@@ -102,13 +105,16 @@ class Crosstab(object):
         ## END
 
         df = pd.concat([df] + subtotals)
-        return df.reindex_axis(axis=0, labels=self._sort_axis(df.index, self.visible_yaxis_summary, self.ycoord))
+        sorted_index = self._sort_axis(df.index,
+                                       self.visible_yaxis_summary,
+                                       self.ycoord)
+        return df.reindex_axis(axis=0, labels=sorted_index)
 
     def _sort_axis(self, axis, visible_axis, coord):
         sorter = []
         for i, idx in enumerate(axis):
             if coord[i] in visible_axis:
-                nans = [np.NaN,] * (visible_axis.index(coord[i])+ 1)
+                nans = [np.NaN, ] * (visible_axis.index(coord[i]) + 1)
                 nans[visible_axis.index(coord[i])] = 1
                 sorter.append([x for x in roundrobin(idx, nans)])
             else:
