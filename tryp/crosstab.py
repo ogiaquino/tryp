@@ -74,7 +74,11 @@ class Crosstab(object):
         ct = ctdf.reorder_levels(order, axis=1)
         ## END
 
-        return ct.reindex_axis(axis=1, labels=self._sort_axis(ct.columns, self.visible_xaxis_summary, self.xcoord))
+        print self.zaxis
+        sorted_columns = self._sort_axis(ct.columns, self.visible_xaxis_summary, self.xcoord)
+        sorted_columns = map(lambda x: x[0][:-1] + (x[1],) , zip(sorted_columns, self.zaxis * (len(sorted_columns) / len(self.zaxis))))
+
+        return ct.reindex_axis(axis=1, labels=sorted_columns)
 
     def _yaxis_summary(self, yaxis, df):
         for idx in df.index:
