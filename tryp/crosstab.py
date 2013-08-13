@@ -15,38 +15,38 @@ class Crosstab(object):
         self.visible_xaxis_summary = metadata.visible_xaxis_summary
         self.visible_yaxis_summary = metadata.visible_yaxis_summary
         self.excel = metadata.excel
-        self.dataframe = self._crosstab(metadata.source_dataframe,
-                                        self.xaxis,
-                                        self.yaxis,
-                                        self.zaxis)
-        self._extend(metadata.extmodule)
+        self.dataframe = self.__crosstab(metadata.source_dataframe,
+                                         self.xaxis,
+                                         self.yaxis,
+                                         self.zaxis)
+        self.__extend(metadata.extmodule)
 
     def to_excel(self):
         to_excel(self)
 
-    def _extend(self, extmodule):
+    def __extend(self, extmodule):
         if extmodule:
             extmodule = imp.load_source(extmodule[0], extmodule[1])
             extmodule.extend(self)
-        self.values_labels = self._values_labels(self.dataframe)
+        self.values_labels = self.__values_labels(self.dataframe)
 
-    def _crosstab(self, source_dataframe, xaxis, yaxis, zaxis):
+    def __crosstab(self, source_dataframe, xaxis, yaxis, zaxis):
         df = source_dataframe.groupby(xaxis + yaxis).sum()
         df = df[zaxis].unstack(xaxis)
         if xaxis:
-            df = self._xaxis_summary(source_dataframe,
-                                     xaxis,
-                                     yaxis,
-                                     zaxis,
-                                     df)
-        return self._yaxis_summary(yaxis, df)
+            df = self.__xaxis_summary(source_dataframe,
+                                      xaxis,
+                                      yaxis,
+                                      zaxis,
+                                      df)
+        return self.__yaxis_summary(yaxis, df)
 
-    def _values_labels(self, ct):
+    def __values_labels(self, ct):
         if isinstance(ct.columns, pd.MultiIndex):
             return map(lambda x: x[-1], ct.columns)
         return ct.columns
 
-    def _xaxis_summary(self, source_dataframe, xaxis, yaxis, zaxis, ctdf):
+    def __xaxis_summary(self, source_dataframe, xaxis, yaxis, zaxis, ctdf):
         for idx in ctdf.columns:
             self.xcoord.append(self.xaxis[-1])
 
@@ -74,16 +74,17 @@ class Crosstab(object):
         ct = ctdf.reorder_levels(order, axis=1)
         ## END
 
-        sorted_columns = self._sort_axis(ct.columns,
-                                         self.visible_xaxis_summary,
-                                         self.xcoord)
+        ## SORT COLUMNS AND RETURN SORTED DF
+        sorted_columns = self.__sort_axis(ct.columns,
+                                          self.visible_xaxis_summary,
+                                          self.xcoord)
         zas = self.zaxis * (len(sorted_columns) / len(self.zaxis))
         sorted_columns = map(lambda x: x[0][:-1] + (x[1],),
                              zip(sorted_columns, zas))
-
         return ct.reindex_axis(axis=1, labels=sorted_columns)
+        ## END
 
-    def _yaxis_summary(self, yaxis, df):
+    def __yaxis_summary(self, yaxis, df):
         for idx in df.index:
             self.ycoord.append(self.yaxis[-1])
 
@@ -104,13 +105,15 @@ class Crosstab(object):
         self.ycoord.append('')
         ## END
 
+        ## SORT THE INDEX AND RETURN SORTED DF
         df = pd.concat([df] + subtotals)
-        sorted_index = self._sort_axis(df.index,
-                                       self.visible_yaxis_summary,
-                                       self.ycoord)
+        sorted_index = self.__sort_axis(df.index,
+                                        self.visible_yaxis_summary,
+                                        self.ycoord)
         return df.reindex_axis(axis=0, labels=sorted_index)
+        ## END
 
-    def _sort_axis(self, axis, visible_axis, coord):
+    def __sort_axis(self, axis, visible_axis, coord):
         sorter = []
         for i, idx in enumerate(axis):
             if coord[i] in visible_axis:
