@@ -8,7 +8,7 @@ from excel import to_excel as to_excel
 
 class Crosstab(object):
     def __init__(self, metadata):
-        self.xcoord, self.ycoord, self.zcoord = [], [], []
+        self.coordinates = {}
         self.xaxis = metadata.xaxis
         self.yaxis = metadata.yaxis
         self.zaxis = metadata.zaxis
@@ -47,8 +47,9 @@ class Crosstab(object):
         return ct.columns
 
     def __xaxis_summary(self, source_dataframe, xaxis, yaxis, zaxis, ctdf):
-        for idx in ctdf.columns:
-            self.xcoord.append(self.xaxis[-1])
+        coordinates = []
+        for _ in ctdf.columns:
+            coordinates.append(self.xaxis[-1])
 
         ## CREATE SUBTOTALS FOR EACH COLUMNS
         for i in range(0, len(self.visible_xaxis_summary)):
@@ -58,7 +59,7 @@ class Crosstab(object):
             for col in subtotal.columns:
                 scolumns = col + (col[-1],) * (len(xaxis) - len(col) + 1)
                 ctdf[scolumns] = subtotal[col]
-                self.xcoord.append(self.visible_xaxis_summary[i])
+                coordinates.append(self.visible_xaxis_summary[i])
         ## END
 
         ## CREATE COLUMNS GRAND TOTAL
@@ -66,7 +67,7 @@ class Crosstab(object):
             total = source_dataframe.groupby(yaxis + xaxis[-1:]).sum()[value]
             keys = tuple([''] * len(xaxis))
             ctdf[(value,) + keys] = total.unstack(xaxis[-1:]).sum(axis=1)
-            self.xcoord.append('')
+            coordinates.append('')
         ## END
 
         ## REORDER AXIS 1 SO THAT AGGREGATES ARE THE LAST LEVEL
@@ -77,16 +78,18 @@ class Crosstab(object):
         ## SORT COLUMNS AND RETURN SORTED DF
         sorted_columns = self.__sort_axis(ct.columns,
                                           self.visible_xaxis_summary,
-                                          self.xcoord)
+                                          coordinates, 'x')
         zas = self.zaxis * (len(sorted_columns) / len(self.zaxis))
+        self.coordinates['z'] = zas
         sorted_columns = map(lambda x: x[0][:-1] + (x[1],),
                              zip(sorted_columns, zas))
         return ct.reindex_axis(axis=1, labels=sorted_columns)
         ## END
 
     def __yaxis_summary(self, yaxis, df):
-        for idx in df.index:
-            self.ycoord.append(self.yaxis[-1])
+        coordinates = []
+        for _ in df.index:
+            coordinates.append(self.yaxis[-1])
 
         ## CREATE SUBTOTALS FOR EACH INDEX
         subtotals = []
@@ -95,39 +98,41 @@ class Crosstab(object):
                 sindex = idx + (idx[-1],) * (len(yaxis) - len(idx))
                 stotal = pd.DataFrame({sindex: df.ix[idx].sum()}).T
                 subtotals.append(stotal)
-                self.ycoord.append(self.visible_yaxis_summary[i])
+                coordinates.append(self.visible_yaxis_summary[i])
         ## END
 
         ## CREATE INDEX GRAND TOTAL
         gindex = tuple([''] * len(yaxis))
         gtotal = pd.DataFrame({gindex: df.ix[:].sum()}).T
         subtotals.append(gtotal)
-        self.ycoord.append('')
+        coordinates.append('')
         ## END
 
         ## SORT THE INDEX AND RETURN SORTED DF
         df = pd.concat([df] + subtotals)
         sorted_index = self.__sort_axis(df.index,
                                         self.visible_yaxis_summary,
-                                        self.ycoord)
+                                        coordinates, 'y')
         return df.reindex_axis(axis=0, labels=sorted_index)
         ## END
 
-    def __sort_axis(self, axis, visible_axis, coord):
+    def __sort_axis(self, labels, visible_axis, coordinates, axis):
         sorter = []
-        for i, idx in enumerate(axis):
-            if coord[i] in visible_axis:
-                nans = [np.NaN, ] * (visible_axis.index(coord[i]) + 1)
-                nans[visible_axis.index(coord[i])] = 1
-                sorter.append([x for x in roundrobin(idx, nans)])
+        for i, l in enumerate(labels):
+            if coordinates[i] in visible_axis:
+                nans = [np.NaN, ] * (visible_axis.index(coordinates[i]) + 1)
+                nans[visible_axis.index(coordinates[i])] = 1
+                sorter.append([x for x in roundrobin(l, nans)])
             else:
                 nans = (np.NaN,) * len(visible_axis)
-                sorter.append([x for x in roundrobin(idx, nans)])
+                sorter.append([x for x in roundrobin(l, nans)])
 
-        lexsort = np.lexsort([x for x in reversed(zip(*sorter))])
         sorted_index = []
+        labels = zip(*labels)
+        lexsort = np.lexsort([x for x in reversed(zip(*sorter))])
+        self.coordinates[axis] = []
         for lx in lexsort:
-            idx = zip(*axis)
-            lex = tuple([idx[x][lx] for x in range(len(idx))])
+            lex = tuple([labels[x][lx] for x in range(len(labels))])
             sorted_index.append(lex)
+            self.coordinates[axis].append(coordinates[lx])
         return sorted_index
