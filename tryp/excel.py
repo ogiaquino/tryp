@@ -1,5 +1,6 @@
 import pandas as pd
 from xlwt import Workbook
+from style import get_values_styles
 
 
 def to_excel(ct):
@@ -122,6 +123,7 @@ def values(ct):
     levels_index = ct.yaxis
     levels_columns = ct.xaxis
 
+    get_values_styles(ct)
     for iv, value in enumerate(ct.dataframe.values):
         for il, label in enumerate(value):
             r = iv + len(levels_columns) + 1
