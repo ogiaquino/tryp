@@ -24,12 +24,6 @@ class Crosstab(object):
     def to_excel(self):
         to_excel(self)
 
-    def __extend(self, extmodule):
-        if extmodule:
-            extmodule = imp.load_source(extmodule[0], extmodule[1])
-            extmodule.extend(self)
-        self.values_labels = self.__values_labels(self.dataframe)
-
     def __crosstab(self, source_dataframe, xaxis, yaxis, zaxis):
         df = source_dataframe.groupby(xaxis + yaxis).sum()
         df = df[zaxis].unstack(xaxis)
@@ -40,11 +34,6 @@ class Crosstab(object):
                                       zaxis,
                                       df)
         return self.__yaxis_summary(yaxis, df)
-
-    def __values_labels(self, ct):
-        if isinstance(ct.columns, pd.MultiIndex):
-            return map(lambda x: x[-1], ct.columns)
-        return ct.columns
 
     def __xaxis_summary(self, source_dataframe, xaxis, yaxis, zaxis, ctdf):
         coordinates = []
@@ -136,3 +125,14 @@ class Crosstab(object):
             sorted_index.append(lex)
             self.coordinates[axis].append(coordinates[lx])
         return sorted_index
+
+    def __extend(self, extmodule):
+        if extmodule:
+            extmodule = imp.load_source(extmodule[0], extmodule[1])
+            extmodule.extend(self)
+        self.values_labels = self.__values_labels(self.dataframe)
+
+    def __values_labels(self, ct):
+        if isinstance(ct.columns, pd.MultiIndex):
+            return map(lambda x: x[-1], ct.columns)
+        return ct.columns
