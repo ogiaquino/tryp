@@ -43,7 +43,8 @@ def _write_values(ct, ws, idx):
     r = idx['r']
     c = idx['c']
     label = idx['label']
-    ws.write(r, c, label)
+    style = idx['style']
+    ws.write(r, c, label, style)
 
 
 def _write_values_labels(ct, ws, idx):
@@ -123,9 +124,12 @@ def values(ct):
     levels_index = ct.yaxis
     levels_columns = ct.xaxis
 
-    get_values_styles(ct)
+    styles = get_values_styles(ct)
     for iv, value in enumerate(ct.dataframe.values):
         for il, label in enumerate(value):
+            style = styles[(ct.coordinates['y'][iv],
+                            ct.coordinates['x'][il],
+                            ct.coordinates['z'][il])]
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)
-            yield {'r': r, 'c': c, 'label': label}
+            yield {'r': r, 'c': c, 'label': label, 'style': style}
