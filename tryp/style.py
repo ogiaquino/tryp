@@ -9,7 +9,7 @@ colour = {
     46: "lavender",
     43: "light-yellow",
     51: "gold",
-    64: "white"
+    64: "white",
 }
 
 
@@ -28,51 +28,61 @@ def get_values_styles(ct):
     return styles
 
 
+def get_index_styles(ct):
+    yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
+    xaxis = [''] + ct.xaxis
+    styles = {}
+
+    for i, y in enumerate(yaxis):
+        for j, x in enumerate(xaxis):
+            styles[(y, x)] = get_styles(i + len(ct.xaxis) + 1, j)
+    return styles
+
+
 def get_styles(row, col):
-    xfi = wb.xf_list[ws.cell_xf_index(row, col)]
-    xf = 'font: name %(name)s, height %(height)s;' \
-         'pattern: pattern solid, fore-colour %(forecolour)s;' \
-         'alignment: vertical %(vertical)s, horizontal %(horizontal)s' \
-          % font(xfi)
-    style = easyxf(xf)
-    style.borders = borders(xfi)
-    style.num_format_str = number_format(xfi)
+    xf = wb.xf_list[ws.cell_xf_index(row, col)]
+    xfval = dict(font(xf) + pattern(xf) + alignment(xf) + borders(xf))
+    xfstr = 'font: name %(name)s, height %(height)s, bold %(bold)s;' \
+            'pattern: pattern solid, fore-colour %(forecolour)s;' \
+            'alignment: vertical %(vertical)s, horizontal %(horizontal)s;' \
+            'borders : bottom %(bottom)s, left %(left)s,'\
+            'right %(right)s, top %(top)s' % xfval
+    style = easyxf(xfstr)
+    style.num_format_str = number_format(xf)
     return style
 
 
-def font(xfi):
-    name = wb.font_list[xfi.font_index].name
-    forecolour = colour[xfi.background.pattern_colour_index]
-    height = wb.font_list[xfi.font_index].height
-    horizontal = alignment(xfi)['horizontal']
-    vertical = alignment(xfi)['vertical']
-    return {'name': name, 'forecolour': forecolour, 'height': height,
-            'horizontal': horizontal, 'vertical': vertical}
+def font(xf):
+    name = wb.font_list[xf.font_index].name
+    height = wb.font_list[xf.font_index].height
+    bold = wb.font_list[xf.font_index].weight
+    bold = 'on' if bold == 700 else 'off'
+    return (('name', name), ('height', height), ('bold', bold))
 
 
-def borders(xfi):
-    brd = Borders()
-    bottom = xfi.border.bottom_line_style.real
-    left = xfi.border.left_line_style.real
-    right = xfi.border.right_line_style.real
-    top = xfi.border.top_line_style.real
-    borders = {'bottom': bottom, 'left': left, 'right': right, 'top': top}
-    brd.bottom = borders["bottom"]
-    brd.left = borders["left"]
-    brd.right = borders["right"]
-    brd.top = borders["top"]
-    return brd
+def pattern(xf):
+    forecolour = colour[xf.background.pattern_colour_index]
+    return (('forecolour', forecolour),)
 
 
-def number_format(xfi):
-    return wb.format_map[xfi.format_key].format_str
-
-
-def alignment(xfi):
+def alignment(xf):
     horz_align = Style.xf_dict['alignment']['horz']
     horz_align = dict(zip(horz_align.values(), horz_align.keys()))
     vert_align = Style.xf_dict['alignment']['vert']
     vert_align = dict(zip(vert_align.values(), vert_align.keys()))
-    horizontal = horz_align[xfi.alignment.hor_align]
-    vertical = vert_align[xfi.alignment.vert_align]
-    return {'horizontal': horizontal, 'vertical': vertical}
+    horizontal = horz_align[xf.alignment.hor_align]
+    vertical = vert_align[xf.alignment.vert_align]
+    return (('horizontal', horizontal), ('vertical', vertical))
+
+
+def borders(xf):
+    brd = Borders()
+    bottom = xf.border.bottom_line_style.real
+    left = xf.border.left_line_style.real
+    right = xf.border.right_line_style.real
+    top = xf.border.top_line_style.real
+    return (('bottom', bottom), ('left', left), ('right', right), ('top', top))
+
+
+def number_format(xf):
+    return wb.format_map[xf.format_key].format_str

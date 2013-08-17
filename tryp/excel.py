@@ -1,6 +1,6 @@
 import pandas as pd
 from xlwt import Workbook
-from style import get_values_styles
+from style import get_values_styles, get_index_styles
 
 
 def to_excel(ct):
@@ -28,7 +28,11 @@ def _write_axes(ct, ws, idx):
     c1 = idx['c1']
     c2 = idx['c2']
     label = idx['label']
-    ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
+    if 'style' in idx:
+        style = idx['style']
+        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+    else:
+        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
 
 
 def write_values(ct, ws):
@@ -82,14 +86,18 @@ def index(ct):
     total_width = len(ct.visible_yaxis_summary)
     labels = merge_indexes(ct.dataframe.index, index_width, total_width)
 
-    for k in sorted(labels.keys()):
-        for label in labels[k]:
+    styles = get_index_styles(ct)
+    for j, k in enumerate(sorted(labels.keys())):
+        xaxis = [''] + ct.xaxis
+        for l, label in enumerate(labels[k]):
+            style = styles[(ct.coordinates['y'][l], xaxis[j])]
             r1 = label[0] + len(columns) + 1
             r2 = label[1] + len(columns) + 1
             c1 = k
             c2 = k
             label = label[2]
-            yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label}
+            yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label,
+                   'style': style}
 
 
 def columns(ct):
