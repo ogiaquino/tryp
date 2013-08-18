@@ -10,6 +10,8 @@ colour = {
     43: "light-yellow",
     51: "gold",
     64: "white",
+    50: "lime",
+    13: "yellow"
 }
 
 
@@ -35,7 +37,22 @@ def get_index_styles(ct):
 
     for i, y in enumerate(yaxis):
         for j, x in enumerate(xaxis):
-            styles[(y, x)] = get_styles(i + len(ct.xaxis) + 1, j)
+            styles[(y, j)] = get_styles(i + len(ct.xaxis) + 1, j)
+    return styles
+
+
+def get_column_styles(ct):
+    yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
+    xaxis = [''] + ct.xaxis
+    styles = {}
+
+    for h in range(len(ct.xaxis)):
+        col = len(ct.yaxis) - 1
+        for i, x in enumerate(xaxis):
+            for j, z in enumerate(ct.zaxis):
+                col = col + 1
+                styles[(h, x, z)] = get_styles(h, col)
+
     return styles
 
 

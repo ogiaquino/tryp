@@ -1,6 +1,6 @@
 import pandas as pd
 from xlwt import Workbook
-from style import get_values_styles, get_index_styles
+from style import get_values_styles, get_index_styles, get_column_styles
 
 
 def to_excel(ct):
@@ -28,11 +28,8 @@ def _write_axes(ct, ws, idx):
     c1 = idx['c1']
     c2 = idx['c2']
     label = idx['label']
-    if 'style' in idx:
-        style = idx['style']
-        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
-    else:
-        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"))
+    style = idx['style']
+    ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
 
 
 def write_values(ct, ws):
@@ -87,10 +84,9 @@ def index(ct):
     labels = merge_indexes(ct.dataframe.index, index_width, total_width)
 
     styles = get_index_styles(ct)
-    for j, k in enumerate(sorted(labels.keys())):
-        xaxis = [''] + ct.xaxis
-        for l, label in enumerate(labels[k]):
-            style = styles[(ct.coordinates['y'][l], xaxis[j])]
+    for k in sorted(labels.keys()):
+        for i, label in enumerate(labels[k]):
+            style = styles[(ct.coordinates['y'][i], k)]
             r1 = label[0] + len(columns) + 1
             r2 = label[1] + len(columns) + 1
             c1 = k
@@ -106,14 +102,19 @@ def columns(ct):
     total_width = len(ct.visible_xaxis_summary) + 1
     labels = merge_indexes(ct.dataframe.columns, columns_width, total_width)
 
+    styles = get_column_styles(ct)
     for k in sorted(labels.keys()):
-        for label in labels[k]:
+        for i, label in enumerate(labels[k]):
+            style = styles[(k,
+                            ct.coordinates['x'][label[0]],
+                            ct.coordinates['z'][label[0]])]
             r1 = k
             r2 = k
             c1 = label[0] + len(index)
             c2 = label[1] + len(index)
             label = label[2]
-            yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label}
+            yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label,
+                   'style': style}
 
 
 def values_labels(ct):
