@@ -1,6 +1,7 @@
 import pandas as pd
 from xlwt import Workbook
-from style import get_values_styles, get_index_styles, get_column_styles
+from style import (get_values_styles, get_index_styles,
+                   get_column_styles, get_values_labels_styles)
 
 
 def to_excel(ct):
@@ -14,22 +15,52 @@ def to_excel(ct):
 
 
 def write_axes(ct, ws):
+    yaxis = ct.visible_yaxis_summary + [ct.yaxis[-1]] * \
+        (len(ct.yaxis) - len(ct.visible_yaxis_summary))
     for idx in index(ct):
-        _write_axes(ct, ws, idx)
+        _write_yaxes(ct, ws, idx, yaxis)
 
     if ct.xaxis:
         for idx in columns(ct):
-            _write_axes(ct, ws, idx)
+            _write_xaxes(ct, ws, idx, ct.xaxis,)
 
 
-def _write_axes(ct, ws, idx):
+def _write_yaxes(ct, ws, idx, axis):
     r1 = idx['r1']
     r2 = idx['r2']
     c1 = idx['c1']
     c2 = idx['c2']
     label = idx['label']
     style = idx['style']
-    ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+
+    if idx['coordinate'] in axis[idx['axis']] and idx['coordinate'] != '':
+        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+    else:
+        # GRAND TOTAL/SUBTOTAL
+        try:
+            ws.write_merge(r1, r2, c1, len(ct.yaxis) - 1,
+                           label.decode("utf-8"), style)
+        except:
+            pass
+
+
+def _write_xaxes(ct, ws, idx, axis):
+    r1 = idx['r1']
+    r2 = idx['r2']
+    c1 = idx['c1']
+    c2 = idx['c2']
+    label = idx['label']
+    style = idx['style']
+
+    if idx['coordinate'] in axis[idx['axis']] and idx['coordinate'] != '':
+        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+    else:
+        # GRAND TOTAL/SUBTOTAL
+        try:
+            ws.write_merge(r1, len(ct.xaxis) - 1, c1, c2,
+                           label.decode("utf-8"), style)
+        except:
+            pass
 
 
 def write_values(ct, ws):
@@ -52,7 +83,8 @@ def _write_values_labels(ct, ws, idx):
     r = idx['r']
     c = idx['c']
     label = idx['label']
-    ws.write(r, c, label)
+    style = idx['style']
+    ws.write(r, c, label, style)
 
 
 def merge_indexes(indexes, index_width, total_width):
@@ -86,14 +118,15 @@ def index(ct):
     styles = get_index_styles(ct)
     for k in sorted(labels.keys()):
         for i, label in enumerate(labels[k]):
-            style = styles[(ct.coordinates['y'][i], k)]
+            coordinate = ct.coordinates['y'][label[0]]
+            style = styles[(coordinate, k)]
             r1 = label[0] + len(columns) + 1
             r2 = label[1] + len(columns) + 1
             c1 = k
             c2 = k
             label = label[2]
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label,
-                   'style': style}
+                   'style': style, 'coordinate': coordinate, 'axis': k}
 
 
 def columns(ct):
@@ -105,6 +138,7 @@ def columns(ct):
     styles = get_column_styles(ct)
     for k in sorted(labels.keys()):
         for i, label in enumerate(labels[k]):
+            coordinate = ct.coordinates['x'][label[0]]
             style = styles[(k,
                             ct.coordinates['x'][label[0]],
                             ct.coordinates['z'][label[0]])]
@@ -114,7 +148,7 @@ def columns(ct):
             c2 = label[1] + len(index)
             label = label[2]
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label,
-                   'style': style}
+                   'style': style, 'coordinate': coordinate, 'axis': k}
 
 
 def values_labels(ct):
@@ -122,11 +156,13 @@ def values_labels(ct):
     levels_columns = ct.xaxis
     levels_values = ct.values_labels
 
+    styles = get_values_labels_styles(ct)
     for i, cc in enumerate(levels_values):
+        style = styles[ct.coordinates['z'][i]]
         r = len(levels_columns)
         c = len(levels_index) + i
         label = cc
-        yield {'r': r, 'c': c, 'label': label}
+        yield {'r': r, 'c': c, 'label': label, 'style': style}
 
 
 def values(ct):

@@ -41,6 +41,13 @@ def get_index_styles(ct):
     return styles
 
 
+def get_values_labels_styles(ct):
+    styles = {}
+    for i in range(len(ct.zaxis)):
+        styles[ct.zaxis[i]] = get_styles(len(ct.xaxis), i + len(ct.yaxis))
+    return styles
+
+
 def get_column_styles(ct):
     yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
     xaxis = [''] + ct.xaxis
