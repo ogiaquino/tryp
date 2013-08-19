@@ -18,14 +18,14 @@ def write_axes(ct, ws):
     yaxis = ct.visible_yaxis_summary + [ct.yaxis[-1]] * \
         (len(ct.yaxis) - len(ct.visible_yaxis_summary))
     for idx in index(ct):
-        _write_yaxes(ct, ws, idx, yaxis)
+        _write_yaxis(ct, ws, idx, yaxis)
 
     if ct.xaxis:
         for idx in columns(ct):
-            _write_xaxes(ct, ws, idx, ct.xaxis,)
+            _write_xaxis(ct, ws, idx, ct.xaxis,)
 
 
-def _write_yaxes(ct, ws, idx, axis):
+def _write_yaxis(ct, ws, idx, axis):
     r1 = idx['r1']
     r2 = idx['r2']
     c1 = idx['c1']
@@ -44,7 +44,7 @@ def _write_yaxes(ct, ws, idx, axis):
             pass
 
 
-def _write_xaxes(ct, ws, idx, axis):
+def _write_xaxis(ct, ws, idx, axis):
     r1 = idx['r1']
     r2 = idx['r2']
     c1 = idx['c1']

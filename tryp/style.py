@@ -1,7 +1,8 @@
 from xlrd import open_workbook
 from xlwt import easyxf, Borders, Pattern, Style
 
-template = "report/inventory_by_sku_templates.xls"
+template = "report/inventory_by_sku_template.xls"
+#template = "report/dsr_excel_template.xls"
 wb = open_workbook(template, formatting_info=True)
 ws = wb.sheet_by_index(0)
 
@@ -11,7 +12,8 @@ colour = {
     51: "gold",
     64: "white",
     50: "lime",
-    13: "yellow"
+    13: "yellow",
+    40: "sky-blue"
 }
 
 
@@ -26,7 +28,7 @@ def get_values_styles(ct):
             for z in ct.zaxis:
                 col = col + 1
                 styles[(y, x, z)] = get_styles(i + len(ct.xaxis) + 1,
-                                               col + len(ct.yaxis))
+                                               col + len(ct.yaxis), ct)
     return styles
 
 
@@ -36,15 +38,15 @@ def get_index_styles(ct):
     styles = {}
 
     for i, y in enumerate(yaxis):
-        for j, x in enumerate(xaxis):
-            styles[(y, j)] = get_styles(i + len(ct.xaxis) + 1, j)
+        for j in range(len(yaxis)):
+            styles[(y, j)] = get_styles(i + len(ct.xaxis) + 1, j, ct)
     return styles
 
 
 def get_values_labels_styles(ct):
     styles = {}
     for i in range(len(ct.zaxis)):
-        styles[ct.zaxis[i]] = get_styles(len(ct.xaxis), i + len(ct.yaxis))
+        styles[ct.zaxis[i]] = get_styles(len(ct.xaxis), i + len(ct.yaxis), ct)
     return styles
 
 
@@ -58,12 +60,12 @@ def get_column_styles(ct):
         for i, x in enumerate(xaxis):
             for j, z in enumerate(ct.zaxis):
                 col = col + 1
-                styles[(h, x, z)] = get_styles(h, col)
+                styles[(h, x, z)] = get_styles(h, col, ct)
 
     return styles
 
 
-def get_styles(row, col):
+def get_styles(row, col, ct):
     xf = wb.xf_list[ws.cell_xf_index(row, col)]
     xfval = dict(font(xf) + pattern(xf) + alignment(xf) + borders(xf))
     xfstr = 'font: name %(name)s, height %(height)s, bold %(bold)s;' \
