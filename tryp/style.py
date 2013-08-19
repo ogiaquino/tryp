@@ -1,10 +1,4 @@
-from xlrd import open_workbook
 from xlwt import easyxf, Borders, Pattern, Style
-
-template = "report/inventory_by_sku_template.xls"
-#template = "report/dsr_excel_template.xls"
-wb = open_workbook(template, formatting_info=True)
-ws = wb.sheet_by_index(0)
 
 colour = {
     46: "lavender",
@@ -17,7 +11,16 @@ colour = {
 }
 
 
-def get_values_styles(ct):
+def styles(ct, wbt, wst):
+    style = {}
+    style['values'] = get_values_styles(ct, wbt, wst)
+    style['index'] = get_index_styles(ct, wbt, wst)
+    style['column'] = get_column_styles(ct, wbt, wst)
+    style['values_labels'] = get_values_labels_styles(ct, wbt, wst)
+    return style
+
+
+def get_values_styles(ct, wbt, wst):
     yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
     xaxis = [''] + ct.xaxis
     styles = {}
@@ -28,29 +31,30 @@ def get_values_styles(ct):
             for z in ct.zaxis:
                 col = col + 1
                 styles[(y, x, z)] = get_styles(i + len(ct.xaxis) + 1,
-                                               col + len(ct.yaxis), ct)
+                                               col + len(ct.yaxis), wbt, wst)
     return styles
 
 
-def get_index_styles(ct):
+def get_index_styles(ct, wbt, wst):
     yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
     xaxis = [''] + ct.xaxis
     styles = {}
 
     for i, y in enumerate(yaxis):
         for j in range(len(yaxis)):
-            styles[(y, j)] = get_styles(i + len(ct.xaxis) + 1, j, ct)
+            styles[(y, j)] = get_styles(i + len(ct.xaxis) + 1, j, wbt, wst)
     return styles
 
 
-def get_values_labels_styles(ct):
+def get_values_labels_styles(ct, wbt, wst):
     styles = {}
     for i in range(len(ct.zaxis)):
-        styles[ct.zaxis[i]] = get_styles(len(ct.xaxis), i + len(ct.yaxis), ct)
+        styles[ct.zaxis[i]] = get_styles(len(ct.xaxis), i + len(ct.yaxis),
+                                         wbt, wst)
     return styles
 
 
-def get_column_styles(ct):
+def get_column_styles(ct, wbt, wst):
     yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
     xaxis = [''] + ct.xaxis
     styles = {}
@@ -60,28 +64,28 @@ def get_column_styles(ct):
         for i, x in enumerate(xaxis):
             for j, z in enumerate(ct.zaxis):
                 col = col + 1
-                styles[(h, x, z)] = get_styles(h, col, ct)
+                styles[(h, x, z)] = get_styles(h, col, wbt, wst)
 
     return styles
 
 
-def get_styles(row, col, ct):
-    xf = wb.xf_list[ws.cell_xf_index(row, col)]
-    xfval = dict(font(xf) + pattern(xf) + alignment(xf) + borders(xf))
+def get_styles(row, col, wbt, wst):
+    xf = wbt.xf_list[wst.cell_xf_index(row, col)]
+    xfval = dict(font(xf, wbt) + pattern(xf) + alignment(xf) + borders(xf))
     xfstr = 'font: name %(name)s, height %(height)s, bold %(bold)s;' \
             'pattern: pattern solid, fore-colour %(forecolour)s;' \
             'alignment: vertical %(vertical)s, horizontal %(horizontal)s;' \
             'borders : bottom %(bottom)s, left %(left)s,'\
             'right %(right)s, top %(top)s' % xfval
     style = easyxf(xfstr)
-    style.num_format_str = number_format(xf)
+    style.num_format_str = number_format(xf, wbt)
     return style
 
 
-def font(xf):
-    name = wb.font_list[xf.font_index].name
-    height = wb.font_list[xf.font_index].height
-    bold = wb.font_list[xf.font_index].weight
+def font(xf, wbt):
+    name = wbt.font_list[xf.font_index].name
+    height = wbt.font_list[xf.font_index].height
+    bold = wbt.font_list[xf.font_index].weight
     bold = 'on' if bold == 700 else 'off'
     return (('name', name), ('height', height), ('bold', bold))
 
@@ -110,5 +114,5 @@ def borders(xf):
     return (('bottom', bottom), ('left', left), ('right', right), ('top', top))
 
 
-def number_format(xf):
-    return wb.format_map[xf.format_key].format_str
+def number_format(xf, wbt):
+    return wbt.format_map[xf.format_key].format_str

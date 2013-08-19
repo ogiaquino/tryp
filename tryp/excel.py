@@ -1,27 +1,33 @@
 import pandas as pd
 from xlwt import Workbook
-from style import (get_values_styles, get_index_styles,
-                   get_column_styles, get_values_labels_styles)
+from xlrd import open_workbook
+from style import styles
 
 
 def to_excel(ct):
     sheetname = ct.excel['sheetname']
     filename = ct.excel['filename']
+    template = ct.excel['template']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
-    write_axes(ct, ws)
-    write_values(ct, ws)
+
+    wbt = open_workbook(template, formatting_info=True)
+    wst = wbt.sheet_by_index(0)
+    sty = styles(ct, wbt, wst)
+
+    write_axes(ct, ws, sty)
+    write_values(ct, ws, sty)
     wb.save(filename)
 
 
-def write_axes(ct, ws):
+def write_axes(ct, ws, styles):
     yaxis = ct.visible_yaxis_summary + [ct.yaxis[-1]] * \
         (len(ct.yaxis) - len(ct.visible_yaxis_summary))
-    for idx in index(ct):
+    for idx in index(ct, styles):
         _write_yaxis(ct, ws, idx, yaxis)
 
     if ct.xaxis:
-        for idx in columns(ct):
+        for idx in columns(ct, styles):
             _write_xaxis(ct, ws, idx, ct.xaxis,)
 
 
@@ -63,11 +69,11 @@ def _write_xaxis(ct, ws, idx, axis):
             pass
 
 
-def write_values(ct, ws):
-    for idx in values_labels(ct):
+def write_values(ct, ws, styles):
+    for idx in values_labels(ct, styles):
         _write_values_labels(ct, ws, idx)
 
-    for idx in values(ct):
+    for idx in values(ct, styles):
         _write_values(ct, ws, idx)
 
 
@@ -109,13 +115,13 @@ def merge_indexes(indexes, index_width, total_width):
     return labels
 
 
-def index(ct):
+def index(ct, styles):
     columns = ct.xaxis
     index_width = len(ct.yaxis)
     total_width = len(ct.visible_yaxis_summary)
     labels = merge_indexes(ct.dataframe.index, index_width, total_width)
 
-    styles = get_index_styles(ct)
+    styles = styles['index']
     for k in sorted(labels.keys()):
         for i, label in enumerate(labels[k]):
             coordinate = ct.coordinates['y'][label[0]]
@@ -129,13 +135,13 @@ def index(ct):
                    'style': style, 'coordinate': coordinate, 'axis': k}
 
 
-def columns(ct):
+def columns(ct, styles):
     index = ct.yaxis
     columns_width = len(ct.xaxis)
     total_width = len(ct.visible_xaxis_summary) + 1
     labels = merge_indexes(ct.dataframe.columns, columns_width, total_width)
 
-    styles = get_column_styles(ct)
+    styles = styles['column']
     for k in sorted(labels.keys()):
         for i, label in enumerate(labels[k]):
             coordinate = ct.coordinates['x'][label[0]]
@@ -151,12 +157,12 @@ def columns(ct):
                    'style': style, 'coordinate': coordinate, 'axis': k}
 
 
-def values_labels(ct):
+def values_labels(ct, styles):
     levels_index = ct.yaxis
     levels_columns = ct.xaxis
     levels_values = ct.values_labels
 
-    styles = get_values_labels_styles(ct)
+    styles = styles['values_labels']
     for i, cc in enumerate(levels_values):
         style = styles[ct.coordinates['z'][i]]
         r = len(levels_columns)
@@ -165,11 +171,11 @@ def values_labels(ct):
         yield {'r': r, 'c': c, 'label': label, 'style': style}
 
 
-def values(ct):
+def values(ct, styles):
     levels_index = ct.yaxis
     levels_columns = ct.xaxis
 
-    styles = get_values_styles(ct)
+    styles = styles['values']
     for iv, value in enumerate(ct.dataframe.values):
         for il, label in enumerate(value):
             style = styles[(ct.coordinates['y'][iv],
