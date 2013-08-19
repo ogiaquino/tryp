@@ -164,7 +164,9 @@ def values_labels(ct, styles):
 
     styles = styles['values_labels']
     for i, cc in enumerate(levels_values):
-        style = styles[ct.coordinates['z'][i]]
+        z = ct.zaxis[i] if 'z' not in ct.coordinates else \
+            ct.coordinates['z'][i]
+        style = styles[z]
         r = len(levels_columns)
         c = len(levels_index) + i
         label = cc
@@ -178,9 +180,12 @@ def values(ct, styles):
     styles = styles['values']
     for iv, value in enumerate(ct.dataframe.values):
         for il, label in enumerate(value):
-            style = styles[(ct.coordinates['y'][iv],
-                            ct.coordinates['x'][il],
-                            ct.coordinates['z'][il])]
+            y = ct.coordinates['y'][iv]
+            x = '' if 'x' not in ct.coordinates else ct.coordinates['x'][il]
+            z = ct.zaxis[il] if 'z' not in ct.coordinates else \
+                ct.coordinates['z'][il]
+
+            style = styles[(y, x, z)]
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)
             yield {'r': r, 'c': c, 'label': label, 'style': style}
