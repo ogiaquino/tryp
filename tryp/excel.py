@@ -1,7 +1,6 @@
 import pandas as pd
 from xlwt import Workbook
-from xlrd import open_workbook
-from style import styles
+from style import Style
 
 
 def to_excel(ct):
@@ -10,11 +9,7 @@ def to_excel(ct):
     template = ct.excel['template']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
-
-    wbt = open_workbook(template, formatting_info=True)
-    wst = wbt.sheet_by_index(0)
-    sty = styles(ct, wbt, wst)
-
+    sty = Style(ct)
     write_axes(ct, ws, sty)
     write_values(ct, ws, sty)
     wb.save(filename)
@@ -24,18 +19,20 @@ def write_axes(ct, ws, styles):
     yaxis = ct.visible_yaxis_summary + [ct.yaxis[-1]] * \
         (len(ct.yaxis) - len(ct.visible_yaxis_summary))
     for idx in index(ct, styles):
-        _write_yaxis(ct, ws, idx, yaxis)
+        _write_yaxis(ct, ws, idx, yaxis, styles)
 
     if ct.xaxis:
         for idx in columns(ct, styles):
-            _write_xaxis(ct, ws, idx, ct.xaxis,)
+            _write_xaxis(ct, ws, idx, ct.xaxis, styles)
 
 
-def _write_yaxis(ct, ws, idx, axis):
-    r1 = idx['r1']
-    r2 = idx['r2']
-    c1 = idx['c1']
-    c2 = idx['c2']
+def _write_yaxis(ct, ws, idx, axis, styles):
+    crosstab_row = styles.crosstab_row
+    crosstab_col = styles.crosstab_col
+    r1 = idx['r1'] + crosstab_row
+    r2 = idx['r2'] + crosstab_row
+    c1 = idx['c1'] + crosstab_col
+    c2 = idx['c2'] + crosstab_col
     label = idx['label']
     style = idx['style']
 
@@ -44,17 +41,20 @@ def _write_yaxis(ct, ws, idx, axis):
     else:
         # GRAND TOTAL/SUBTOTAL
         try:
-            ws.write_merge(r1, r2, c1, len(ct.yaxis) - 1,
+            c2 = len(ct.yaxis) - 1 + crosstab_col
+            ws.write_merge(r1, r2, c1, c2,
                            label.decode("utf-8"), style)
         except:
             pass
 
 
-def _write_xaxis(ct, ws, idx, axis):
-    r1 = idx['r1']
-    r2 = idx['r2']
-    c1 = idx['c1']
-    c2 = idx['c2']
+def _write_xaxis(ct, ws, idx, axis, styles):
+    crosstab_row = styles.crosstab_row
+    crosstab_col = styles.crosstab_col
+    r1 = idx['r1'] + crosstab_row
+    r2 = idx['r2'] + crosstab_row
+    c1 = idx['c1'] + crosstab_col
+    c2 = idx['c2'] + crosstab_col
     label = idx['label']
     style = idx['style']
 
@@ -63,7 +63,8 @@ def _write_xaxis(ct, ws, idx, axis):
     else:
         # GRAND TOTAL/SUBTOTAL
         try:
-            ws.write_merge(r1, len(ct.xaxis) - 1, c1, c2,
+            r2 = len(ct.xaxis) - 1 + crosstab_row
+            ws.write_merge(r1, r2, c1, c2,
                            label.decode("utf-8"), style)
         except:
             pass
@@ -71,23 +72,27 @@ def _write_xaxis(ct, ws, idx, axis):
 
 def write_values(ct, ws, styles):
     for idx in values_labels(ct, styles):
-        _write_values_labels(ct, ws, idx)
+        _write_values_labels(ct, ws, idx, styles)
 
     for idx in values(ct, styles):
-        _write_values(ct, ws, idx)
+        _write_values(ct, ws, idx, styles)
 
 
-def _write_values(ct, ws, idx):
-    r = idx['r']
-    c = idx['c']
+def _write_values(ct, ws, idx, styles):
+    crosstab_row = styles.crosstab_row
+    crosstab_col = styles.crosstab_col
+    r = idx['r'] + crosstab_row
+    c = idx['c'] + crosstab_col
     label = idx['label']
     style = idx['style']
     ws.write(r, c, label, style)
 
 
-def _write_values_labels(ct, ws, idx):
-    r = idx['r']
-    c = idx['c']
+def _write_values_labels(ct, ws, idx, styles):
+    crosstab_row = styles.crosstab_row
+    crosstab_col = styles.crosstab_col
+    r = idx['r'] + crosstab_row
+    c = idx['c'] + crosstab_col
     label = idx['label']
     style = idx['style']
     ws.write(r, c, label, style)
@@ -121,7 +126,7 @@ def index(ct, styles):
     total_width = len(ct.visible_yaxis_summary)
     labels = merge_indexes(ct.dataframe.index, index_width, total_width)
 
-    styles = styles['index']
+    styles = styles.index
     for k in sorted(labels.keys()):
         for i, label in enumerate(labels[k]):
             coordinate = ct.coordinates['y'][label[0]]
@@ -141,7 +146,7 @@ def columns(ct, styles):
     total_width = len(ct.visible_xaxis_summary) + 1
     labels = merge_indexes(ct.dataframe.columns, columns_width, total_width)
 
-    styles = styles['column']
+    styles = styles.column
     for k in sorted(labels.keys()):
         for i, label in enumerate(labels[k]):
             coordinate = ct.coordinates['x'][label[0]]
@@ -162,7 +167,7 @@ def values_labels(ct, styles):
     levels_columns = ct.xaxis
     levels_values = ct.values_labels
 
-    styles = styles['values_labels']
+    styles = styles.values_labels
     for i, cc in enumerate(levels_values):
         z = ct.zaxis[i] if 'z' not in ct.coordinates else \
             ct.coordinates['z'][i]
@@ -177,7 +182,7 @@ def values(ct, styles):
     levels_index = ct.yaxis
     levels_columns = ct.xaxis
 
-    styles = styles['values']
+    styles = styles.values
     for iv, value in enumerate(ct.dataframe.values):
         for il, label in enumerate(value):
             y = ct.coordinates['y'][iv]
