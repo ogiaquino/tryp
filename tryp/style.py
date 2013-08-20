@@ -21,6 +21,14 @@ class Style(object):
         self.crosstab_row = note_map['CROSSTAB'][0]
         self.crosstab_col = note_map['CROSSTAB'][1]
 
+        self.ytotal_label = self.ws.cell(self.crosstab_row + len(ct.xaxis) + 1,
+                            self.crosstab_col).value
+
+        self.xtotal_label = self.ws.cell(self.crosstab_row,
+                            self.crosstab_col + len(ct.yaxis)).value
+
+        print self.xtotal_label, self.ytotal_label
+
         self.values = self.get_values_styles(ct)
         self.index = self.get_index_styles(ct)
         self.column = self.get_column_styles(ct)
