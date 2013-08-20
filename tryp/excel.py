@@ -50,6 +50,8 @@ def _write_yaxis(ct, ws, idx, axis, styles):
         # GRAND TOTAL/SUBTOTAL
         try:
             c2 = len(ct.yaxis) - 1 + crosstab_col
+            if style.label:
+                label = label + style.label
             ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
         except:
             pass
@@ -62,8 +64,8 @@ def _write_xaxis(ct, ws, idx, axis, styles):
     r2 = idx['r2'] + crosstab_row
     c1 = idx['c1'] + crosstab_col
     c2 = idx['c2'] + crosstab_col
-    label = idx['label']
     style = idx['style']
+    label = idx['label']
 
     if idx['coordinate'] in axis[idx['axis']] and idx['coordinate'] != '':
         ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
@@ -71,6 +73,8 @@ def _write_xaxis(ct, ws, idx, axis, styles):
         # GRAND TOTAL/SUBTOTAL
         try:
             r2 = len(ct.xaxis) - 1 + crosstab_row
+            if style.label:
+                label = label + style.label
             ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
         except:
             pass

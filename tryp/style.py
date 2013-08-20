@@ -22,12 +22,11 @@ class Style(object):
         self.crosstab_col = note_map['CROSSTAB'][1]
 
         self.ytotal_label = self.ws.cell(self.crosstab_row + len(ct.xaxis) + 1,
-                            self.crosstab_col).value
+                                         self.crosstab_col).value
 
         self.xtotal_label = self.ws.cell(self.crosstab_row,
-                            self.crosstab_col + len(ct.yaxis)).value
-
-        print self.xtotal_label, self.ytotal_label
+                                         self.crosstab_col +
+                                         len(ct.yaxis)).value
 
         self.values = self.get_values_styles(ct)
         self.index = self.get_index_styles(ct)
@@ -97,6 +96,14 @@ class Style(object):
                 'right %(right)s, top %(top)s' % xfval
         style = easyxf(xfstr)
         style.num_format_str = self.number_format(xf)
+
+        style.label = ''
+        value = self.ws.cell(row, col).value
+        if isinstance(value, basestring):
+            if '[' in value and ']' in value:
+                value = value.split('[')[1]
+                value = value.replace(']', '')
+                style.label = value
         return style
 
     def font(self, xf):
