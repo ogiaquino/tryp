@@ -12,7 +12,15 @@ def to_excel(ct):
     sty = Style(ct)
     write_axes(ct, ws, sty)
     write_values(ct, ws, sty)
+    write_corner(ct, ws, sty)
     wb.save(filename)
+
+
+def write_corner(ct, ws, styles):
+    ws.write_merge(styles.crosstab_row,
+                   styles.crosstab_row + len(ct.xaxis),
+                   styles.crosstab_col,
+                   styles.crosstab_col + len(ct.yaxis) - 1, '', styles.corner)
 
 
 def write_axes(ct, ws, styles):
@@ -42,8 +50,7 @@ def _write_yaxis(ct, ws, idx, axis, styles):
         # GRAND TOTAL/SUBTOTAL
         try:
             c2 = len(ct.yaxis) - 1 + crosstab_col
-            ws.write_merge(r1, r2, c1, c2,
-                           label.decode("utf-8"), style)
+            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
         except:
             pass
 
@@ -64,8 +71,7 @@ def _write_xaxis(ct, ws, idx, axis, styles):
         # GRAND TOTAL/SUBTOTAL
         try:
             r2 = len(ct.xaxis) - 1 + crosstab_row
-            ws.write_merge(r1, r2, c1, c2,
-                           label.decode("utf-8"), style)
+            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
         except:
             pass
 

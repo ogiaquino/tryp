@@ -25,6 +25,11 @@ class Style(object):
         self.index = self.get_index_styles(ct)
         self.column = self.get_column_styles(ct)
         self.values_labels = self.get_values_labels_styles(ct)
+        self.corner = self.get_corner_styles(ct)
+
+    def get_corner_styles(self, ct):
+        styles = {}
+        return self.get_styles(self.crosstab_row - 1, self.crosstab_col - 1)
 
     def get_values_styles(self, ct):
         yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
