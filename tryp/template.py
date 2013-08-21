@@ -15,100 +15,99 @@ colour = {
 
 class Template(object):
     def __init__(self, ct):
+        self.ct = ct
         self.wb = open_workbook(ct.excel['template'], formatting_info=True)
         self.ws = self.wb.sheet_by_index(0)
+
         note_map = self.ws.cell_note_map
         note_map = dict([(note_map[k].text, k) for k in note_map.keys()])
-        self.crosstab_row = note_map['CROSSTAB'][0]
-        self.crosstab_col = note_map['CROSSTAB'][1]
-        self.panes_are_frozen = self.ws.panes_are_frozen
-        self.vert_split_pos = self.ws.vert_split_pos
-        self.horz_split_pos = self.ws.horz_split_pos
+        self.crosstab_loc = (note_map['CROSSTAB'][0], note_map['CROSSTAB'][1])
 
-        self.ytotal_label = self.ws.cell(self.crosstab_row + len(ct.xaxis) + 1,
-                                         self.crosstab_col).value
-        self.xtotal_label = self.ws.cell(self.crosstab_row,
-                                         self.crosstab_col +
-                                         len(ct.yaxis)).value
+        self.styles = {}
+        self.styles['values'] = self.__get_values_styles()
+        self.styles['index'] = self.__get_index_styles()
+        self.styles['column'] = self.__get_column_styles()
+        self.styles['values_labels'] = self.__get_values_labels_styles()
+        self.styles['corner'] = self.__get_ct_corner_styles()
+        self.styles['header'] = self.__get_header_styles()
 
-        self.values = self.get_values_styles(ct)
-        self.index = self.get_index_styles(ct)
-        self.column = self.get_column_styles(ct)
-        self.values_labels = self.get_values_labels_styles(ct)
-        self.corner = self.get_corner_styles(ct)
-        self.headers = self.get_header_styles(ct)
-
-    def get_header_styles(self, ct):
+    def __get_header_styles(self):
         headers = []
-        for row in range(0, self.crosstab_row):
+        crosstab_row = self.crosstab_loc[0]
+        for row in range(0, crosstab_row):
             for col in range(len(self.ws.row(row))):
                 h = (row, col, self.ws.row(row)[col].value,
-                     self.get_styles(row - self.crosstab_row, col))
+                     self.__get_styles(row - crosstab_row, col))
                 headers.append(h)
         return headers
 
-    def get_corner_styles(self, ct):
+    def __get_ct_corner_styles(self):
         styles = {}
-        return self.get_styles(0, 0)
+        return self.__get_styles(0, 0)
 
-    def get_values_styles(self, ct):
-        yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
-        xaxis = [''] + ct.xaxis
+    def __get_values_styles(self):
+        yaxis = [''] + self.ct.visible_yaxis_summary + [self.ct.yaxis[-1]]
+        xaxis = [''] + self.ct.xaxis
         styles = {}
 
         for i, y in enumerate(yaxis):
             col = -1
             for x in xaxis:
-                for z in ct.zaxis:
+                for z in self.ct.zaxis:
                     col = col + 1
-                    styles[(y, x, z)] = self.get_styles(i + len(ct.xaxis) + 1,
-                                                        col + len(ct.yaxis))
+                    sty = self.__get_styles(i + len(self.ct.xaxis) + 1,
+                                            col + len(self.ct.yaxis))
+                    styles[(y, x, z)] = sty
         return styles
 
-    def get_index_styles(self, ct):
-        yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
-        xaxis = [''] + ct.xaxis
+    def __get_index_styles(self):
+        yaxis = [''] + self.ct.visible_yaxis_summary + [self.ct.yaxis[-1]]
+        xaxis = [''] + self.ct.xaxis
         styles = {}
 
         for i, y in enumerate(yaxis):
             for j in range(len(yaxis)):
-                styles[(y, j)] = self.get_styles(i + len(ct.xaxis) + 1, j)
+                sty = self.__get_styles(i + len(self.ct.xaxis) + 1, j)
+                styles[(y, j)] = sty
         return styles
 
-    def get_values_labels_styles(self, ct):
+    def __get_values_labels_styles(self):
         styles = {}
-        for i in range(len(ct.zaxis)):
-            styles[ct.zaxis[i]] = self.get_styles(len(ct.xaxis), i +
-                                                  len(ct.yaxis))
+        for i in range(len(self.ct.zaxis)):
+            sty = self.__get_styles(len(self.ct.xaxis), i + len(self.ct.yaxis))
+            styles[self.ct.zaxis[i]] = sty
         return styles
 
-    def get_column_styles(self, ct):
-        yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
-        xaxis = [''] + ct.xaxis
+    def __get_column_styles(self):
+        yaxis = [''] + self.ct.visible_yaxis_summary + [self.ct.yaxis[-1]]
+        xaxis = [''] + self.ct.xaxis
         styles = {}
 
-        for h in range(len(ct.xaxis)):
-            col = len(ct.yaxis) - 1
+        for h in range(len(self.ct.xaxis)):
+            col = len(self.ct.yaxis) - 1
             for i, x in enumerate(xaxis):
-                for j, z in enumerate(ct.zaxis):
+                for j, z in enumerate(self.ct.zaxis):
                     col = col + 1
-                    styles[(h, x, z)] = self.get_styles(h, col)
+                    styles[(h, x, z)] = self.__get_styles(h, col)
 
         return styles
 
-    def get_styles(self, row, col):
-        row = row + self.crosstab_row
-        col = col + self.crosstab_col
+    def __get_styles(self, row, col):
+        crosstab_row, crosstab_col = self.crosstab_loc
+        row = row + crosstab_row
+        col = col + crosstab_col
         xf = self.wb.xf_list[self.ws.cell_xf_index(row, col)]
-        xfval = dict(self.font(xf) + self.pattern(xf) + self.alignment(xf) +
-                     self.borders(xf))
+        xfval = dict(self.__font(xf) +
+                     self.__pattern(xf) +
+                     self.__alignment(xf) +
+                     self.__borders(xf))
         xfstr = 'font: name %(name)s, height %(height)s, bold %(bold)s;'\
                 'pattern: pattern solid, fore-colour %(forecolour)s;'\
                 'alignment: vertical %(vertical)s, horizontal %(horizontal)s;'\
                 'borders : bottom %(bottom)s, left %(left)s,'\
                 'right %(right)s, top %(top)s' % xfval
         style = easyxf(xfstr)
-        style.num_format_str = self.number_format(xf)
+        style.num_format_str = self.__number_format(xf)
 
         style.label = ''
         value = self.ws.cell(row, col).value
@@ -119,18 +118,18 @@ class Template(object):
                 style.label = value
         return style
 
-    def font(self, xf):
+    def __font(self, xf):
         name = self.wb.font_list[xf.font_index].name
         height = self.wb.font_list[xf.font_index].height
         bold = self.wb.font_list[xf.font_index].weight
         bold = 'on' if bold == 700 else 'off'
         return (('name', name), ('height', height), ('bold', bold))
 
-    def pattern(self, xf):
+    def __pattern(self, xf):
         forecolour = colour[xf.background.pattern_colour_index]
         return (('forecolour', forecolour),)
 
-    def alignment(self, xf):
+    def __alignment(self, xf):
         horz_align = Style.xf_dict['alignment']['horz']
         horz_align = dict(zip(horz_align.values(), horz_align.keys()))
         vert_align = Style.xf_dict['alignment']['vert']
@@ -139,7 +138,7 @@ class Template(object):
         vertical = vert_align[xf.alignment.vert_align]
         return (('horizontal', horizontal), ('vertical', vertical))
 
-    def borders(self, xf):
+    def __borders(self, xf):
         brd = Borders()
         bottom = xf.border.bottom_line_style.real
         left = xf.border.left_line_style.real
@@ -148,5 +147,5 @@ class Template(object):
         return (('bottom', bottom), ('left', left), ('right', right),
                 ('top', top))
 
-    def number_format(self, xf):
+    def __number_format(self, xf):
         return self.wb.format_map[xf.format_key].format_str
