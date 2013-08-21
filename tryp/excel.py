@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from xlwt import Workbook
-from style import Style
+from template import Template
 
 
 def to_excel(ct):
@@ -10,7 +10,7 @@ def to_excel(ct):
     template = ct.excel['template']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
-    sty = Style(ct)
+    sty = Template(ct)
     write_axes(ct, ws, sty)
     write_values(ct, ws, sty)
     write_corner(ct, ws, sty)

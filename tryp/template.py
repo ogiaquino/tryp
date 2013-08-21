@@ -1,5 +1,5 @@
 from xlrd import open_workbook
-from xlwt import easyxf, Borders, Pattern, Style as XStyle
+from xlwt import easyxf, Borders, Pattern, Style
 
 colour = {
     46: "lavender",
@@ -13,7 +13,7 @@ colour = {
 }
 
 
-class Style(object):
+class Template(object):
     def __init__(self, ct):
         self.wb = open_workbook(ct.excel['template'], formatting_info=True)
         self.ws = self.wb.sheet_by_index(0)
@@ -131,9 +131,9 @@ class Style(object):
         return (('forecolour', forecolour),)
 
     def alignment(self, xf):
-        horz_align = XStyle.xf_dict['alignment']['horz']
+        horz_align = Style.xf_dict['alignment']['horz']
         horz_align = dict(zip(horz_align.values(), horz_align.keys()))
-        vert_align = XStyle.xf_dict['alignment']['vert']
+        vert_align = Style.xf_dict['alignment']['vert']
         vert_align = dict(zip(vert_align.values(), vert_align.keys()))
         horizontal = horz_align[xf.alignment.hor_align]
         vertical = vert_align[xf.alignment.vert_align]
