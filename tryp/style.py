@@ -21,10 +21,10 @@ class Style(object):
         note_map = dict([(note_map[k].text, k) for k in note_map.keys()])
         self.crosstab_row = note_map['CROSSTAB'][0]
         self.crosstab_col = note_map['CROSSTAB'][1]
+        self.freeze = note_map.get('FREEZE', (0, 0))
 
         self.ytotal_label = self.ws.cell(self.crosstab_row + len(ct.xaxis) + 1,
                                          self.crosstab_col).value
-
         self.xtotal_label = self.ws.cell(self.crosstab_row,
                                          self.crosstab_col +
                                          len(ct.yaxis)).value

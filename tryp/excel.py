@@ -14,7 +14,15 @@ def to_excel(ct):
     write_values(ct, ws, sty)
     write_corner(ct, ws, sty)
     write_header(ct, ws, sty)
+    freeze_panes(ws, sty)
     wb.save(filename)
+
+
+def freeze_panes(ws, sty):
+    ws.set_panes_frozen(True)
+    ws.set_horz_split_pos(sty.freeze[0])
+    ws.set_vert_split_pos(sty.freeze[1])
+    ws.show_grid = False
 
 
 def write_header(ct, ws, sty):
