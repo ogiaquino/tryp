@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from xlwt import Workbook
 from style import Style
 
@@ -224,4 +225,6 @@ def values(ct, styles):
             style = styles[(y, x, z)]
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)
+            if np.isnan(label):
+                label = '-'
             yield {'r': r, 'c': c, 'label': label, 'style': style}
