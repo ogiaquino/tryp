@@ -13,7 +13,20 @@ def to_excel(ct):
     write_axes(ct, ws, sty)
     write_values(ct, ws, sty)
     write_corner(ct, ws, sty)
+    write_header(ct, ws, sty)
     wb.save(filename)
+
+
+def write_header(ct, ws, sty):
+    for h in sty.headers:
+        row = h[0]
+        col = h[1]
+        try:
+            label = h[2] % ct.labels
+        except:
+            label = h[2]
+        style = h[3]
+        ws.write(h[0], h[1], label, h[3])
 
 
 def write_corner(ct, ws, styles):

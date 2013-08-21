@@ -8,7 +8,8 @@ colour = {
     64: "white",
     50: "lime",
     13: "yellow",
-    40: "sky-blue"
+    40: "sky-blue",
+    10: "red"
 }
 
 
@@ -33,6 +34,16 @@ class Style(object):
         self.column = self.get_column_styles(ct)
         self.values_labels = self.get_values_labels_styles(ct)
         self.corner = self.get_corner_styles(ct)
+        self.headers = self.get_header_styles(ct)
+
+    def get_header_styles(self, ct):
+        headers = []
+        for row in range(0, self.crosstab_row):
+            for col in range(len(self.ws.row(row))):
+                h = (row, col, self.ws.row(row)[col].value,
+                     self.get_styles(row - self.crosstab_row, col))
+                headers.append(h)
+        return headers
 
     def get_corner_styles(self, ct):
         styles = {}
