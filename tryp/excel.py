@@ -19,9 +19,9 @@ def to_excel(ct):
 
 
 def freeze_panes(ws, sty):
-    ws.set_panes_frozen(True)
-    ws.set_horz_split_pos(sty.freeze[0])
-    ws.set_vert_split_pos(sty.freeze[1])
+    ws.set_panes_frozen(sty.panes_are_frozen)
+    ws.set_horz_split_pos(sty.horz_split_pos)
+    ws.set_vert_split_pos(sty.vert_split_pos)
     ws.show_grid = False
 
 
