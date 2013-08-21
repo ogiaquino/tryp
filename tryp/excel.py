@@ -116,8 +116,8 @@ def _write_values_labels(ct, ws, idx, styles):
     crosstab_col = styles.crosstab_col
     r = idx['r'] + crosstab_row
     c = idx['c'] + crosstab_col
-    label = idx['label']
     style = idx['style']
+    label = style.label or idx['label']
     ws.write(r, c, label, style)
 
 
