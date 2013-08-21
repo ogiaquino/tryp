@@ -36,7 +36,7 @@ class Style(object):
 
     def get_corner_styles(self, ct):
         styles = {}
-        return self.get_styles(self.crosstab_row - 1, self.crosstab_col - 1)
+        return self.get_styles(0, 0)
 
     def get_values_styles(self, ct):
         yaxis = [''] + ct.visible_yaxis_summary + [ct.yaxis[-1]]
