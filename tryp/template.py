@@ -52,8 +52,8 @@ class Template(object):
                 'right %(right)s, top %(top)s' % xfval
         style = easyxf(xfstr)
         style.label = self.__get_label(row + crosstab_row, col + crosstab_col)
-        style.row = row
-        style.col = col
+        style.row = row  # CAN BE USE TO OVERWRITE STYLE IN excel.py
+        style.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
         style.row_height = self.ws.rowinfo_map[row + crosstab_row].height
         style.column_width = self.ws.computed_column_width(col + crosstab_col)
         style.num_format_str = self.__number_format(xf)
