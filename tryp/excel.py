@@ -23,7 +23,7 @@ def freeze_panes(ws, tmpl):
     ws.set_panes_frozen(tmpl.ws.panes_are_frozen)
     ws.set_horz_split_pos(tmpl.ws.horz_split_pos)
     ws.set_vert_split_pos(tmpl.ws.vert_split_pos)
-    ws.show_grid = False
+    ws.show_grid = tmpl.ws.show_grid_lines
 
 
 def write_header(ct, ws, tmpl):
