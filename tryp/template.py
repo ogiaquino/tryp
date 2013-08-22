@@ -67,7 +67,9 @@ class Template(object):
 
         for i, y in enumerate(yaxis):
             for j in range(len(yaxis)):
-                sty = self.__get_styles(i + len(self.ct.xaxis) + 1, j)
+                col = j
+                row = i + len(self.ct.xaxis) + 1
+                sty = self.__get_styles(row, col)
                 styles[(y, j)] = sty
         return styles
 
@@ -116,6 +118,8 @@ class Template(object):
                 value = value.split('[')[1]
                 value = value.replace(']', '')
                 style.label = value
+        style.row_height = self.ws.rowinfo_map[row].height
+        style.column_width = self.ws.computed_column_width(col)
         return style
 
     def __font(self, xf):

@@ -35,7 +35,9 @@ def write_header(ct, ws, tmpl):
         except:
             label = h[2]
         style = h[3]
-        ws.write(h[0], h[1], label, h[3])
+        ws.write(row, col, label, style)
+        ws.row(row).height = style.row_height
+        ws.col(col).width = style.column_width
 
 
 def write_corner(ct, ws, tmpl):
@@ -75,6 +77,8 @@ def _write_yaxis(ct, ws, idx, axis, tmpl):
             if style.label:
                 label = label + style.label
             ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+            ws.row(r1).height = style.row_height
+            ws.col(c1).width = style.column_width
         except:
             pass
 
@@ -97,6 +101,8 @@ def _write_xaxis(ct, ws, idx, axis, tmpl):
             if style.label:
                 label = label + style.label
             ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+            ws.row(r1).height = style.row_height
+            ws.col(c1).width = style.column_width
         except:
             pass
 
@@ -115,6 +121,8 @@ def _write_values(ct, ws, idx, tmpl):
     c = idx['c'] + crosstab_col
     label = idx['label']
     style = idx['style']
+    ws.row(r).height = style.row_height
+    ws.col(c).width = style.column_width
     ws.write(r, c, label, style)
 
 
