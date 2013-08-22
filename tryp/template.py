@@ -1,3 +1,4 @@
+import re
 from xlrd import open_workbook
 from xlwt import easyxf, Borders, Pattern, Style
 
@@ -31,6 +32,39 @@ class Template(object):
         self.styles['values_labels'] = self.__get_values_labels_styles()
         self.styles['corner'] = self.__get_ct_corner_styles()
         self.styles['header'] = self.__get_header_styles()
+
+    def get_styles(self, row, col, overwrite={}):
+        crosstab_row, crosstab_col = self.crosstab_loc
+        xf = self.wb.xf_list[self.ws.cell_xf_index(row + crosstab_row,
+                                                   col + crosstab_col)]
+        xfval = dict(self.__font(xf) +
+                     self.__pattern(xf) +
+                     self.__alignment(xf) +
+                     self.__borders(xf))
+        for k in overwrite:
+            xfval[k] = overwrite[k]
+
+        xfstr = 'font: name %(name)s, colour %(colour_index)s,' \
+                'height %(height)s, bold %(bold)s;'\
+                'pattern: pattern solid, fore-colour %(forecolour)s;'\
+                'alignment: vertical %(vertical)s, horizontal %(horizontal)s;'\
+                'borders : bottom %(bottom)s, left %(left)s,'\
+                'right %(right)s, top %(top)s' % xfval
+        style = easyxf(xfstr)
+        style.label = self.__get_label(row + crosstab_row, col + crosstab_col)
+        style.row = row
+        style.col = col
+        style.row_height = self.ws.rowinfo_map[row + crosstab_row].height
+        style.column_width = self.ws.computed_column_width(col + crosstab_col)
+        style.num_format_str = self.__number_format(xf)
+        return style
+
+    def __get_label(self, row, col):
+        label = unicode(self.ws.cell(row, col).value)
+        match = re.search('\[(.*?)\]', label)
+        if match:
+            label = re.search('\[(.*?)\]', label).group(1)
+        return label
 
     def __get_header_styles(self):
         headers = []
@@ -95,40 +129,6 @@ class Template(object):
                     styles[(h, x, z)] = self.get_styles(h, col)
 
         return styles
-
-    def get_styles(self, row, col, overwrite={}):
-        crosstab_row, crosstab_col = self.crosstab_loc
-        xf = self.wb.xf_list[self.ws.cell_xf_index(row + crosstab_row,
-                                                   col + crosstab_col)]
-        xfval = dict(self.__font(xf) +
-                     self.__pattern(xf) +
-                     self.__alignment(xf) +
-                     self.__borders(xf))
-        for k in overwrite:
-            xfval[k] = overwrite[k]
-
-        xfstr = 'font: name %(name)s, colour %(colour_index)s,' \
-                'height %(height)s, bold %(bold)s;'\
-                'pattern: pattern solid, fore-colour %(forecolour)s;'\
-                'alignment: vertical %(vertical)s, horizontal %(horizontal)s;'\
-                'borders : bottom %(bottom)s, left %(left)s,'\
-                'right %(right)s, top %(top)s' % xfval
-        style = easyxf(xfstr)
-
-        style.label = ''
-        value = self.ws.cell(row + crosstab_row, col + crosstab_col).value
-        if isinstance(value, basestring):
-            if '[' in value and ']' in value:
-                value = value.split('[')[1]
-                value = value.replace(']', '')
-                style.label = value
-
-        style.row = row
-        style.col = col
-        style.row_height = self.ws.rowinfo_map[row + crosstab_row].height
-        style.column_width = self.ws.computed_column_width(col + crosstab_col)
-        style.num_format_str = self.__number_format(xf)
-        return style
 
     def __font(self, xf):
         font = self.wb.font_list[xf.font_index]
