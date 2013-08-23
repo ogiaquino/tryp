@@ -1,7 +1,7 @@
 """Usage:
     tryp.py -f tryp_file -d csv_file -o output_file  -t template_file
     tryp.py -f tryp_file -o output_file -t template_file\
- --connstring=<arg> --sqlfile=<arg> [--sqlparams=<arg>]...
+ [--connstring=<arg>] [--sqlfile=<arg>] [--sqlparams=<arg>]...
 
    Options:
           -f tryp_file.
@@ -46,12 +46,12 @@ class CrosstabMetaData(object):
             return (tryp_filename, extmodule)
 
     def data_frame(self, csv_file, connstring, sql_file, sqlparams):
-        if csv_file == 'csv':
+        if csv_file:
             df = read_csv(csv_file)
         else:
             query = open(sql_file).read()
             #query = query % sqlparams
-            conn = psycopg2.connect(self.report['connstring'])
+            conn = psycopg2.connect(connstring or self.report['connstring'])
             df = psql.frame_query(query, con=conn)
         return df
 
