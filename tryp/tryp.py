@@ -50,9 +50,9 @@ class CrosstabMetaData(object):
             df = read_csv(csv_file)
         else:
             query = open(sql_file).read()
-            #query = query % sqlparams
+            params = dict([params.split('=') for params in sqlparams])
             conn = psycopg2.connect(connstring or self.report['connstring'])
-            df = psql.frame_query(query, con=conn)
+            df = psql.frame_query(query % params, con=conn)
         return df
 
 
