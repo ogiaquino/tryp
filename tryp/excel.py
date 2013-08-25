@@ -121,9 +121,9 @@ def _write_values(ct, ws, idx, tmpl):
     c = idx['c'] + crosstab_col
     label = idx['label']
     style = idx['style']
+    ws.write(r, c, label, style)
     ws.row(r).height = style.row_height
     ws.col(c).width = style.column_width
-    ws.write(r, c, label, style)
 
 
 def _write_values_labels(ct, ws, idx, tmpl):
@@ -133,6 +133,8 @@ def _write_values_labels(ct, ws, idx, tmpl):
     style = idx['style']
     label = style.label or idx['label']
     ws.write(r, c, label, style)
+    ws.row(r).height = style.row_height
+    ws.col(c).width = style.column_width
 
 
 def merge_indexes(indexes, index_width, total_width):
