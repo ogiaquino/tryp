@@ -48,6 +48,7 @@ class Template(object):
                 'height %(height)s, bold %(bold)s;'\
                 'pattern: pattern solid, fore-colour %(forecolour)s;'\
                 'alignment: vertical %(vertical)s, horizontal %(horizontal)s;'\
+                'align: wrap %(wrap)s;' \
                 'borders : bottom %(bottom)s, left %(left)s,'\
                 'right %(right)s, top %(top)s' % xfval
         style = easyxf(xfstr)
@@ -148,7 +149,10 @@ class Template(object):
         vert_align = dict(zip(vert_align.values(), vert_align.keys()))
         horizontal = horz_align[xf.alignment.hor_align]
         vertical = vert_align[xf.alignment.vert_align]
-        return (('horizontal', horizontal), ('vertical', vertical))
+        text_wrapped = str(xf.alignment.text_wrapped)
+        wrap = Style.xf_dict['alignment']['wrap'][text_wrapped]
+        return (('horizontal', horizontal), ('vertical', vertical),
+                ('wrap', wrap))
 
     def __borders(self, xf):
         brd = Borders()
