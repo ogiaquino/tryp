@@ -178,8 +178,6 @@ def index(ct, tmpl):
 
             if conditional_style:
                 label = conditional_style['label']
-                #style = tmpl.get_styles(style.row, style.col,
-                #                        conditional_style['style_attr'])
                 style = conditional_style['style']
             else:
                 label = label[2]
@@ -243,7 +241,7 @@ def values(ct, tmpl):
             c = il + len(levels_index)
             conditional_style = ct.conditional_style(label, z, style)
             if conditional_style:
-                style = conditional_style
+                style = conditional_style['style']
             if np.isnan(label):
                 label = '-'
             yield {'r': r, 'c': c, 'label': label, 'style': style}

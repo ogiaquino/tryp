@@ -18,7 +18,7 @@ colour = {
 
 
 class Template(object):
-    def __init__(self, ct):
+    def __init__(self, ct=None):
         self.ct = ct
         self.wb = open_workbook(ct.excel['template'], formatting_info=True)
         self.ws = self.wb.sheet_by_index(0)
