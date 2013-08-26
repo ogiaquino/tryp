@@ -8,7 +8,6 @@ from excel import to_excel as to_excel
 
 class Crosstab(object):
     def __init__(self, metadata):
-        self.labels = {}
         self.coordinates = {}
         self.xaxis = metadata.xaxis
         self.yaxis = metadata.yaxis
@@ -131,6 +130,7 @@ class Crosstab(object):
         if extmodule:
             extmodule = imp.load_source(extmodule[0], extmodule[1])
             extmodule.extend(self)
+            self.datasets = extmodule.datasets(self)
         self.values_labels = self.__values_labels(self.dataframe)
 
     def __values_labels(self, ct):

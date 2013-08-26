@@ -31,7 +31,7 @@ def write_header(ct, ws, tmpl):
         row = h[0]
         col = h[1]
         try:
-            label = h[2] % ct.labels
+            label = h[2] % ct.datasets
         except:
             label = h[2]
         style = h[3]
