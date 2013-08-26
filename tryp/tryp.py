@@ -52,6 +52,7 @@ class CrosstabMetaData(object):
             query = open(sql_file).read()
             params = dict([params.split('=') for params in sqlparams])
             conn = psycopg2.connect(connstring or self.report['connstring'])
+            self.connection = conn
             df = psql.frame_query(query % params, con=conn)
         return df
 
