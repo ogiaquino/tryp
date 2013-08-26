@@ -66,6 +66,8 @@ class Template(object):
         match = re.search('\[(.*?)\]', label)
         if match:
             label = re.search('\[(.*?)\]', label).group(1)
+        else:
+            label = ''
         return label
 
     def __get_header_styles(self):
