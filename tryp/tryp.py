@@ -48,6 +48,7 @@ class CrosstabMetaData(object):
     def data_frame(self, csv_file, connstring, sql_file, sqlparams):
         if csv_file:
             df = read_csv(csv_file)
+            self.connection = None
         else:
             query = open(sql_file).read()
             params = dict([params.split('=') for params in sqlparams])
