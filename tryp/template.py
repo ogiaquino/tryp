@@ -35,7 +35,7 @@ class Template(object):
         self.styles['corner'] = self.__get_ct_corner_styles()
         self.styles['header'] = self.__get_header_styles()
 
-    def get_styles(self, row, col, overwrite={}):
+    def get_styles(self, row, col, overwrite={}, num_format=None):
         crosstab_row, crosstab_col = self.crosstab_loc
         xf = self.wb.xf_list[self.ws.cell_xf_index(row + crosstab_row,
                                                    col + crosstab_col)]
@@ -59,7 +59,7 @@ class Template(object):
         style.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
         style.row_height = self.ws.rowinfo_map[row + crosstab_row].height
         style.column_width = self.ws.computed_column_width(col + crosstab_col)
-        style.num_format_str = self.__number_format(xf)
+        style.num_format_str = num_format or self.__number_format(xf)
         return style
 
     def __get_label(self, row, col):

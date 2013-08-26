@@ -169,18 +169,20 @@ def index(ct, tmpl):
     for k in sorted(labels.keys()):
         for i, label in enumerate(labels[k]):
             coordinate = ct.coordinates['y'][label[0]]
-            conditional_style = ct.conditional_style(label, coordinate)
             r1 = label[0] + len(columns) + 1
             r2 = label[1] + len(columns) + 1
             c1 = k
             c2 = k
-            label = label[2]
             style = styles[(coordinate, k)]
+            conditional_style = ct.conditional_style(label, coordinate, style)
 
             if conditional_style:
                 label = conditional_style['label']
-                style = tmpl.get_styles(style.row, style.col,
-                                        conditional_style['style_attr'])
+                #style = tmpl.get_styles(style.row, style.col,
+                #                        conditional_style['style_attr'])
+                style = conditional_style['style']
+            else:
+                label = label[2]
 
             yield {'r1': r1, 'r2': r2, 'c1': c1, 'c2': c2, 'label': label,
                    'style': style, 'coordinate': coordinate, 'axis': k}
@@ -239,10 +241,9 @@ def values(ct, tmpl):
             style = styles[(y, x, z)]
             r = iv + len(levels_columns) + 1
             c = il + len(levels_index)
-            conditional_style = ct.conditional_style(label, z)
+            conditional_style = ct.conditional_style(label, z, style)
             if conditional_style:
-                style = tmpl.get_styles(style.row, style.col,
-                                        conditional_style['style_attr'])
+                style = conditional_style
             if np.isnan(label):
                 label = '-'
             yield {'r': r, 'c': c, 'label': label, 'style': style}
