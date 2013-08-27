@@ -140,21 +140,33 @@ def _write_values_labels(ct, ws, idx, tmpl):
 def merge_indexes(indexes, index_width, total_width):
     labels = {}
 
+    def __index(l):
+        series = []
+        index = [0]
+        for i, v in enumerate(l):
+            try:
+                if l[i] != l[i + 1]:
+                    series.append(v)
+                    index.append(i + 1)
+            except:
+                series.append(v)
+        return (series, index)
+
     def __labels(k, series):
         labels[k] = []
-        lseries = series.index.tolist()
+        lseries = series[1]
         lseries.append(len(indexes))
         for il, idx in enumerate(lseries[:-1]):
-            labels[k].append((idx, lseries[il + 1] - 1, series[idx]))
+            labels[k].append((idx, lseries[il + 1] - 1, series[0][il]))
 
     for ir in range(total_width):
         series = pd.Series(zip(*indexes)[ir])
-        series = series.drop_duplicates()
+        series = __index(series)
         __labels(ir, series)
 
     for ir in range(total_width, index_width):
         series = pd.Series(zip(*indexes)[ir])
-        __labels(ir, series)
+        __labels(ir, (series, [x for x in range(len(series))]))
 
     return labels
 
