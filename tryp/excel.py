@@ -173,9 +173,9 @@ def index(ct, tmpl):
             r2 = label[1] + len(columns) + 1
             c1 = k
             c2 = k
+
             style = styles[(coordinate, k)]
             conditional_style = ct.conditional_style(label, coordinate, style)
-
             if conditional_style:
                 label = conditional_style['label']
                 style = conditional_style['style']
@@ -231,17 +231,18 @@ def values(ct, tmpl):
     styles = tmpl.styles['values']
     for iv, value in enumerate(ct.dataframe.values):
         for il, label in enumerate(value):
+            r = iv + len(levels_columns) + 1
+            c = il + len(levels_index)
+
             y = ct.coordinates['y'][iv]
             x = '' if 'x' not in ct.coordinates else ct.coordinates['x'][il]
             z = ct.zaxis[il] if 'z' not in ct.coordinates else \
                 ct.coordinates['z'][il]
-
             style = styles[(y, x, z)]
-            r = iv + len(levels_columns) + 1
-            c = il + len(levels_index)
             conditional_style = ct.conditional_style(label, z, style)
             if conditional_style:
                 style = conditional_style['style']
+
             if np.isnan(label):
                 label = '-'
             yield {'r': r, 'c': c, 'label': label, 'style': style}
