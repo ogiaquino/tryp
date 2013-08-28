@@ -16,7 +16,16 @@ def to_excel(ct):
     write_corner(ct, ws, tmpl)
     write_header(ct, ws, tmpl)
     freeze_panes(ws, tmpl)
+    borderize_floor(ct, ws, tmpl)
     wb.save(filename)
+
+
+def borderize_floor(ct, ws, tmpl):
+    row = tmpl.ws.nrows - tmpl.crosstab_loc[0] - 1
+    style = tmpl.get_styles(row, 0)
+    for c in range(len(ct.dataframe.columns) + len(ct.yaxis)):
+        r = len(ct.dataframe.index) + tmpl.crosstab_loc[0] + len(ct.xaxis) + 1
+        ws.write(r, c, '', style)
 
 
 def freeze_panes(ws, tmpl):
