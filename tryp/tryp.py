@@ -1,7 +1,8 @@
 """Usage:
     tryp.py -f tryp_file -d csv_file -o output_file  -t template_file
-    tryp.py -f tryp_file -o output_file -t template_file\
- [--connstring=<arg>] [--sqlfile=<arg>] [--sqlparams=<arg>]...
+    tryp.py -f tryp_file -o output_file -t template_file \
+ [--dbhost=<arg>] [--dbport=<arg>] [--dbname=<arg>] [--dbuser=<arg>] \
+ [--dbpassword=<arg>] [--sqlfile=<arg>] [--sqlparams=<arg>]...
 
    Options:
           -f tryp_file.
@@ -9,6 +10,11 @@
           -o out_putfile
           -t template_file
           --connstring connstring
+          --dbhost database hostname
+          --dbport database port
+          --dbname database name
+          --dbuser database username
+          --dbpassword database password
           --sqlfile sql_file
           --sqlparams sqlparams
 """
@@ -22,10 +28,12 @@ from crosstab import Crosstab
 
 class CrosstabMetaData(object):
     def __init__(self, tryp_file, template_file, output_file, csv_file,
-                 connstring, sql_file, sqlparams):
+                 dbhost, dbport, dbname, dbuser, dbpassword,
+                 sql_file, sqlparams):
         self.report = parse(tryp_file, 'crosstab')
-        self.source_dataframe = self.data_frame(csv_file, connstring, sql_file,
-                                                sqlparams)
+        self.source_dataframe = self.data_frame(csv_file, dbhost, dbport,
+                                                dbname, dbuser, dbpassword,
+                                                sql_file, sqlparams)
         self.xaxis = self.report['xaxis']
         self.yaxis = self.report['yaxis']
         self.zaxis = self.report['zaxis']
@@ -45,14 +53,23 @@ class CrosstabMetaData(object):
         if os.path.exists(extmodule):
             return (tryp_filename, extmodule)
 
-    def data_frame(self, csv_file, connstring, sql_file, sqlparams):
+    def data_frame(self, csv_file, dbhost, dbport, dbname, dbuser, dbpassword,
+                   sql_file, sqlparams):
         if csv_file:
             df = read_csv(csv_file)
             self.connection = None
         else:
             query = open(sql_file).read()
             params = dict([params.split('=') for params in sqlparams])
-            conn = psycopg2.connect(connstring or self.report['connstring'])
+            connstring = "host='%(host)s' port='%(port)s'" \
+                         "dbname='%(dbname)s' user='%(user)s'" \
+                         "password='%(password)s'"
+            connstring = connstring % {'host': dbhost,
+                                       'port': dbport,
+                                       'dbname': dbname,
+                                       'user': dbuser,
+                                       'password': dbpassword}
+            conn = psycopg2.connect(self.report['connstring'] or connstring)
             self.connection = conn
             df = psql.frame_query(query % params, con=conn)
         return df
@@ -60,9 +77,11 @@ class CrosstabMetaData(object):
 
 class Tryp(object):
     def __init__(self, tryp_file, template_file, output_file, csv_file,
-                 connstring, sql_file, sqlparams):
+                 dbhost, dbport, dbname, dbuser, dbpassword, sql_file,
+                 sqlparams):
         ctmeta = CrosstabMetaData(tryp_file, template_file, output_file,
-                                  csv_file, connstring, sql_file, sqlparams)
+                                  csv_file, dbhost, dbport, dbname, dbuser,
+                                  dbpassword, sql_file, sqlparams)
         self.crosstab = Crosstab(ctmeta)
 
 
@@ -73,11 +92,15 @@ def main():
     template_file = args['-t']
     output_file = args['-o']
     csv_file = args['-d']
-    connstring = args['--connstring']
     sql_file = args['--sqlfile']
     sqlparams = args['--sqlparams']
-    Tryp(tryp_file, template_file, output_file, csv_file, connstring,
-         sql_file, sqlparams).crosstab.to_excel()
+    dbhost = args['--dbhost']
+    dbport = args['--dbport']
+    dbname = args['--dbname']
+    dbuser = args['--dbuser']
+    dbpassword = args['--dbpassword']
+    Tryp(tryp_file, template_file, output_file, csv_file, dbhost, dbport,
+         dbname, dbuser, dbpassword, sql_file, sqlparams).crosstab.to_excel()
 
 if __name__ == '__main__':
     main()
