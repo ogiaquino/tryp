@@ -42,7 +42,7 @@ class CrosstabMetaData(object):
         self.excel = {}
         self.excel['filename'] = output_file
         self.excel['template'] = template_file
-        self.excel['sheetname'] = os.path.splitext(output_file)[0]
+        self.excel['sheetname'] = self.report['sheetname']
         self.extmodule = self.is_extmodule_exist(tryp_file)
 
     def is_extmodule_exist(self, tryp_file):
