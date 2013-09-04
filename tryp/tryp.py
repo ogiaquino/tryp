@@ -71,6 +71,10 @@ class CrosstabMetaData(object):
                                        'password': dbpassword}
             conn = psycopg2.connect(connstring or self.report['connstring'])
             self.connection = conn
+            print conn
+            f = open('/tmp/query.sql', 'w')
+            f.write(query % params)
+            f.close()
             df = psql.frame_query(query % params, con=conn)
         return df
 

@@ -11,12 +11,16 @@ def to_excel(ct):
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
     tmpl = Template(ct)
-    write_axes(ct, ws, tmpl)
-    write_values(ct, ws, tmpl)
-    write_corner(ct, ws, tmpl)
-    write_header(ct, ws, tmpl)
-    freeze_panes(ws, tmpl)
-    borderize_floor(ct, ws, tmpl)
+    if not ct.dataframe.empty:
+        write_header(ct, ws, tmpl)
+        write_axes(ct, ws, tmpl)
+        write_values(ct, ws, tmpl)
+        write_corner(ct, ws, tmpl)
+        freeze_panes(ws, tmpl)
+        borderize_floor(ct, ws, tmpl)
+    else:
+        ws.write_merge(0, 0, 0, 2, 'Your report returned an empty dataset.')
+        ws.show_grid = tmpl.ws.show_grid_lines
     wb.save(filename)
 
 

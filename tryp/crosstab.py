@@ -16,11 +16,14 @@ class Crosstab(object):
         self.visible_xaxis_summary = metadata.visible_xaxis_summary
         self.visible_yaxis_summary = metadata.visible_yaxis_summary
         self.excel = metadata.excel
-        self.dataframe = self.__crosstab(metadata.source_dataframe,
-                                         self.xaxis,
-                                         self.yaxis,
-                                         self.zaxis)
-        self.__extend(metadata.extmodule)
+        if not metadata.source_dataframe.empty:
+            self.dataframe = self.__crosstab(metadata.source_dataframe,
+                                             self.xaxis,
+                                             self.yaxis,
+                                             self.zaxis)
+            self.__extend(metadata.extmodule)
+        else:
+            self.dataframe = metadata.source_dataframe
 
     def to_excel(self):
         to_excel(self)
