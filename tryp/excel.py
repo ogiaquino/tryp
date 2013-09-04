@@ -10,8 +10,8 @@ def to_excel(ct):
     template = ct.excel['template']
     wb = Workbook()
     ws = wb.add_sheet(sheetname)
-    tmpl = Template(ct)
     if not ct.dataframe.empty:
+        tmpl = Template(ct)
         write_header(ct, ws, tmpl)
         write_axes(ct, ws, tmpl)
         write_values(ct, ws, tmpl)
@@ -20,7 +20,7 @@ def to_excel(ct):
         borderize_floor(ct, ws, tmpl)
     else:
         ws.write_merge(0, 0, 0, 2, 'Your report returned an empty dataset.')
-        ws.show_grid = tmpl.ws.show_grid_lines
+        ws.show_grid = False
     wb.save(filename)
 
 
