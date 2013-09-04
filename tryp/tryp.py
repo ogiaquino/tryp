@@ -1,5 +1,6 @@
 """Usage:
-    tryp.py -f tryp_file -d csv_file -o output_file  -t template_file
+    tryp.py -f tryp_file -d csv_file -o output_file  -t template_file \
+ [--sqlparams=<arg>]
     tryp.py -f tryp_file -o output_file -t template_file \
  [--dbhost=<arg>] [--dbport=<arg>] [--dbname=<arg>] [--dbuser=<arg>] \
  [--dbpassword=<arg>] [--sqlfile=<arg>] [--sqlparams=<arg>]...
@@ -57,6 +58,11 @@ class CrosstabMetaData(object):
                    sql_file, sqlparams):
         if csv_file:
             df = read_csv(csv_file)
+            if sqlparams:
+                params = dict([params.split('=') for params in sqlparams])
+                for column in params:
+                    filters = params[column].replace("'", '').split(',')
+                    df = df[df[column].isin(filters)]
             self.connection = None
         else:
             query = open(sql_file).read()
