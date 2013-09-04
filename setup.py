@@ -13,6 +13,7 @@ setup(name='tryp',
       maintainer_email='ogiaquino@gmail.com',
       platforms='Linux',
       url='https://github.com/ogiaquino/tryp',
+      zip_safe = False,
       tests_require=['nose',],
       test_suite='tests',
       entry_points={
