@@ -16,6 +16,49 @@ colour = {
     17: "green"
 }
 
+xfstr = 'font: name %(name)s, colour %(colour_index)s,' \
+        'height %(height)s, bold %(bold)s;'\
+        'pattern: pattern solid, fore-colour %(forecolour)s;'\
+        'alignment: vertical %(vertical)s, horizontal %(horizontal)s;'\
+        'align: wrap %(wrap)s;' \
+        'borders : bottom %(bottom)s, left %(left)s,'\
+        'right %(right)s, top %(top)s'
+
+def font(wb, xf):
+    font = wb.font_list[xf.font_index]
+    bold = 'on' if font.weight == 700 else 'off'
+    colour_index = colour.get(font.colour_index, 8)
+    return (('name', font.name), ('height', font.height), ('bold', bold),
+            ('colour_index', colour_index))
+
+def pattern(xf):
+    forecolour = colour[xf.background.pattern_colour_index]
+    return (('forecolour', forecolour),)
+
+def alignment(xf):
+    horz_align = Style.xf_dict['alignment']['horz']
+    horz_align = dict(zip(horz_align.values(), horz_align.keys()))
+    vert_align = Style.xf_dict['alignment']['vert']
+    vert_align = dict(zip(vert_align.values(), vert_align.keys()))
+    horizontal = horz_align[xf.alignment.hor_align]
+    vertical = vert_align[xf.alignment.vert_align]
+    text_wrapped = str(xf.alignment.text_wrapped)
+    wrap = Style.xf_dict['alignment']['wrap'][text_wrapped]
+    return (('horizontal', horizontal), ('vertical', vertical),
+            ('wrap', wrap))
+
+def borders( xf):
+    brd = Borders()
+    bottom = xf.border.bottom_line_style.real
+    left = xf.border.left_line_style.real
+    right = xf.border.right_line_style.real
+    top = xf.border.top_line_style.real
+    return (('bottom', bottom), ('left', left), ('right', right),
+            ('top', top))
+
+def number_format(wb, xf):
+    return wb.format_map[xf.format_key].format_str
+
 
 class Template(object):
     def __init__(self, ct=None):
@@ -39,27 +82,20 @@ class Template(object):
         crosstab_row, crosstab_col = self.crosstab_loc
         xf = self.wb.xf_list[self.ws.cell_xf_index(row + crosstab_row,
                                                    col + crosstab_col)]
-        xfval = dict(self.__font(xf) +
-                     self.__pattern(xf) +
-                     self.__alignment(xf) +
-                     self.__borders(xf))
+        xfval = dict(font(self.wb, xf) +
+                     pattern(xf) +
+                     alignment(xf) +
+                     borders(xf))
         for k in overwrite:
             xfval[k] = overwrite[k]
 
-        xfstr = 'font: name %(name)s, colour %(colour_index)s,' \
-                'height %(height)s, bold %(bold)s;'\
-                'pattern: pattern solid, fore-colour %(forecolour)s;'\
-                'alignment: vertical %(vertical)s, horizontal %(horizontal)s;'\
-                'align: wrap %(wrap)s;' \
-                'borders : bottom %(bottom)s, left %(left)s,'\
-                'right %(right)s, top %(top)s' % xfval
-        style = easyxf(xfstr)
+        style = easyxf(xfstr % xfval)
         style.label = self.__get_label(row + crosstab_row, col + crosstab_col)
         style.row = row  # CAN BE USE TO OVERWRITE STYLE IN excel.py
         style.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
         style.row_height = self.ws.rowinfo_map[row + crosstab_row].height
         style.column_width = self.ws.computed_column_width(col + crosstab_col)
-        style.num_format_str = num_format or self.__number_format(xf)
+        style.num_format_str = num_format or number_format(self.wb, xf)
         return style
 
     def __get_label(self, row, col):
@@ -134,38 +170,3 @@ class Template(object):
                     styles[(h, x, z)] = self.get_styles(h, col)
 
         return styles
-
-    def __font(self, xf):
-        font = self.wb.font_list[xf.font_index]
-        bold = 'on' if font.weight == 700 else 'off'
-        colour_index = colour.get(font.colour_index, 8)
-        return (('name', font.name), ('height', font.height), ('bold', bold),
-                ('colour_index', colour_index))
-
-    def __pattern(self, xf):
-        forecolour = colour[xf.background.pattern_colour_index]
-        return (('forecolour', forecolour),)
-
-    def __alignment(self, xf):
-        horz_align = Style.xf_dict['alignment']['horz']
-        horz_align = dict(zip(horz_align.values(), horz_align.keys()))
-        vert_align = Style.xf_dict['alignment']['vert']
-        vert_align = dict(zip(vert_align.values(), vert_align.keys()))
-        horizontal = horz_align[xf.alignment.hor_align]
-        vertical = vert_align[xf.alignment.vert_align]
-        text_wrapped = str(xf.alignment.text_wrapped)
-        wrap = Style.xf_dict['alignment']['wrap'][text_wrapped]
-        return (('horizontal', horizontal), ('vertical', vertical),
-                ('wrap', wrap))
-
-    def __borders(self, xf):
-        brd = Borders()
-        bottom = xf.border.bottom_line_style.real
-        left = xf.border.left_line_style.real
-        right = xf.border.right_line_style.real
-        top = xf.border.top_line_style.real
-        return (('bottom', bottom), ('left', left), ('right', right),
-                ('top', top))
-
-    def __number_format(self, xf):
-        return self.wb.format_map[xf.format_key].format_str
