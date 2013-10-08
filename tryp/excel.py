@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from xlwt import Workbook
+import xlsxwriter
 from template import Template
 
 
@@ -8,20 +8,28 @@ def to_excel(ct):
     sheetname = ct.excel['sheetname']
     filename = ct.excel['filename']
     template = ct.excel['template']
-    wb = Workbook()
-    ws = wb.add_sheet(sheetname)
+    wb = xlsxwriter.Workbook(filename)
+    ws = wb.add_worksheet(sheetname)
     if not ct.dataframe.empty:
-        tmpl = Template(ct)
-        write_header(ct, ws, tmpl)
+        tmpl = Template(ct, wb)
+        #write_header(ct, ws, tmpl)
         write_axes(ct, ws, tmpl)
         write_values(ct, ws, tmpl)
-        write_corner(ct, ws, tmpl)
-        freeze_panes(ws, tmpl)
-        borderize_floor(ct, ws, tmpl)
+        #write_corner(ct, ws, tmpl)
+        #freeze_panes(ws, tmpl)
+        #borderize_floor(ct, ws, tmpl)
     else:
-        ws.write_merge(0, 0, 0, 2, 'Your report returned an empty dataset.')
-        ws.show_grid = False
-    wb.save(filename)
+        #ws.write_merge(0, 0, 0, 2, 'Your report returned an empty dataset.')
+        #ws.show_grid = False
+        pass
+    wb.close()
+
+
+def write_merge(ws, r1, c1, r2, c2, label, style):
+    if r1!=r2 or c1!=c2:
+        ws.merge_range(r1, c1, r2, c2, label, style)
+    else:
+        ws.write(r1, c1, label, style)
 
 
 def borderize_floor(ct, ws, tmpl):
@@ -82,18 +90,22 @@ def _write_yaxis(ct, ws, idx, axis, tmpl):
     style = idx['style']
 
     if idx['coordinate'] in axis[idx['axis']] and idx['coordinate'] != '':
-        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+        #ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+        write_merge(ws, r1, c1, r2, c2, label.decode("utf-8"), style)
     else:
         # GRAND TOTAL/SUBTOTAL
-        try:
-            c2 = len(ct.yaxis) - 1 + crosstab_col
-            if style.label:
-                label = label + style.label
-            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
-            ws.row(r1).height = style.row_height
-            ws.col(c1).width = style.column_width
-        except:
-            pass
+        #try:
+        c2 = len(ct.yaxis) - 1 + crosstab_col
+        if style.label:
+            label = label + style.label
+        if ('Total' in label) or ('Result' in label):
+            write_merge(ws, r1, c1, r2, c2, label.decode("utf-8"), style)
+
+        #ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+        #ws.row(r1).height = style.row_height
+        #ws.col(c1).width = style.column_width
+        #except:
+        #    pass
 
 
 def _write_xaxis(ct, ws, idx, axis, tmpl):
@@ -106,18 +118,18 @@ def _write_xaxis(ct, ws, idx, axis, tmpl):
     label = idx['label']
 
     if idx['coordinate'] in axis[idx['axis']] and idx['coordinate'] != '':
-        ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+        #ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+        write_merge(ws, r1, c1, r2, c2, label.decode("utf-8"), style)
     else:
         # GRAND TOTAL/SUBTOTAL
-        try:
-            r2 = len(ct.xaxis) - 1 + crosstab_row
-            if style.label:
-                label = label + style.label
-            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
-            ws.row(r1).height = style.row_height
-            ws.col(c1).width = style.column_width
-        except:
-            pass
+        r2 = len(ct.xaxis) - 1 + crosstab_row
+        if style.label:
+            label = label + style.label
+        if ('Total' in label) or ('Result' in label):
+            write_merge(ws, r1, c1, r2, c2, label.decode("utf-8"), style)
+        #ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+        #ws.row(r1).height = style.row_height
+        #ws.col(c1).width = style.column_width
 
 
 def write_values(ct, ws, tmpl):
@@ -135,8 +147,9 @@ def _write_values(ct, ws, idx, tmpl):
     label = idx['label']
     style = idx['style']
     ws.write(r, c, label, style)
-    ws.row(r).height = style.row_height
-    ws.col(c).width = style.column_width
+    #ws.write(r, c, label, style)
+    #ws.row(r).height = style.row_height
+    #ws.col(c).width = style.column_width
 
 
 def _write_values_labels(ct, ws, idx, tmpl):
@@ -146,8 +159,9 @@ def _write_values_labels(ct, ws, idx, tmpl):
     style = idx['style']
     label = style.label or idx['label']
     ws.write(r, c, label, style)
-    ws.row(r).height = style.row_height
-    ws.col(c).width = style.column_width
+    #ws.write(r, c, label, style)
+    #ws.row(r).height = style.row_height
+    #ws.col(c).width = style.column_width
 
 
 def merge_indexes(indexes, index_width, total_width):
