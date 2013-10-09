@@ -46,6 +46,8 @@ def alignment(xf):
     vert_align = dict(zip(vert_align.values(), vert_align.keys()))
     horizontal = horz_align[xf.alignment.hor_align]
     vertical = vert_align[xf.alignment.vert_align]
+    if vertical=='centre':
+        vertical='vcenter'
     text_wrapped = str(xf.alignment.text_wrapped)
     wrap = Style.xf_dict['alignment']['wrap'][text_wrapped]
     return (('align', horizontal), ('valign', vertical),
@@ -86,12 +88,12 @@ class Template(object):
         crosstab_row, crosstab_col = self.crosstab_loc
         xf = self.wbt.xf_list[self.ws.cell_xf_index(row + crosstab_row,
                                                    col + crosstab_col)]
-        xfval = dict(font(self.wbt, xf) +
-                     pattern(xf) +
-                     alignment(xf) +
-                     borders(xf))
-        for k in overwrite:
-            xfval[k] = overwrite[k]
+        #xfval = dict(font(self.wbt, xf) +
+        #             pattern(xf) +
+        #             alignment(xf) +
+        #             borders(xf))
+        #for k in overwrite:
+        #    xfval[k] = overwrite[k]
 
         #style = easyxf(xfstr % xfval)
         #style.label = self.__get_label(row + crosstab_row, col + crosstab_col)
@@ -108,6 +110,10 @@ class Template(object):
                        alignment(xf) +
                        number_format(self.wbt, xf))
         xstyle = self.wb.add_format(xformat)
+        xstyle.row_height = float(self.ws.rowinfo_map[row + crosstab_row].height / 20)
+        xstyle.column_width = float(self.ws.computed_column_width(col + crosstab_col) /256)
+        #style.row = row  # CAN BE USE TO OVERWRITE STYLE IN excel.py
+        #style.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
         xstyle.label = self.__get_label(row + crosstab_row, col + crosstab_col)
         return xstyle 
 
