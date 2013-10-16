@@ -112,8 +112,8 @@ class Template(object):
         xstyle = self.wb.add_format(xformat)
         xstyle.row_height = float(self.ws.rowinfo_map[row + crosstab_row].height / 20)
         xstyle.column_width = float(self.ws.computed_column_width(col + crosstab_col) /256)
-        #style.row = row  # CAN BE USE TO OVERWRITE STYLE IN excel.py
-        #style.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
+        xstyle.row = row  # CAN BE USE TO OVERWRITE STYLE IN excel.py
+        xstyle.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
         xstyle.label = self.__get_label(row + crosstab_row, col + crosstab_col)
         return xstyle 
 
