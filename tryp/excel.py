@@ -85,15 +85,16 @@ def _write_yaxis(ct, ws, idx, axis, tmpl):
         ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
     else:
         # GRAND TOTAL/SUBTOTAL
-        try:
+        if idx['c1'] == len(ct.visible_yaxis_summary):
             c2 = len(ct.yaxis) - 1 + crosstab_col
             if style.label:
                 label = label + style.label
-            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+            if idx['coordinate']:
+                ws.write_merge(r1, r2, ct.yaxis.index(idx['coordinate']) + 1, c2, label.decode("utf-8"), style)
+            else:
+                ws.write_merge(r1,r2, 0, c2, label.decode("utf-8"), style)
             ws.row(r1).height = style.row_height
             ws.col(c1).width = style.column_width
-        except:
-            pass
 
 
 def _write_xaxis(ct, ws, idx, axis, tmpl):
@@ -109,15 +110,16 @@ def _write_xaxis(ct, ws, idx, axis, tmpl):
         ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
     else:
         # GRAND TOTAL/SUBTOTAL
-        try:
+        if idx['r1'] == len(ct.visible_xaxis_summary):
             r2 = len(ct.xaxis) - 1 + crosstab_row
             if style.label:
                 label = label + style.label
-            ws.write_merge(r1, r2, c1, c2, label.decode("utf-8"), style)
+            if idx['coordinate']:
+                ws.write_merge(ct.xaxis.index(idx['coordinate']) + crosstab_row + 1, r2, c1, c2, label.decode("utf-8"), style)
+            else:
+                ws.write_merge(crosstab_row, r2, c1, c2, label.decode("utf-8"), style)
             ws.row(r1).height = style.row_height
             ws.col(c1).width = style.column_width
-        except:
-            pass
 
 
 def write_values(ct, ws, tmpl):
