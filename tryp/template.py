@@ -6,34 +6,34 @@ colour = {
     8: "black",
     10: "red",
     13: "yellow",
-    40: "sky-blue",
-    43: "light-yellow",
-    46: "lavender",
+    40: "#00CCFF",
+    43: "#FFFF99",
+    46: "#CC99FF",
     50: "lime",
-    51: "gold",
+    50: "#99CC00",
+    51: "#FFCC00",
     64: "white",
-    9: "white",
+     9: "white",
     17: "green"
 }
 
-xfstr = 'font: name %(name)s, colour %(colour_index)s,' \
-        'height %(height)s, bold %(bold)s;'\
-        'pattern: pattern solid, fore-colour %(forecolour)s;'\
-        'alignment: vertical %(vertical)s, horizontal %(horizontal)s;'\
-        'align: wrap %(wrap)s;' \
-        'borders : bottom %(bottom)s, left %(left)s,'\
-        'right %(right)s, top %(top)s'
+
+class XStyle:
+    pass
+
 
 def font(wb, xf):
     font = wb.font_list[xf.font_index]
-    bold = 'on' if font.weight == 700 else 'off'
-    colour_index = colour.get(font.colour_index, 8)
-    return (('name', font.name), ('height', font.height), ('bold', bold),
-            ('colour_index', colour_index))
+    bold = True if font.weight == 700 else False
+    colour_index = colour.get(font.colour_index, 'black')
+    return (('font_name', font.name), ('font_size', font.height / 20),
+            ('bold', bold), ('font_color', colour_index))
+
 
 def pattern(xf):
     forecolour = colour[xf.background.pattern_colour_index]
-    return (('forecolour', forecolour),)
+    return (('bg_color', forecolour),)
+
 
 def alignment(xf):
     horz_align = Style.xf_dict['alignment']['horz']
@@ -42,13 +42,15 @@ def alignment(xf):
     vert_align = dict(zip(vert_align.values(), vert_align.keys()))
     horizontal = horz_align[xf.alignment.hor_align]
     vertical = vert_align[xf.alignment.vert_align]
+    if vertical == 'centre':
+        vertical = 'vcenter'
     text_wrapped = str(xf.alignment.text_wrapped)
     wrap = Style.xf_dict['alignment']['wrap'][text_wrapped]
-    return (('horizontal', horizontal), ('vertical', vertical),
-            ('wrap', wrap))
+    return (('align', horizontal), ('valign', vertical),
+            ('text_wrap', wrap))
 
-def borders( xf):
-    brd = Borders()
+
+def borders(xf):
     bottom = xf.border.bottom_line_style.real
     left = xf.border.left_line_style.real
     right = xf.border.right_line_style.real
@@ -56,15 +58,17 @@ def borders( xf):
     return (('bottom', bottom), ('left', left), ('right', right),
             ('top', top))
 
+
 def number_format(wb, xf):
-    return wb.format_map[xf.format_key].format_str
+    return (('num_format', wb.format_map[xf.format_key].format_str),)
 
 
 class Template(object):
-    def __init__(self, ct=None):
+    def __init__(self, ct=None, wb=None):
         self.ct = ct
-        self.wb = open_workbook(ct.excel['template'], formatting_info=True)
-        self.ws = self.wb.sheet_by_index(0)
+        self.wb = wb
+        self.wbt = open_workbook(ct.excel['template'], formatting_info=True)
+        self.ws = self.wbt.sheet_by_index(0)
 
         note_map = self.ws.cell_note_map
         note_map = dict([(note_map[k].text, k) for k in note_map.keys()])
@@ -80,23 +84,23 @@ class Template(object):
 
     def get_styles(self, row, col, overwrite={}, num_format=None):
         crosstab_row, crosstab_col = self.crosstab_loc
-        xf = self.wb.xf_list[self.ws.cell_xf_index(row + crosstab_row,
+        xf = self.wbt.xf_list[self.ws.cell_xf_index(row + crosstab_row,
                                                    col + crosstab_col)]
-        xfval = dict(font(self.wb, xf) +
-                     pattern(xf) +
-                     alignment(xf) +
-                     borders(xf))
-        for k in overwrite:
-            xfval[k] = overwrite[k]
-
-        style = easyxf(xfstr % xfval)
-        style.label = self.__get_label(row + crosstab_row, col + crosstab_col)
-        style.row = row  # CAN BE USE TO OVERWRITE STYLE IN excel.py
-        style.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
-        style.row_height = self.ws.rowinfo_map[row + crosstab_row].height
-        style.column_width = self.ws.computed_column_width(col + crosstab_col)
-        style.num_format_str = num_format or number_format(self.wb, xf)
-        return style
+        xstyle = XStyle()
+        xformat = dict(font(self.wbt, xf) +
+                       borders(xf) +
+                       pattern(xf) +
+                       alignment(xf) +
+                       number_format(self.wbt, xf))
+        xstyle = self.wb.add_format(xformat)
+        xstyle.row_height = float(self.ws.rowinfo_map[row +
+                                  crosstab_row].height / 20)
+        xstyle.column_width = float(self.ws.computed_column_width(col +
+                                    crosstab_col) / 256)
+        xstyle.row = row  # CAN BE USE TO OVERWRITE STYLE IN excel.py
+        xstyle.col = col  # CAN BE USE TO OVERWRITE STYLE IN excel.py
+        xstyle.label = self.__get_label(row + crosstab_row, col + crosstab_col)
+        return xstyle
 
     def __get_label(self, row, col):
         label = unicode(self.ws.cell(row, col).value)
