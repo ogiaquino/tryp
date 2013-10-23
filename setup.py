@@ -1,6 +1,6 @@
 from setuptools import setup
 
-requires = ['pandas', 'xlwt', 'xlrd', 'docopt', 'psycopg2']
+requires = ['pandas', 'xlsxwriter', 'xlrd', 'docopt', 'psycopg2']
 long_description = """Generate an excel file with crosstabulation
  defined in tryp file."""
 
