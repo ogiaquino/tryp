@@ -5,7 +5,7 @@ long_description = """Generate an excel file with crosstabulation
  defined in tryp file."""
 
 setup(name='tryp',
-      version='0.1.1',
+      version='0.1.2',
       description='tryp',
       long_description=long_description,
       license='BSD',
