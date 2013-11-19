@@ -1,8 +1,8 @@
 .. highlight:: rst
 
-===============================
-A tool for generating an xlsx
-===============================
+=======================================================================================
+A tool for generating an xlsx file from a crosstabulated hierarchical Pandas DataFrame.
+=======================================================================================
 
 -----------------
 Setting up Tryp
