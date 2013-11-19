@@ -1,8 +1,10 @@
 .. highlight:: rst
 
-============================
-tryp Python Reporting Tool
-============================
+===============================
+A tool for generating an xlsx
+of hierarchical crosstabulated
+Pandas DataFrame.
+===============================
 
 -----------------
 Setting up Tryp
