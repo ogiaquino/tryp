@@ -2,8 +2,6 @@
 
 ===============================
 A tool for generating an xlsx
-of hierarchical crosstabulated
-Pandas DataFrame.
 ===============================
 
 -----------------
