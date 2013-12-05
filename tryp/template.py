@@ -2,6 +2,7 @@ import re
 from xlrd import open_workbook
 from xlwt import easyxf, Borders, Pattern, Style
 
+#TODO: Create a mapping of excel default colours.
 colour = {
     8: "black",
     10: "red",
