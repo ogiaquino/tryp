@@ -15,7 +15,6 @@ class Crosstab(object):
         self.zaxis = metadata.zaxis
         self.visible_xaxis_summary = metadata.visible_xaxis_summary
         self.visible_yaxis_summary = metadata.visible_yaxis_summary
-        self.excel = metadata.excel
         if not metadata.source_dataframe.empty:
             self.dataframe = self.__crosstab(metadata.source_dataframe,
                                              self.xaxis,
