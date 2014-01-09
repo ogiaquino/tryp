@@ -1,31 +1,33 @@
-import imp
 import pandas as pd
 import numpy as np
-from itertools import cycle, islice
+from util import roundrobin
 
-def roundrobin(*iterables):
-    "roundrobin('ABC', 'D', 'EF') --> A D E B F C"
-    # Recipe credited to George Sakkis
-    pending = len(iterables)
-    nexts = cycle(iter(it).next for it in iterables)
-    while pending:
-        try:
-            for next in nexts:
-                yield next()
-        except StopIteration:
-            pending -= 1
-            nexts = cycle(islice(nexts, pending))
 
 class Crosstab(object):
+    """Crosstab object crosstabulate a pandas dataframe object.
+
+    Parameters:
+    xaxis : list of dataframe columns to be referred as xaxis
+    yaxis : list of dataframe index to be referred as yaxis
+    zaxis : list of dataframe values to be referred as zaxis
+    xaxis_total : list of dataframe columns that should be
+                  totaled
+    yaxis_total : list of dataframe index that should be
+                  totaled
+    source_dataframe : pandas dataframe object to be
+                       crosstabulated
+
+    For a more detailed explanation please refer to crosstab.ipynb
+    inside notebooks folder.
+    """
     def __init__(self, xaxis, yaxis, zaxis, xaxis_total, yaxis_total,
-                 source_dataframe, extmodule=None):
+                 source_dataframe):
         self.coordinates = {}
         self.xaxis = xaxis
         self.yaxis = yaxis
         self.zaxis = zaxis
         self.xaxis_total = xaxis_total
         self.yaxis_total = yaxis_total
-
         df = source_dataframe.groupby(xaxis + yaxis).sum()
         df = df[zaxis].unstack(xaxis)
         if xaxis:

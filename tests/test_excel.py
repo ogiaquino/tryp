@@ -15,23 +15,8 @@ class TestExcel(unittest.TestCase):
         values = ['sales', 'invoice_count']
         index_totals = ['region', 'area']
         columns_totals = ['region', 'area', 'distributor']
-
-        excel = {}
-        excel['filename'] = 'filename'
-        excel['sheetname'] = 'Sheet1'
-
-        trypobj = type('tryp', (object,),
-                       {'source_dataframe': df,
-                        'yaxis': index,
-                        'xaxis': columns,
-                        'zaxis': values,
-                        'visible_yaxis_summary': index_totals,
-                        'visible_xaxis_summary': columns_totals,
-                        'extmodule': None,
-                        'excel': excel
-                        })()
-
-        ct = Crosstab(trypobj)
+        ct = Crosstab(columns, index, values,
+                      columns_totals, index_totals, df)
         merge_indexes_expected_result = {0: [(0, 0, u''),
                                              (1, 7, u'Bulacan'),
                                              (8, 14, u'Rizal')],
