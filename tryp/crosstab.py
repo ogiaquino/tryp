@@ -43,8 +43,7 @@ class Crosstab(object):
         dataframe = self.dataframe
 
         # UNSTACKED DATAFRAME
-        udf = dataframe.groupby(xaxis + yaxis).sum() \
-                [zaxis].unstack(xaxis)
+        udf = dataframe.groupby(xaxis + yaxis).sum()[zaxis].unstack(xaxis)
 
         for _ in udf.columns:
             coordinates.append(xaxis[-1])
