@@ -14,7 +14,7 @@ class TestExcel(unittest.TestCase):
         columns = ['salesrep', 'retailer']
         values = ['sales', 'invoice_count']
         index_totals = ['region', 'area']
-        columns_totals = ['region', 'area', 'distributor']
+        columns_totals = ['salesrep']
         ct = Crosstab(columns, index, values,
                       columns_totals, index_totals, df)
         merge_indexes_expected_result = {0: [(0, 0, u''),
