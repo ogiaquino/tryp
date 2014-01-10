@@ -16,9 +16,6 @@ class Crosstab(object):
                   totaled
     dataframe : pandas dataframe object to be
                 crosstabulated
-
-    For a more detailed explanation please refer to crosstab.ipynb
-    inside notebooks folder.
     """
     def __init__(self, xaxis, yaxis, zaxis, xaxis_total, yaxis_total,
                  dataframe):
