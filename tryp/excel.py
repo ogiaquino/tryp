@@ -206,9 +206,9 @@ def index(ct, tmpl, wb):
             c2 = k
 
             style = styles[(coordinate, k)]
-            conditional_style = ct.conditional_style(wb, label, coordinate,
+            if ct.conditional_style:
+                conditional_style = ct.conditional_style(wb, label, coordinate,
                                                      style)
-            if conditional_style:
                 label = conditional_style['label']
                 style = conditional_style['style']
             else:
@@ -271,8 +271,8 @@ def values(ct, tmpl, wb):
             z = ct.zaxis[il] if 'z' not in ct.coordinates else \
                 ct.coordinates['z'][il]
             style = styles[(y, x, z)]
-            conditional_style = ct.conditional_style(wb, label, z, style)
-            if conditional_style:
+            if ct.conditional_style:
+                conditional_style = ct.conditional_style(wb, label, z, style)
                 style = conditional_style['style']
 
             if np.isnan(label):
