@@ -1,8 +1,8 @@
 .. highlight:: rst
 
+
 =======================================================================================
 A tool for generating an xlsx file from a crosstabulated hierarchical Pandas DataFrame.
-Please note that this is still in prototype stage.
 =======================================================================================
 
 -----------------
