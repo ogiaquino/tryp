@@ -1,0 +1,11 @@
+{
+ "crosstab": {
+  "xaxis": ["region", "area", "distributor"],
+  "yaxis": ["salesrep","retailer"],
+  "zaxis": ["sales", "invoice_count"],
+  "visible_yaxis_summary": ["salesrep"],
+  "visible_xaxis_summary": ["region", "area"],
+  "sheetname": "test",
+  "connstring": "host='localhost' port='5433' dbname='test' user='postgres' password='test'"
+  }
+}
