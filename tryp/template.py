@@ -15,7 +15,10 @@ colour = {
     51: "#FFCC00",
     64: "white",
      9: "white",
-    17: "green"
+    17: "green",
+    15: "cyan",
+    14: "magenta",
+    12: "blue",
 }
 
 
