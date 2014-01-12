@@ -15,7 +15,7 @@ Setting up Tryp
 
     pip install numpy
 
-* Do installation. This will pull down all the requirements 
+* Do installation. This will pull down all the requirements.
 
 .. code-block :: python
 
@@ -26,6 +26,12 @@ Setting up Tryp
 .. code-block :: python
 
    python setup.py nosetests
+   
+* Run the following command to generate a report.
+
+.. code-block :: python
+   
+   trypgen -f sample.tryp -d sample.csv -t sample_template.xls -o sample.xlsx
    
 * From an excel template file:
 .. image:: template.png
