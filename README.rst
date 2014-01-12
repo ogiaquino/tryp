@@ -26,7 +26,18 @@ Setting up Tryp
 .. code-block :: python
 
    python setup.py nosetests
+   
+* From an excel template file:
+.. image:: template.png
+   
+
+* Output would be like this:
+.. image:: output.png
+   
 
 
 .. image:: https://travis-ci.org/ogiaquino/tryp.png
         :target: https://travis-ci.org/ogiaquino/tryp
+        
+ 
+       
