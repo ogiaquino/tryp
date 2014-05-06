@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import imp
 import pandas as pd
 import numpy as np
@@ -45,7 +48,7 @@ class Crosstab(object):
         for _ in ctdf.columns:
             coordinates.append(self.xaxis[-1])
 
-        ## CREATE SUBTOTALS FOR EACH COLUMNS
+        # CREATE SUBTOTALS FOR EACH COLUMNS
         for i in range(0, len(self.visible_xaxis_summary)):
             subtotal = source_dataframe.groupby(xaxis[:i+1] + yaxis)
             subtotal = subtotal.sum()[zaxis].unstack(xaxis[:i+1])
@@ -54,22 +57,22 @@ class Crosstab(object):
                 scolumns = col + (col[-1],) * (len(xaxis) - len(col) + 1)
                 ctdf[scolumns] = subtotal[col]
                 coordinates.append(self.visible_xaxis_summary[i])
-        ## END
+        # END
 
-        ## CREATE COLUMNS GRAND TOTAL
+        # CREATE COLUMNS GRAND TOTAL
         for value in zaxis:
             total = source_dataframe.groupby(yaxis + xaxis[-1:]).sum()[value]
             keys = tuple([''] * len(xaxis))
             ctdf[(value,) + keys] = total.unstack(xaxis[-1:]).sum(axis=1)
             coordinates.append('')
-        ## END
+        # END
 
-        ## REORDER AXIS 1 SO THAT AGGREGATES ARE THE LAST LEVEL
+        # REORDER AXIS 1 SO THAT AGGREGATES ARE THE LAST LEVEL
         order = range(1, len(xaxis) + 1) + [0]
         ct = ctdf.reorder_levels(order, axis=1)
-        ## END
+        # END
 
-        ## SORT COLUMNS AND RETURN SORTED DF
+        # SORT COLUMNS AND RETURN SORTED DF
         sorted_columns = self.__sort_axis(ct.columns,
                                           self.visible_xaxis_summary,
                                           coordinates, 'x')
@@ -78,14 +81,14 @@ class Crosstab(object):
         sorted_columns = map(lambda x: x[0][:-1] + (x[1],),
                              zip(sorted_columns, zas))
         return ct.reindex_axis(axis=1, labels=sorted_columns)
-        ## END
+        # END
 
     def __yaxis_summary(self, yaxis, df):
         coordinates = []
         for _ in df.index:
             coordinates.append(self.yaxis[-1])
 
-        ## CREATE SUBTOTALS FOR EACH INDEX
+        # CREATE SUBTOTALS FOR EACH INDEX
         subtotals = []
         for i in range(len(self.visible_yaxis_summary)):
             for idx in set([x[:i+1] for x in df.index]):
@@ -93,22 +96,22 @@ class Crosstab(object):
                 stotal = pd.DataFrame({sindex: df.ix[idx].sum()}).T
                 subtotals.append(stotal)
                 coordinates.append(self.visible_yaxis_summary[i])
-        ## END
+        # END
 
-        ## CREATE INDEX GRAND TOTAL
+        # CREATE INDEX GRAND TOTAL
         gindex = tuple([''] * len(yaxis))
         gtotal = pd.DataFrame({gindex: df.ix[:].sum()}).T
         subtotals.append(gtotal)
         coordinates.append('')
-        ## END
+        # END
 
-        ## SORT THE INDEX AND RETURN SORTED DF
+        # SORT THE INDEX AND RETURN SORTED DF
         df = pd.concat([df] + subtotals)
         sorted_index = self.__sort_axis(df.index,
                                         self.visible_yaxis_summary,
                                         coordinates, 'y')
         return df.reindex_axis(axis=0, labels=sorted_index)
-        ## END
+        # END
 
     def __sort_axis(self, labels, visible_axis, coordinates, axis):
         sorter = []

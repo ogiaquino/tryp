@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import tempfile
 import unittest
+
 from tryp.parser import parse_tryp
 
 
