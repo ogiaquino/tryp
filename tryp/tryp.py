@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """Usage:
     tryp.py -f tryp_file -d csv_file -o output_file  -t template_file \
  [--sqlparams=<arg>]
@@ -19,8 +22,10 @@
           --sqlfile sql_file
           --sqlparams sqlparams
 """
+
 import os
 import psycopg2
+
 from pandas.io.parsers import read_csv
 from pandas.io import sql as psql
 from parser import parse

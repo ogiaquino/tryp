@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import unittest
 import pandas as pd
+
 from tryp.crosstab import Crosstab
 
 data_loc = os.path.dirname(os.path.abspath(__file__)) + '/data'

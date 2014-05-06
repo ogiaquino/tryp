@@ -1,15 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pandas as pd
 import numpy as np
 import xlsxwriter
+
 from template import Template
 
 
 def to_excel(ct):
     sheetname = ct.excel['sheetname']
     filename = ct.excel['filename']
-    template = ct.excel['template']
     wb = xlsxwriter.Workbook(filename)
     ws = wb.add_worksheet(sheetname)
+
     if not ct.dataframe.empty:
         tmpl = Template(ct, wb)
         write_header(ct, ws, tmpl)
@@ -208,7 +212,7 @@ def index(ct, tmpl, wb):
             style = styles[(coordinate, k)]
             if ct.conditional_style:
                 conditional_style = ct.conditional_style(wb, label, coordinate,
-                                                     style)
+                                                         style)
                 label = conditional_style['label']
                 style = conditional_style['style']
             else:

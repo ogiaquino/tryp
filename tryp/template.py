@@ -1,8 +1,12 @@
-import re
-from xlrd import open_workbook
-from xlwt import easyxf, Borders, Pattern, Style
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-#TODO: Create a mapping of excel default colours.
+import re
+
+from xlrd import open_workbook
+from xlwt import Style
+
+# TODO: Create a mapping of excel default colours.
 colour = {
     8: "black",
     10: "red",
@@ -14,7 +18,7 @@ colour = {
     50: "#99CC00",
     51: "#FFCC00",
     64: "white",
-     9: "white",
+    9: "white",
     17: "green",
     15: "cyan",
     14: "magenta",
@@ -89,7 +93,7 @@ class Template(object):
     def get_styles(self, row, col, overwrite={}, num_format=None):
         crosstab_row, crosstab_col = self.crosstab_loc
         xf = self.wbt.xf_list[self.ws.cell_xf_index(row + crosstab_row,
-                                                   col + crosstab_col)]
+                                                    col + crosstab_col)]
         xstyle = XStyle()
         xformat = dict(font(self.wbt, xf) +
                        borders(xf) +
@@ -126,7 +130,6 @@ class Template(object):
         return headers
 
     def __get_ct_corner_styles(self):
-        styles = {}
         return self.get_styles(0, 0)
 
     def __get_values_styles(self):
@@ -147,7 +150,6 @@ class Template(object):
 
     def __get_index_styles(self):
         yaxis = [''] + self.ct.visible_yaxis_summary + [self.ct.yaxis[-1]]
-        xaxis = [''] + self.ct.xaxis
         styles = {}
 
         for i, y in enumerate(yaxis):
@@ -166,7 +168,6 @@ class Template(object):
         return styles
 
     def __get_column_styles(self):
-        yaxis = [''] + self.ct.visible_yaxis_summary + [self.ct.yaxis[-1]]
         xaxis = [''] + self.ct.xaxis
         styles = {}
 

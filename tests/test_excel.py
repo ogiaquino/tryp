@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import unittest
 import pandas as pd
+
 from tryp.excel import merge_indexes
 from tryp.crosstab import Crosstab
 
